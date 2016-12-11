@@ -97,6 +97,8 @@ if(argv.h || argv.help){
   console.log('--source "/path/to/the/md5_file_source_its_the_reference.txt/"    or    -source "/path/to/the/md5_file_source_its_the_reference.txt/"');
   console.log('--compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"    or    -compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/" \n');
   console.log('To rename files name in the file of results without space :');
+  console.log('-- nospace or -nospace')
+  console.log('Example:');
   console.log('Before: /Folder1/my file for example.mkv a9asd1171dd83e122598af664bd3f785)');
   console.log('After: /Folder1/my_file_for_example.mkv a9asd1171dd83e122598af664bd3f785)');
   return;
