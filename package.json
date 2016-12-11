@@ -1,0 +1,25 @@
+{
+  "name": "generate_check_md5_files",
+  "version": "0.0.1",
+  "description": "",
+  "main": "check-md5-files.js",
+  "dependencies": {
+    "line-by-line": "0.1.5",
+    "line-reader": "0.4.0",
+    "recursive-readdir-sync": "1.0.6",
+    "shelljs": "0.7.5",
+    "yargs": "6.5.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "md5",
+    "generate",
+    "check",
+    "compare",
+    "files"
+  ],
+  "author": "Kevin CARADANT",
+  "license": "ISC"
+}
