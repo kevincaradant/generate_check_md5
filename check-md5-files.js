@@ -26,7 +26,7 @@ const argumentsSendByUser = Object.keys(argv).filter(obj => obj != '$0' && obj !
 * @param {array} arr the array providing items to check for in the haystack.
 * @return {boolean} true|false if haystack contains at least one item from arr.
 */
-var findElemInArray = function (haystack, arr) {
+const findElemInArray = function (haystack, arr) {
   return arr.every(function (v) {
     return haystack.indexOf(v) >= 0;
   });
@@ -83,10 +83,8 @@ const checkMD5 = (pSourceArray, pCompareArray) => {
   }
 }
 
-// ----------------------------------------------------------------------------------
-
-if(argv.h || argv.help){
-  console.log(`
+const showHelp = () => {
+  return `
     To generate MD5 on console (only) :
     --path "/path/to/the/my_directory_with_files/"    or    -path "/path/to/the/my_directory_with_files/"
 
@@ -108,8 +106,15 @@ if(argv.h || argv.help){
     -- nospace or -nospace
     Example:
     Before: /Folder1/my file for example.mkv a9asd1171dd83e122598af664bd3f785)
-    After: /Folder1/my_file_for_example.mkv a9asd1171dd83e122598af664bd3f785)
-    `);
+    After: /Folder1/my_file_for_example.mkv a9asd1171dd83e122598af664bd3f785) `
+}
+
+
+
+// ----------------------------------------------------------------------------------
+
+if(argv.h || argv.help){
+  console.log(showHelp());
     return;
   }
   // If we haven't any arguments
@@ -132,7 +137,6 @@ if(argv.h || argv.help){
 
   // If we use path parameter
   if (argv.path) {
-
     // If we use path parameter and we don't specify an output file to write the results
     if(!argv.dest) {
       console.log('You should give the destination path to write the results in a file. Use: --dest "your/path/and/your-file.txt".');
