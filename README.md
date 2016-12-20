@@ -42,6 +42,7 @@
   </a>
 </p>
 
+
 ## Description
 With this generator, you can very easily create a MD5 hash on each files wanted.
 Furthemore, you can compare two MD5 files and see the difference.
@@ -58,6 +59,7 @@ Very useful in the case of the backup copy.
 | Rise       | > 2.x.x   | `npm install generator-rise -g`       |
 | Yarn       | > 1.x.x   | `npm install yarn -g`                 |
 | Yeoman     | > 1.x.x   | `npm install yo -g`                   |
+| auto-cl    | > 3.x.x   | `npm install auto-changelog -g`       |
 
 ## Others Dependencies
 ### 1- Yarn
@@ -86,7 +88,7 @@ Tape the command: `npm install`
 - `$ npm run minor`: Create a tag 0.X.0 and publish the npm module
 - `$ npm run major`: Create a tag X.0.0 and publish the npm module
 - `$ npm run postpublish`: After to call `npm run publish`, We push the new tag on the github (origin master)
-- `$ npm run toc`: Create a Changelog using the commits on github
+- `$ npm run autocl`: Generate a Changelog file using the commits on github
 
 ### How it works ?
 
