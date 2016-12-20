@@ -59,7 +59,7 @@ Very useful in the case of the backup copy.
 | Rise       | > 2.x.x   | `npm install generator-rise -g`       |
 | Yarn       | > 1.x.x   | `npm install yarn -g`                 |
 | Yeoman     | > 1.x.x   | `npm install yo -g`                   |
-| auto-cl    | > 3.x.x   | `npm install auto-changelog -g`       |
+| Auto-cl    | > 3.x.x   | `npm install auto-changelog -g`       |
 
 ## Others Dependencies
 ### 1- Yarn

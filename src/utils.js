@@ -45,7 +45,6 @@ const readFile = pFile => {
   });
 };
 
-
 // For each line of a the pCompareArray. We check if the content is included in the pSourceArray.
 const checkMD5 = (pSourceArray, pCompareArray) => {
   let stateErrorMD5 = 0;
