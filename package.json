@@ -1,7 +1,7 @@
 {
   "name": "generate_check_md5",
   "version": "1.0.1",
-  "description": "",
+  "description": "Generate and compare MD5 on files",
   "main": "dist/index.js",
   "files": [
     "bin/",
@@ -31,7 +31,7 @@
     "url": "git+https://github.com/kevincaradant/generate_check_md5.git"
   },
   "keywords": [
-    "generate, create, md5, analyze md5, compare md5"
+    "generate, create, generator, comparator, md5, analyze md5, compare md5"
   ],
   "author": "Kévin CARADANT <kevin.caradant@gmail.com>",
   "license": "MIT",
