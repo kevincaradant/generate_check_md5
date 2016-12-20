@@ -6,10 +6,7 @@
          alt="NPM Version">
   </a>
 
-  <a href="https://coveralls.io/r/kevincaradant/generate_check_md5">
-    <img src="https://img.shields.io/coveralls/kevincaradant/generate_check_md5.svg?style=flat-square"
-         alt="Coverage Status">
-  </a>
+[![CoverageStatus](https://coveralls.io/repos/github/kevincaradant/generate_check_md5/badge.svg?branch=master)](https://coveralls.io/github/kevincaradant/generate_check_md5?branch=master)
 
   <a href="https://travis-ci.org/kevincaradant/generate_check_md5">
     <img src="https://img.shields.io/travis/kevincaradant/generate_check_md5.svg?style=flat-square"

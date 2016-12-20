@@ -15,7 +15,7 @@
     "test": "tape -r babel-register tests/**/*.js | tspec",
     "build": "babel --optional runtime src -d dist",
     "postbuild": "npm run check -s && npm run test -s",
-    "coverage": "babel-node node_modules/isparta/bin/isparta cover --report html src",
+    "coverage": "babel-node node_modules/isparta/bin/isparta cover --report lcovonly --report html src",
     "coveralls": "npm run coverage -s && coveralls < coverage/lcov.info",
     "postcoveralls": "rimraf ./coverage",
     "prepublish": "npm run build -s",
