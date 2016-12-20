@@ -10,18 +10,21 @@ const error = clc.red.bold;
 const success = clc.green.bold;
 const notice = clc.blue.bold;
 
+// Return true if all the elements in pArr are included in pHaystack
 const findElemInArray = (pHaystack, pArr) => {
   return pArr.every(v => {
     return pHaystack.indexOf(v) >= 0;
   });
 };
 
+// Return true if at leadt one element in pArr is included in pHaystack
 const findAtLeastOneElemInArray = (pHaystack, pArr) => {
   return pArr.some(v => {
     return pHaystack.indexOf(v) >= 0;
   });
 };
 
+// A simple method to read line by line a file
 const readFile = pFile => {
   const lineByLineReader = new LineByLineReader(pFile);
   const pArrayResults = [];
@@ -42,12 +45,13 @@ const readFile = pFile => {
   });
 };
 
-/* eslint array-callback-return: 0 */
+
+// For each line of a the pCompareArray. We check if the content is included in the pSourceArray.
 const checkMD5 = (pSourceArray, pCompareArray) => {
   let stateErrorMD5 = 0;
   let cptErrorMD5 = 0;
 
-  // For each lines in the compare file. We check if the md5 is the same that the other file.
+  /* eslint array-callback-return: 0 */
   pCompareArray.map(md5 => {
     stateErrorMD5 = pSourceArray.includes(md5) ? 0 : 1;
     if (stateErrorMD5) {
@@ -89,6 +93,7 @@ const analyseMD5 = (pFileSource, pFilesPath, pArgvNoSpace) => {
   });
 };
 
+// Show the help text
 const showHelp = () => {
   return `
   To generate MD5 on console (only) :
@@ -145,6 +150,7 @@ const sortFileDest = (pFile, pArgvDest) => {
   });
 };
 
+// Write in a file or in a console, all the MD5 results
 const writeMD5FileDest = (pFiles, pArgvDest, pArgvUpdate, pArgvRewrite, pArgvNoSpace) => {
   // If we want to rewrite completely the file. Delete and create again it.
   if (pArgvDest && fs.existsSync(pArgvDest) && !pArgvUpdate && pArgvRewrite) {

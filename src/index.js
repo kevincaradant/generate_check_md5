@@ -42,13 +42,13 @@ const argumentsSendByUser = Object.keys(argv).filter(obj => obj !== '$0' && obj 
     return;
   }
 
-  // Check: If at least one argument is correct
-  if (!checks.isExistAtLeastOneParamFromUser(argumentsAllowedArray, argumentsSendByUser)) {
+  // Check: If all arguments are correct otherwise we reject the request
+  if (!checks.checkAllParamsFromUser(argumentsAllowedArray, argumentsSendByUser)) {
     return;
   }
 
-  // Check: If all arguments are correct otherwise we reject the request
-  if (!checks.checkAllParamsFromUser(argumentsAllowedArray, argumentsSendByUser)) {
+  // Check: If at least one argument is correct
+  if (!checks.isExistAtLeastOneParamFromUser(argumentsAllowedArray, argumentsSendByUser)) {
     return;
   }
 

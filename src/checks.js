@@ -12,6 +12,8 @@ const notice = clc.blue.bold;
 // FALSE => We have a problem
 // TRUE => Everything is good
 
+// Return true: Help arg not called
+// Return false: Help arg was called
 const checkHelp = (pArgvH, pArgvHelp) => {
   if (pArgvH || pArgvHelp) {
     console.log(notice(utils.showHelp()));
@@ -20,6 +22,8 @@ const checkHelp = (pArgvH, pArgvHelp) => {
   return true;
 };
 
+// Return true: ALl arguments exists.
+// Return false: One or more arguments doesn't exist
 const checkAllParamsFromUser = (pArgumentsAllowedArray, pArgumentsSendByUser) => {
   if (!utils.findElemInArray(pArgumentsAllowedArray, pArgumentsSendByUser)) {
     console.log(error('\nYou doesn\'t use allowed params.') + notice('\nDo --h or --help for more informations'));
@@ -28,14 +32,18 @@ const checkAllParamsFromUser = (pArgumentsAllowedArray, pArgumentsSendByUser) =>
   return true;
 };
 
+// Return true: At least  one argument exists.
+// Return false: Any argument exist
 const isExistAtLeastOneParamFromUser = (pArgumentsAllowedArray, pArgumentsSendByUser) => {
   if (!utils.findAtLeastOneElemInArray(pArgumentsAllowedArray, pArgumentsSendByUser)) {
-    console.log(error('\nYou should pass arguments to use this module'));
+    console.log(error('\nYou should pass valid arguments to use this module'));
     return false;
   }
   return true;
 };
 
+// Return true: --path arg is correct
+// Return false: --path arg is not correct
 const isPathCorrect = pArgvPath => {
   if (pArgvPath) {
     if (typeof pArgvPath !== 'string') {
@@ -62,6 +70,8 @@ const isPathCorrect = pArgvPath => {
   return false;
 };
 
+// Return true: --dest arg is correct
+// Return false: --dest arg is not correct
 const isDestCorrect = pArgvDest => {
   if (pArgvDest) {
     if (typeof pArgvDest !== 'string') {
@@ -88,6 +98,8 @@ const isDestCorrect = pArgvDest => {
   return false;
 };
 
+// Return true: --source arg is correct
+// Return false: --source arg is not correct
 const isSourceCorrect = pArgvSource => {
   if (pArgvSource) {
     if (typeof pArgvSource !== 'string') {
@@ -114,6 +126,8 @@ const isSourceCorrect = pArgvSource => {
   return false;
 };
 
+// Return true: --compare arg is correct
+// Return false: --compare arg is not correct
 const isCompareCorrect = pArgvCompare => {
   if (pArgvCompare) {
     if (typeof pArgvCompare !== 'string') {
@@ -140,6 +154,8 @@ const isCompareCorrect = pArgvCompare => {
   return false;
 };
 
+// Return true: --path arg exist
+// Return false: --path arg doesn't not exist
 const showPathError = pArgvPath => {
   if (!pArgvPath) {
     console.log(error('\nArgument --path: You should give the path of a folder to analyze it.') + notice('\nUse: --path "your/path/and/your-folder-name"'));
@@ -148,6 +164,8 @@ const showPathError = pArgvPath => {
   return true;
 };
 
+// Return true: --dest arg exist
+// Return false: --dest arg doesn't not exist
 const showDestError = pArgvDest => {
   if (!pArgvDest) {
     console.log(warn('\nArgument --dest: You should give the destination path to write the results in a file.') + notice('\nUse: --dest "your/path/and/your-file.txt".\nIn the moment, the results will be only show in the console.'));
@@ -156,6 +174,8 @@ const showDestError = pArgvDest => {
   return true;
 };
 
+// Return true: --source arg exist
+// Return false: --source arg doesn't not exist
 const showSourceError = pArgvSource => {
   if (!pArgvSource) {
     console.log(error('\nArgument --source: You should give the path of a folder to compare it.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
@@ -164,6 +184,8 @@ const showSourceError = pArgvSource => {
   return true;
 };
 
+// Return true: --compare arg exist
+// Return false: --compare arg doesn't not exist
 const showCompareError = pArgvCompare => {
   if (!pArgvCompare) {
     console.log(error('\nArgument --compare: You should give the path of a folder to compare it.') + notice('\nUse: --compare "your/path/and/your-file.txt"'));
@@ -172,6 +194,8 @@ const showCompareError = pArgvCompare => {
   return true;
 };
 
+// Return true: --rewrite or --update  or any of these arg exist
+// Return false: --rewrite arg doesn't not exist
 const showRewriteUpdateError = (pArgvUpdate, pArgvRewrite) => {
   if (pArgvUpdate && pArgvRewrite) {
     console.log(error('\nArguments --update && --rewrite: You can\'t give these two parameters in the same time.') + notice('\nUse --update or --rewrite'));
