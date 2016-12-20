@@ -1,50 +1,46 @@
-<big><h1 align="center">generate_check_md5</h1></big>
+<big><h1 align="center">Generator / Comparator MD5</h1></big>
 
 <p align="center">
-	<a href="https://npmjs.org/package/generate_check_md5">
-		<img src="https://img.shields.io/npm/v/generate_check_md5.svg?style=flat-square"
-		alt="NPM Version">
-	</a>
+  <a href="https://npmjs.org/package/generate_check_md5">
+    <img src="https://img.shields.io/npm/v/generate_check_md5.svg?style=flat-square"
+    alt="NPM Version">
+  </a>
 
-	<a href="https://coveralls.io/github/kevincaradant/generate_check_md5?branch=master">
-		<img src="https://coveralls.io/repos/github/kevincaradant/generate_check_md5/badge.svg?branch=master"
-		alt="Coverage Status">
-	</a>
+  <a href="https://coveralls.io/github/kevincaradant/generate_check_md5?branch=master">
+    <img src="https://coveralls.io/repos/github/kevincaradant/generate_check_md5/badge.svg?branch=master"
+    alt="Coverage Status">
+  </a>
 
-	<a href="https://travis-ci.org/kevincaradant/generate_check_md5">
-		<img src="https://img.shields.io/travis/kevincaradant/generate_check_md5.svg?style=flat-square"
-		alt="Build Status">
-	</a>
+  <a href="https://travis-ci.org/kevincaradant/generate_check_md5">
+    <img src="https://img.shields.io/travis/kevincaradant/generate_check_md5.svg?style=flat-square"
+    alt="Build Status">
+  </a>
 
-	<a href="https://npmjs.org/package/generate_check_md5">
-		<img src="http://img.shields.io/npm/dm/generate_check_md5.svg?style=flat-square"
-		alt="Downloads">
-	</a>
+  <a href="https://npmjs.org/package/generate_check_md5">
+    <img src="http://img.shields.io/npm/dm/generate_check_md5.svg?style=flat-square"
+    alt="Downloads">
+  </a>
 
-	<a href="https://david-dm.org/kevincaradant/generate_check_md5.svg">
-		<img src="https://david-dm.org/kevincaradant/generate_check_md5.svg?style=flat-square"
-		alt="Dependencies Status">
-	</a>
+  <a href="https://david-dm.org/kevincaradant/generate_check_md5.svg">
+    <img src="https://david-dm.org/kevincaradant/generate_check_md5.svg?style=flat-square"
+    alt="Dependencies Status">
+  </a>
 
   <a href="https://david-dm.org/kevincaradant/generate_check_md5/dev-status.svg">
     <img src="https://david-dm.org/kevincaradant/generate_check_md5/dev-status.svg?style=flat-square"
     alt="devDependencies Status">
   </a>
 
-	<a href="https://github.com/kevincaradant/generate_check_md5/blob/master/LICENSE">
-		<img src="https://img.shields.io/npm/l/generate_check_md5.svg?style=flat-square"
-		alt="License">
-	</a>
+  <a href="https://github.com/kevincaradant/generate_check_md5/blob/master/LICENSE">
+    <img src="https://img.shields.io/npm/l/generate_check_md5.svg?style=flat-square"
+    alt="License">
+  </a>
 
-	<a href="http://inch-ci.org/github/kevincaradant/generate_check_md5.svg?branch=master&style=flat-square">
-		<img src="http://inch-ci.org/github/kevincaradant/generate_check_md5.svg?branch=master&style=flat-square"
-		alt="License">
-	</a>
+  <a href="http://inch-ci.org/github/kevincaradant/generate_check_md5.svg?branch=master&style=flat-square">
+    <img src="http://inch-ci.org/github/kevincaradant/generate_check_md5.svg?branch=master&style=flat-square"
+    alt="Docs">
+  </a>
 </p>
-
-<p align="center"><big>
-
-</big></p>
 
 ## Description
 With this generator, you can very easily create a MD5 hash on each files wanted.
