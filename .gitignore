@@ -5,4 +5,5 @@ node_modules
 dist
 tmp
 coverage
-npm-debug.log
+npm-debug.log*
+tmpTests
