@@ -1,8 +1,6 @@
 // ----------------------------
 // --- CONST AND GLOBAL VAR ---
 // ----------------------------
-require('babel-core/register');
-require('babel-polyfill');
 
 const checks = require('./checks.js');
 const utils = require('./utils.js');
