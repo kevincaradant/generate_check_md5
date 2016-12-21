@@ -22,7 +22,7 @@
     alt="Downloads">
   </a>
 
-	<a href="https://www.bithound.io/github/kevincaradant/generate_check_md5">
+  <a href="https://www.bithound.io/github/kevincaradant/generate_check_md5">
     <img src="https://www.bithound.io/github/kevincaradant/generate_check_md5/badges/score.svg"
     alt="Bithound Status">
   </a>
@@ -32,12 +32,12 @@
     alt="devDependencies Status">
   </a>
 
-	<a href="https://www.bithound.io/github/kevincaradant/generate_check_md5/master/dependencies/npm">
+  <a href="https://www.bithound.io/github/kevincaradant/generate_check_md5/master/dependencies/npm">
     <img src="https://www.bithound.io/github/kevincaradant/generate_check_md5/badges/dependencies.svg"
     alt="dependencies Status">
   </a>
 
-	<a href="https://www.bithound.io/github/kevincaradant/generate_check_md5">
+  <a href="https://www.bithound.io/github/kevincaradant/generate_check_md5">
     <img src="https://www.bithound.io/github/kevincaradant/generate_check_md5/badges/code.svg"
     alt="Code Status">
   </a>
