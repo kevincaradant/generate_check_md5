@@ -1,5 +1,6 @@
 const checks = require('./checks.js');
 const test = require('tape');
+const path = require('path');
 
 // CheckHelp
 test('Call checkHelp with Arg1', t => {
@@ -103,7 +104,7 @@ test('Call isPathCorrect with a argument with a good path', t => {
 
 test('Call isPathCorrect with a argument with a file path', t => {
   t.plan(1);
-  const rslt = Promise.resolve(checks.isPathCorrect(__dirname + '/checks.spec.js'));
+  const rslt = Promise.resolve(checks.isPathCorrect(path.join(__dirname, '/checks.spec.js')));
   rslt.then(data => {
     t.false(data);
     t.end();
@@ -119,7 +120,7 @@ test('Call isDestCorrect with a path argument without string path', t => {
 
 test('Call isDestCorrect with a argument with a bad string path', t => {
   t.plan(1);
-  const rslt = Promise.resolve(checks.isDestCorrect(__dirname + 'null.txt'));
+  const rslt = Promise.resolve(checks.isDestCorrect(path.join(__dirname, '/test.txt')));
   rslt.then(data => {
     t.true(data);
     t.end();
@@ -128,7 +129,7 @@ test('Call isDestCorrect with a argument with a bad string path', t => {
 
 test('Call isDestCorrect with a argument with a good path', t => {
   t.plan(1);
-  const rslt = Promise.resolve(checks.isDestCorrect(__dirname + '/checks.spec.js'));
+  const rslt = Promise.resolve(checks.isDestCorrect(path.join(__dirname, '/checks.spec.js')));
   rslt.then(data => {
     t.true(data);
     t.end();
@@ -162,7 +163,7 @@ test('Call isSourceCorrect with a argument with a bad string path', t => {
 
 test('Call isSourceCorrect with a argument with a good path', t => {
   t.plan(1);
-  const rslt = Promise.resolve(checks.isSourceCorrect(__dirname + '/checks.spec.js'));
+  const rslt = Promise.resolve(checks.isSourceCorrect(path.join(__dirname, '/checks.spec.js')));
   rslt.then(data => {
     t.true(data);
     t.end();
@@ -177,7 +178,6 @@ test('Call isSourceCorrect with a argument with a folder path', t => {
     t.end();
   });
 });
-
 
 // isCompareCorrect
 test('Call isCompareCorrect with a path argument without string path', t => {
@@ -197,7 +197,7 @@ test('Call isCompareCorrect with a argument with a bad string path', t => {
 
 test('Call isCompareCorrect with a argument with a good path', t => {
   t.plan(1);
-  const rslt = Promise.resolve(checks.isCompareCorrect(__dirname + '/checks.spec.js'));
+  const rslt = Promise.resolve(checks.isCompareCorrect(path.join(__dirname, '/checks.spec.js')));
   rslt.then(data => {
     t.true(data);
     t.end();
@@ -213,79 +213,79 @@ test('Call isCompareCorrect with a argument with a folder path', t => {
   });
 });
 
-//showPathError
+// showPathError
 test('Call showPathError with a argument at true', t => {
   t.plan(1);
-	t.true(checks.showPathError(true));
-	t.end();
+  t.true(checks.showPathError(true));
+  t.end();
 });
 
 test('Call showPathError with a argument at false', t => {
   t.plan(1);
-	t.false(checks.showPathError(false));
-	t.end();
+  t.false(checks.showPathError(false));
+  t.end();
 });
 
-//showDestError
+// showDestError
 test('Call showDestError with a argument at true', t => {
   t.plan(1);
-	t.true(checks.showDestError(true));
-	t.end();
+  t.true(checks.showDestError(true));
+  t.end();
 });
 
 test('Call showDestError with a argument at false', t => {
   t.plan(1);
-	t.false(checks.showDestError(false));
-	t.end();
+  t.false(checks.showDestError(false));
+  t.end();
 });
 
-//showSourceError
+// showSourceError
 test('Call showSourceError with a argument at true', t => {
   t.plan(1);
-	t.true(checks.showSourceError(true));
-	t.end();
+  t.true(checks.showSourceError(true));
+  t.end();
 });
 
 test('Call showSourceError with a argument at false', t => {
   t.plan(1);
-	t.false(checks.showSourceError(false));
-	t.end();
+  t.false(checks.showSourceError(false));
+  t.end();
 });
 
-//showCompareError
+// showCompareError
 test('Call showCompareError with a argument at true', t => {
   t.plan(1);
-	t.true(checks.showCompareError(true));
-	t.end();
+  t.true(checks.showCompareError(true));
+  t.end();
 });
 
 test('Call showCompareError with a argument at false', t => {
   t.plan(1);
-	t.false(checks.showCompareError(false));
-	t.end();
+  t.false(checks.showCompareError(false));
+  t.end();
 });
 
-//showRewriteUpdateError
+// showRewriteUpdateError
 test('Call showRewriteUpdateError with two args at true', t => {
   t.plan(1);
-	t.false(checks.showRewriteUpdateError(true, true));
-	t.end();
+  t.false(checks.showRewriteUpdateError(true, true));
+  t.end();
 });
 
 test('Call showRewriteUpdateError with the first argument at true and the second argument at false', t => {
   t.plan(1);
-	t.true(checks.showRewriteUpdateError(true, false));
-	t.end();
+  t.true(checks.showRewriteUpdateError(true, false));
+  t.end();
 });
 
 test('Call showRewriteUpdateError with the first argument at false and the second argument at true', t => {
   t.plan(1);
-	t.true(checks.showRewriteUpdateError(false, true));
-	t.end();
+  t.true(checks.showRewriteUpdateError(false, true));
+  t.end();
 });
 
 test('Call showRewriteUpdateError with two args at false', t => {
   t.plan(1);
-	t.true(checks.showRewriteUpdateError(false, false));
-	t.end();
+  t.true(checks.showRewriteUpdateError(false, false));
+  t.end();
 });
