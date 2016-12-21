@@ -81,13 +81,16 @@ const analyseMD5 = (pFileSource, pFilesPath, pArgvNoSpace) => {
   return new Promise(resolve => {
     readFile(pFileSource).then(data => {
       let getNewFilesToAddArray = [];
+      let getFilesToRemoveArray = [];
       const sourceArrayNameFiles = data.map(line => line.split(' : ')[1]);
       if (pArgvNoSpace) {
         getNewFilesToAddArray = pFilesPath.filter(line => !sourceArrayNameFiles.includes(line.split(' ').join('_')));
+        getFilesToRemoveArray = sourceArrayNameFiles.filter(line => !pFilesPath.includes(line.split(' ').join('_')));
       } else {
         getNewFilesToAddArray = pFilesPath.filter(line => !sourceArrayNameFiles.includes(line));
+        getFilesToRemoveArray = sourceArrayNameFiles.filter(line => !pFilesPath.includes(line));
       }
-      resolve(getNewFilesToAddArray);
+      resolve({getNewFilesToAddArray, getFilesToRemoveArray});
     });
   });
 };
@@ -150,14 +153,15 @@ const sortFileDest = (pFile, pArgvDest) => {
 };
 
 // Write in a file or in a console, all the MD5 results
-const writeMD5FileDest = (pFiles, pArgvDest, pArgvUpdate, pArgvRewrite, pArgvNoSpace) => {
+const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, pArgvRewrite, pArgvNoSpace) => {
   // If we want to rewrite completely the file. Delete and create again it.
   if (pArgvDest && fs.existsSync(pArgvDest) && !pArgvUpdate && pArgvRewrite) {
     fs.unlinkSync(pArgvDest);
   }
 
-  // For each PATH of file
-  pFiles.forEach((file, index, arr) => {
+  console.log(notice(`\nLine to add in --dest path file:`));
+  // For each files to add in dest file
+  pFilesToAdd.forEach((file, index, arr) => {
     console.log(notice(`${index + 1} / ${arr.length}`));
     const md5 = md5File.sync(file);
 
@@ -174,6 +178,27 @@ const writeMD5FileDest = (pFiles, pArgvDest, pArgvUpdate, pArgvRewrite, pArgvNoS
       console.log(`${md5} : ${file} \n`);
     }
   });
+
+  if (pArgvDest) {
+    console.log(notice(`\nLine to remove from --dest path file:`));
+    // For each files to add in dest file
+    pFilesToRemove.forEach((file, index, arr) => {
+      console.log(notice(`${index + 1} / ${arr.length}`));
+      // We add _ instead of space to have a pretty display in the file
+      // If the argument --nospace is given
+      if (pArgvNoSpace) {
+        file = file.split(' ').join('_');
+      }
+
+      var body = fs.readFileSync(pArgvDest).toString();
+      // 36 is to have the line including the hash of the line and not only the name of the file
+      var idx = (body.indexOf(file))-36;
+      if (idx > -1 ) {
+        var output = body.substr(0, idx) + body.substr(idx + file.length+36);
+        fs.writeFileSync(pArgvDest, output);
+      }
+    });
+  }
 
   // Sort the output file in the case of an update
   if (pArgvDest && !pArgvRewrite) {

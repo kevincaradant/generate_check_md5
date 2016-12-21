@@ -99,17 +99,17 @@ const argumentsSendByUser = Object.keys(argv).filter(obj => obj !== '$0' && obj 
             const elementsToUpdate = data;
             console.log(warn(`Following file: ${argv.dest} alreading existing`));
 
-            if (elementsToUpdate.length === 0) {
+            if (elementsToUpdate.getNewFilesToAddArray.length === 0 && elementsToUpdate.getFilesToRemoveArray.length === 0) {
               console.log(success('No difference detected between the --path and --dest arguments'));
             } else {
-              console.log(success(`${elementsToUpdate.length} difference detected between the data gave via --path and --dest arguments`));
-              utils.writeMD5FileDest(elementsToUpdate, argv.dest, argv.update, argv.rewrite, argv.nospace);
+              console.log(success(`${elementsToUpdate.getNewFilesToAddArray.length + elementsToUpdate.getFilesToRemoveArray.length} difference detected between the data gave via --path and --dest arguments`));
+              utils.writeMD5FileDest(elementsToUpdate.getNewFilesToAddArray, elementsToUpdate.getFilesToRemoveArray, argv.dest, argv.update, argv.rewrite, argv.nospace);
             }
           });
           // Otherwise if we have a --dest path but the file doesn't exist yet or we have the --rewrite argument
         } else if (!fs.existsSync(argv.dest) || argv.rewrite) {
           // We search and write all MD5 hash in a file or a console
-          utils.writeMD5FileDest(filesPath, argv.dest, argv.update, argv.rewrite, argv.nospace);
+          utils.writeMD5FileDest(filesPath, null, argv.dest, argv.update, argv.rewrite, argv.nospace);
         } else {
           // ERROR UNKNOWN. Need a new else if to catch why
           console.log(error('Error unknown detected. Please try --help or --h to resolve the problem'));
@@ -117,7 +117,7 @@ const argumentsSendByUser = Object.keys(argv).filter(obj => obj !== '$0' && obj 
       } else {
         // Otherwise, we haven't dest argument to write it in file
         // We will show the results only in the console
-        utils.writeMD5FileDest(filesPath, argv.dest, argv.update, argv.rewrite, argv.nospace);
+        utils.writeMD5FileDest(filesPath, null, argv.dest, argv.update, argv.rewrite, argv.nospace);
       }
     } catch (err) {
       console.log(error(err));
