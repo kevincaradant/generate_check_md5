@@ -22,14 +22,24 @@
     alt="Downloads">
   </a>
 
-  <a href="https://david-dm.org/kevincaradant/generate_check_md5.svg">
-    <img src="https://david-dm.org/kevincaradant/generate_check_md5.svg?style=flat-square"
-    alt="Dependencies Status">
+	<a href="https://www.bithound.io/github/kevincaradant/generate_check_md5">
+    <img src="https://www.bithound.io/github/kevincaradant/generate_check_md5/badges/score.svg"
+    alt="Bithound Status">
   </a>
 
-  <a href="https://david-dm.org/kevincaradant/generate_check_md5/dev-status.svg">
-    <img src="https://david-dm.org/kevincaradant/generate_check_md5/dev-status.svg?style=flat-square"
+  <a href="https://www.bithound.io/github/kevincaradant/generate_check_md5/master/dependencies/npm">
+    <img src="https://www.bithound.io/github/kevincaradant/generate_check_md5/badges/devDependencies.svg"
     alt="devDependencies Status">
+  </a>
+
+	<a href="https://www.bithound.io/github/kevincaradant/generate_check_md5/master/dependencies/npm">
+    <img src="https://www.bithound.io/github/kevincaradant/generate_check_md5/badges/dependencies.svg"
+    alt="dependencies Status">
+  </a>
+
+	<a href="https://www.bithound.io/github/kevincaradant/generate_check_md5">
+    <img src="https://www.bithound.io/github/kevincaradant/generate_check_md5/badges/code.svg"
+    alt="Code Status">
   </a>
 
   <a href="https://github.com/kevincaradant/generate_check_md5/blob/master/LICENSE">
