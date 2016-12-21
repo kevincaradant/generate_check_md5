@@ -98,6 +98,8 @@ const analyseMD5 = (pFileSource, pFilesPath, pArgvNoSpace) => {
 // Show the help text
 const showHelp = () => {
   return `
+  PARAMS:
+
   To generate MD5 on console (only) :
   --path "/path/to/the/my_directory_with_files/"
 
@@ -115,7 +117,8 @@ const showHelp = () => {
   --source "/path/to/the/md5_file_source_its_the_reference.txt/"
   --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
-  ------------------------------------  OPTIONAL: ------------------------------------
+  OPTIONS:
+
   To rename files name in the file of results without space :
   --nospace
   Example:
