@@ -2,20 +2,19 @@
   "name": "generate_check_md5",
   "version": "1.2.0",
   "description": "Generate and compare MD5 files",
-  "main": "dist/index.js",
+  "main": "bin/index.js",
   "files": [
-    "bin/",
-    "dist/"
+    "bin/"
   ],
   "scripts": {
     "start": "npm run build",
-    "clean": "rimraf dist && rimraf coverage",
+    "clean": "rimraf bin && rimraf coverage",
     "lint": "eslint src tests",
     "check": "npm run lint -s && dependency-check ./package.json",
     "watch": "watch 'npm run build' src tests",
     "pretest": "babel --plugins transform-remove-console --optional runtime src tests -d tmpTests",
     "test": "tape -r babel-register tmpTests/**/*.js | tspec",
-    "build": "babel --optional runtime src -d dist",
+    "build": "babel --optional runtime src -d bin",
     "postbuild": "npm run check -s && npm run test -s",
     "coverage": "babel-node node_modules/isparta/bin/isparta cover --report lcovonly --report html tmpTests",
     "coveralls": "npm run coverage -s && coveralls < coverage/lcov.info",
@@ -32,6 +31,10 @@
     "type": "git",
     "url": "git+https://github.com/kevincaradant/generate_check_md5.git"
   },
+	"bin": {
+    "gcs": "./bin/index.js"
+  },
+  "preferGlobal": true,
   "keywords": [
     "generate, create, generator, comparator, md5, analyze md5, compare md5"
   ],
