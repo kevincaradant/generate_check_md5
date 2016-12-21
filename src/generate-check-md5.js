@@ -9,31 +9,32 @@ const fs = require('fs');
 const recursiveReadSync = require('recursive-readdir-sync');
 const clc = require('cli-color');
 
-const error = clc.red.bold;
-const success = clc.green.bold;
-const warn = clc.yellow.bold;
-const notice = clc.blue.bold;
-
-const argumentsAllowedArray = [
-  'path',
-  'nospace',
-  'dest',
-  'source',
-  'compare',
-  'rewrite',
-  'update'
-];
-
-const argumentsSendByUser = Object.keys(argv).filter(obj => obj !== '$0' && obj !== '_');
-
-// ----------------------------
-// --- CONST AND GLOBAL VAR ---
-// ----------------------------
-
-// ------------------
-// -----  CHECKS ----
-// ------------------
 exports.generate = () => {
+  const error = clc.red.bold;
+  const success = clc.green.bold;
+  const warn = clc.yellow.bold;
+  const notice = clc.blue.bold;
+
+  const argumentsAllowedArray = [
+    'path',
+    'nospace',
+    'dest',
+    'source',
+    'compare',
+    'rewrite',
+    'update'
+  ];
+
+  const argumentsSendByUser = Object.keys(argv).filter(obj => obj !== '$0' && obj !== '_');
+
+  // ----------------------------
+  // --- CONST AND GLOBAL VAR ---
+  // ----------------------------
+
+  // ------------------
+  // -----  CHECKS ----
+  // ------------------
+
   (async function () {
     // Check: If the user want show the help list
     if (!checks.checkHelp(argv.h, argv.help)) {

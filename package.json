@@ -2,8 +2,9 @@
   "name": "generate_check_md5",
   "version": "1.2.3",
   "description": "Generate and compare MD5 files",
-  "main": "bin/index.js",
+  "main": "./bin/index.js",
   "files": [
+		"src/",
     "bin/"
   ],
   "scripts": {
