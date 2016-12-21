@@ -1,5 +1,8 @@
 {
   "ignore": [
     "**/bin/**"
-  ]
+  ],
+  "critics": {
+    "wc": { "limit": 500 }
+  }
 }
