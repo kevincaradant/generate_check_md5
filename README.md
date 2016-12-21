@@ -1,4 +1,5 @@
 <big><h1 align="center">Generator / Comparator MD5</h1></big>
+<big><h2 align="center">WORK IN PROGRESS FOR USE BEING A NPM PACKAGE.</h2></big>
 
 <p align="center">
   <a href="https://npmjs.org/package/generate_check_md5">

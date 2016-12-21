@@ -190,11 +190,11 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
         file = file.split(' ').join('_');
       }
 
-      var body = fs.readFileSync(pArgvDest).toString();
+      const body = fs.readFileSync(pArgvDest).toString();
       // 36 is to have the line including the hash of the line and not only the name of the file
-      var idx = (body.indexOf(file))-36;
-      if (idx > -1 ) {
-        var output = body.substr(0, idx) + body.substr(idx + file.length+36);
+      const idx = (body.indexOf(file)) - 36;
+      if (idx > -1) {
+        const output = body.substr(0, idx) + body.substr(idx + file.length + 36);
         fs.writeFileSync(pArgvDest, output);
       }
     });
