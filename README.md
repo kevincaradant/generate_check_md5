@@ -65,7 +65,7 @@ Very useful in the case of the backup copy.
     <img src="https://raw.githubusercontent.com/kevincaradant/generate_check_md5/master/img/warn.png"
     alt="Warn">
   </a>
-  Can't work without global installation
+  Should be installed in global
 </h4></i>
 
 ```js

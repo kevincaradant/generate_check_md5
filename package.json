@@ -8,12 +8,14 @@
     "clean": "rimraf bin && rimraf coverage",
     "lint": "eslint src tests",
     "check": "npm run lint -s && dependency-check ./package.json",
-    "watch": "watch 'npm run build' src tests",
     "pretest": "babel --plugins transform-remove-console --optional runtime src tests -d tmpTests",
     "test": "tape -r babel-register tmpTests/**/*.js | tspec",
-    "build": "babel --optional runtime src -d bin",
+    "test:watch": "watch-run -i -p \"tests/**/*.js\" npm run test",
+    "compile": "babel --optional runtime src -d bin",
+    "compile:watch": "watch-run -i -p \"src/**/*.js\" npm run compile",
+    "build": "npm run compile",
     "postbuild": "npm run check -s && npm run test -s",
-    "coverage": "babel-node node_modules/isparta/bin/isparta cover --report lcovonly --report html tmpTests",
+    "coverage": "nyc --reporter=lcov --reporter=text npm run test",
     "coveralls": "npm run coverage -s && coveralls < coverage/lcov.info",
     "postcoveralls": "rimraf ./coverage",
     "prepublish": "npm run build -s",
@@ -67,10 +69,10 @@
     "dependency-check": "2.7.0",
     "eslint": "3.12.2",
     "eslint-config-xo-space": "0.15.0",
-    "isparta": "4.0.0",
+    "nyc": "8.1.0",
     "rimraf": "2.5.4",
-    "tape": "4.6.3",
     "tap-spec": "4.1.1",
-    "watch": "1.0.1"
+    "tape": "4.6.3",
+    "watch-run": "1.2.4"
   }
 }
