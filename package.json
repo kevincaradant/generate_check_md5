@@ -1,6 +1,6 @@
 {
   "name": "generate_check_md5",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Generate and compare MD5 files",
   "main": "./bin/index.js",
   "scripts": {
@@ -48,8 +48,8 @@
   },
   "homepage": "https://github.com/kevincaradant/generate_check_md5#readme",
   "dependencies": {
-		"babel-core": "6.21.0",
-		"babel-polyfill": "6.20.0",
+    "babel-core": "6.21.0",
+    "babel-polyfill": "6.20.0",
     "cli-color": "1.1.0",
     "line-by-line": "0.1.5",
     "md5-file": "3.1.1",
