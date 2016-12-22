@@ -954,9 +954,9 @@ delegates@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/delegates/-/delegates-1.0.0.tgz#84c6e159b81904fdca59a0ef44cd870d31250f9a"
 
-dependency-check@2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/dependency-check/-/dependency-check-2.6.0.tgz#0832e068ff17f5e8e43b47a38f9d076a6ef84a74"
+dependency-check@2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/dependency-check/-/dependency-check-2.7.0.tgz#7fd13368d90047b4c2d65923ff22a023ef4caf8d"
   dependencies:
     async "^1.0.0"
     builtins "^1.0.0"
@@ -2510,13 +2510,9 @@ resolve-from@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-1.0.1.tgz#26cbfe935d1aeeeabb29bc3fe5aeb01e93d44226"
 
-resolve@1.1.x, resolve@~1.1.7:
+resolve@1.1.x, resolve@^1.1.6, resolve@^1.1.7, resolve@~1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
-
-resolve@^1.1.6, resolve@^1.1.7:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.2.0.tgz#9589c3f2f6149d1417a40becc1663db6ec6bc26c"
 
 restore-cursor@^1.0.1:
   version "1.0.1"

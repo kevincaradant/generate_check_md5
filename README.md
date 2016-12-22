@@ -102,11 +102,9 @@ Tape the command: `npm install`
 
 ### How it works ?
 
-1- Tape the command: `npm run build`
+1- Go in the bin folder.
 
-2- Go in the dist folder.
-
-3- Choose one of these commands:
+2- Choose one of these commands:
 
 ```js
 // To generate MD5 on console (only) :
