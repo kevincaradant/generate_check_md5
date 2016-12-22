@@ -52,7 +52,6 @@
   </a>
 </p>
 
-
 ## Description
 With this generator, you can very easily create a MD5 hash on each files wanted.
 Furthemore, you can compare two MD5 files and see the difference.
@@ -60,8 +59,16 @@ That's make sense, for example, if you want to compare a file which is on HARDDR
 file which is on HARDDRIVE B and be sure the files aren't corrupted.
 Very useful in the case of the backup copy.
 
-## Install
-## Global Dependencies
+## Install (Production)
+<h4><i>![warn](https://raw.githubusercontent.com/kevincaradant/generate_check_md5/master/img/warn.png)Can't work without global installation</h4></i>
+```js
+
+npm install -g generate_check_md5
+yarn -g generate_check_md5
+```
+
+## Install (Development)
+### Global Dependencies
 | Dependency |  Version  | Install                               |
 | ---------- | -------   | ------------------------------------- |
 | NodeJS     | > 4.x.x   | [http://node.org](http://nodejs.org/) |
@@ -71,11 +78,11 @@ Very useful in the case of the backup copy.
 | Yeoman     | > 1.x.x   | `npm install yo -g`                   |
 | Auto-cl    | > 3.x.x   | `npm install auto-changelog -g`       |
 
-## Others Dependencies
-### 1- Yarn
+### Others Dependencies
+#### 1- Yarn
 Tape the command: `yarn`
 
-### 2- npm
+#### 2- npm
 Tape the command: `npm install`
 
 
