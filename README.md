@@ -64,7 +64,6 @@ Very useful in the case of the backup copy.
 ```js
 
 npm install -g generate_check_md5
-yarn -g generate_check_md5
 ```
 
 ## Install (Development)
