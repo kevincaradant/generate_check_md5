@@ -60,7 +60,14 @@ file which is on HARDDRIVE B and be sure the files aren't corrupted.
 Very useful in the case of the backup copy.
 
 ## Install (Production)
-<h4><i>![warn](https://raw.githubusercontent.com/kevincaradant/generate_check_md5/master/img/warn.png)  Can't work without global installation</h4></i>
+<h4><i>
+  <a href="https://raw.githubusercontent.com/kevincaradant/generate_check_md5/master/img/warn.png">
+    <img src="https://raw.githubusercontent.com/kevincaradant/generate_check_md5/master/img/warn.png"
+    alt="Warn">
+  </a>
+  Can't work without global installation
+</h4></i>
+
 ```js
 
 npm install -g generate_check_md5
