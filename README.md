@@ -73,8 +73,42 @@ Very useful in the case of the backup copy.
 npm install -g generate_check_md5
 ```
 
+## Usage (Production)
+
+### How it works ? (Production)
+
+```js
+// To generate MD5 on console (only) :
+gcmd5 --path "/path/to/the/my_directory_with_files/"
+
+// To generate MD5 and write it in the file :
+gcmd5 --path "/path/to/the/my_directory_with_files/" --dest "/path/to/write/file_md5_results.txt"
+
+// To compare two md5 files :
+gcmd5 --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
+
+// To generate AND compare md5 files in the same :
+gcmd5 --path "/path/to/the/my_directory_with_files/" --dest "/path/to/write/file_md5_results.txt" --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
+
+//------------------------------------  OPTIONAL: ------------------------------------
+// To rename files name in the file of results without space :
+gcmd5 your_arguments  --nospace
+// Example:
+// Before: /Folder1/my file for example.mkv a9asd1171dd83e122598af664bd3f785)
+// After: /Folder1/my_file_for_example.mkv a9asd1171dd83e122598af664bd3f785)
+
+// To ask only an update between a path and your md5 files :
+gcmd5 your_arguments --update
+// NB: By default, if you don't specify --update or --rewrite, it's the argument --update which is selected
+
+// To rewrite completely your md5 files got with --dest :
+gcmd5 your_arguments  --rewrite
+```
+
+-----------------------------------
+
 ## Install (Development)
-### Global Dependencies
+### Global Dependencies (Development)
 | Dependency |  Version  | Install                               |
 | ---------- | -------   | ------------------------------------- |
 | NodeJS     | > 4.x.x   | [http://node.org](http://nodejs.org/) |
@@ -84,15 +118,15 @@ npm install -g generate_check_md5
 | Yeoman     | > 1.x.x   | `npm install yo -g`                   |
 | Auto-cl    | > 3.x.x   | `npm install auto-changelog -g`       |
 
-### Others Dependencies
-#### 1- Yarn
+### Others Dependencies (Development)
+#### Yarn
 Tape the command: `yarn`
 
-#### 2- npm
+#### Npm
 Tape the command: `npm install`
 
 
-## Usage
+## Usage (Development)
 ### Tasks
 - `$ npm run start`: Like `npm run dev`
 - `$ npm run clean`: Remove the dist and coverage folders
@@ -113,7 +147,7 @@ Tape the command: `npm install`
 - `$ npm run postpublish`: After to call `npm run publish`, We push the new tag on the github (origin master)
 - `$ npm run autocl`: Generate a Changelog file using the commits on github
 
-### How it works ?
+### How it works ? (Develoment)
 
 1- Go in the bin folder.
 
@@ -134,17 +168,17 @@ node index.js --path "/path/to/the/my_directory_with_files/" --dest "/path/to/wr
 
 //------------------------------------  OPTIONAL: ------------------------------------
 // To rename files name in the file of results without space :
-node index.js your_arugments  --nospace
+node index.js your_arguments  --nospace
 // Example:
 // Before: /Folder1/my file for example.mkv a9asd1171dd83e122598af664bd3f785)
 // After: /Folder1/my_file_for_example.mkv a9asd1171dd83e122598af664bd3f785)
 
 // To ask only an update between a path and your md5 files :
-node index.js your_arugments --update
+node index.js your_arguments --update
 // NB: By default, if you don't specify --update or --rewrite, it's the argument --update which is selected
 
 // To rewrite completely your md5 files got with --dest :
-node index.js your_arugments  --rewrite
+node index.js your_arguments  --rewrite
 ```
 
 ## License
