@@ -95,7 +95,7 @@ const isDestCorrect = pArgvDest => {
       });
     });
   }
-  return false;
+  return true;
 };
 
 // Return true: --source arg is correct
@@ -169,7 +169,6 @@ const showPathError = pArgvPath => {
 const showDestError = pArgvDest => {
   if (!pArgvDest) {
     console.log(warn('\nArgument --dest: You should give the destination path to write the results in a file.') + notice('\nUse: --dest "your/path/and/your-file.txt".\nIn the moment, the results will be only show in the console.'));
-    return false;
   }
   return true;
 };

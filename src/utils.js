@@ -164,6 +164,10 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
 
   console.log(notice(`\nLine to add in --dest path file:`));
   // For each files to add in dest file
+  if (pFilesToAdd.length === 0) {
+    console.log(notice('0 / 0'));
+  }
+
   pFilesToAdd.forEach((file, index, arr) => {
     console.log(notice(`${index + 1} / ${arr.length}`));
     const md5 = md5File.sync(file);
@@ -184,6 +188,11 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
 
   if (pArgvDest) {
     console.log(notice(`\nLine to remove from --dest path file:`));
+
+    if (pFilesToRemove.length === 0) {
+      console.log(notice('0 / 0'));
+    }
+
     // For each files to add in dest file
     pFilesToRemove.forEach((file, index, arr) => {
       console.log(notice(`${index + 1} / ${arr.length}`));

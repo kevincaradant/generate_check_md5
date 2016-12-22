@@ -78,9 +78,15 @@ test('Call isExistAtLeastOneParamFromUser with all good params', t => {
 });
 
 // isPathCorrect
+test('Call isPathCorrect with a path argument without any path', t => {
+  t.plan(1);
+  t.false(checks.isPathCorrect());
+  t.end();
+});
+
 test('Call isPathCorrect with a path argument without string path', t => {
   t.plan(1);
-  t.false(checks.isPathCorrect(null));
+  t.false(checks.isPathCorrect(12));
   t.end();
 });
 
@@ -112,9 +118,16 @@ test('Call isPathCorrect with a argument with a file path', t => {
 });
 
 // isDestCorrect
-test('Call isDestCorrect with a path argument without string path', t => {
+test('Call isDestCorrect with a dest argument without path', t => {
   t.plan(1);
-  t.false(checks.isDestCorrect(null));
+  t.true(checks.isDestCorrect());
+  t.end();
+});
+
+// isDestCorrect
+test('Call isDestCorrect with a dest argument without string path', t => {
+  t.plan(1);
+  t.false(checks.isDestCorrect(12));
   t.end();
 });
 
@@ -146,9 +159,15 @@ test('Call isDestCorrect with a argument with a folder path', t => {
 });
 
 // isSourceCorrect
-test('Call isSourceCorrect with a path argument without string path', t => {
+test('Call isSourceCorrect with a source argument without path', t => {
   t.plan(1);
-  t.false(checks.isSourceCorrect(null));
+  t.false(checks.isSourceCorrect());
+  t.end();
+});
+
+test('Call isSourceCorrect with a source argument without string path', t => {
+  t.plan(1);
+  t.false(checks.isSourceCorrect(12));
   t.end();
 });
 
@@ -180,9 +199,15 @@ test('Call isSourceCorrect with a argument with a folder path', t => {
 });
 
 // isCompareCorrect
-test('Call isCompareCorrect with a path argument without string path', t => {
+test('Call isCompareCorrect with a compare argument without  path', t => {
   t.plan(1);
-  t.false(checks.isCompareCorrect(null));
+  t.false(checks.isCompareCorrect());
+  t.end();
+});
+
+test('Call isCompareCorrect with a compare argument without string path', t => {
+  t.plan(1);
+  t.false(checks.isCompareCorrect(12));
   t.end();
 });
 
@@ -230,12 +255,6 @@ test('Call showPathError with a argument at false', t => {
 test('Call showDestError with a argument at true', t => {
   t.plan(1);
   t.true(checks.showDestError(true));
-  t.end();
-});
-
-test('Call showDestError with a argument at false', t => {
-  t.plan(1);
-  t.false(checks.showDestError(false));
   t.end();
 });
 
