@@ -27,6 +27,56 @@ test('Call checkHelp without Arg1 & Arg2', t => {
   t.end();
 });
 
+// findElemInArray
+test('Call findElemInArray with two same arrays', t => {
+  t.plan(1);
+  const arrayElements1 = ['p1', 'p2', 'p3'];
+  const arrayElements2 = ['p1', 'p2', 'p3'];
+  t.true(checks.findElemInArray(arrayElements1, arrayElements2));
+  t.end();
+});
+
+test('Call findElemInArray with two different arrays (1 element is diff)', t => {
+  t.plan(1);
+  const arrayElements1 = ['p1', 'p2', 'p4'];
+  const arrayElements2 = ['p1', 'p2', 'p3'];
+  t.false(checks.findElemInArray(arrayElements1, arrayElements2));
+  t.end();
+});
+
+test('Call findElemInArray with two different arrays (all elements are diff)', t => {
+  t.plan(1);
+  const arrayElements1 = ['p11', 'p22', 'p4'];
+  const arrayElements2 = ['p1', 'p2', 'p3'];
+  t.false(checks.findElemInArray(arrayElements1, arrayElements2));
+  t.end();
+});
+
+// findAtLeastOneElemInArray
+test('Call findAtLeastOneElemInArray with two same arrays', t => {
+  t.plan(1);
+  const arrayElements1 = ['p1', 'p2', 'p3'];
+  const arrayElements2 = ['p1', 'p2', 'p3'];
+  t.true(checks.findAtLeastOneElemInArray(arrayElements1, arrayElements2));
+  t.end();
+});
+
+test('Call findAtLeastOneElemInArray with two different arrays (1 element is diff)', t => {
+  t.plan(1);
+  const arrayElements1 = ['p1', 'p2', 'p4'];
+  const arrayElements2 = ['p1', 'p2', 'p3'];
+  t.true(checks.findAtLeastOneElemInArray(arrayElements1, arrayElements2));
+  t.end();
+});
+
+test('Call findAtLeastOneElemInArray with two different arrays (all elements are diff)', t => {
+  t.plan(1);
+  const arrayElements1 = ['p11', 'p33', 'p4'];
+  const arrayElements2 = ['p1', 'p2', 'p3'];
+  t.false(checks.findAtLeastOneElemInArray(arrayElements1, arrayElements2));
+  t.end();
+});
+
 // checkAllParamsFromUser
 test('Call checkAllParamsFromUser with one bad params', t => {
   t.plan(1);
