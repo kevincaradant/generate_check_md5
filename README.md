@@ -132,9 +132,12 @@ Tape the command: `npm install`
 - `$ npm run clean`: Remove the dist and coverage folders
 - `$ npm run lint`: Apply a ESlinter ( xo config ) on the src and tests folders
 - `$ npm run check`: Aply the linter and check if the dependencies required in js files is also present in the package.json
-- `$ npm run watch`: Compile again the tests and the dist folder after any change
+- `$ npm run pretest`: Before the tests, we start babel if `npm run test` was called
 - `$ npm run test`: Execute once all the tests available
-- `$ npm run build`: Compile all src files with babel and get the dist output folder
+- `$ npm run test:watch`: When the tmpTests or src folder's files change, we do again `npm run test`
+- `$ npm run compile`: Compile all src files with babel and get the dist output folder
+- `$ npm run compile:watch`: When the src folder's files change, we do again `npm run compile`
+- `$ npm run build`: Execute `npm run compile`
 - `$ npm run postbuild`: Execute `npm run check` and `npm run test` after to have execute `npm run build`
 - `$ npm run coverage`: Execute the coverage of the code and show the results in the coverage folder
 - `$ npm run coveralls`: Execute `npm run coverage` and create the data of the code for coveralls
