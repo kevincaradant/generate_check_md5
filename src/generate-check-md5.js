@@ -114,7 +114,7 @@ exports.generate = () => {
           utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
         } else {
           // ERROR UNKNOWN. Need a new else if to catch why
-          console.log(error('Error unknown detected. Please try --help or --h to resolve the problem'));
+          console.log(error('Error unknown detected. Please try --help or --h to resolve the problem. Otherwise, you can create a new issue on github and copy/paste the command line which generates this error'));
         }
       } else {
         // Otherwise, we haven't dest argument to write it in file

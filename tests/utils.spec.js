@@ -520,7 +520,6 @@ test('Call sortFileDest with GOOD(FILE) Arg1(String)', t => {
 
   const rslt = Promise.resolve(utils.sortFileDest('path/to/dir/test2.txt'));
   rslt.then(data => {
-    console.log(data);
     mock.restore();
     t.true(data);
     t.end();
@@ -554,5 +553,91 @@ test('Call sortFileDest with BAD(FOLDER) Arg1(String)', t => {
   rslt.then(data => {
     t.false(data);
     t.end();
+  });
+});
+
+test('Call writeMD5FileDest with BAD(FOLDER) Arg1(Array) AND BAD(FOLDER) Arg2(Array)', t => {
+  t.plan(1);
+
+  const rslt = Promise.resolve(utils.writeMD5FileDest(__dirname, __dirname));
+  rslt.then(data => {
+    t.false(data);
+    t.end();
+  });
+});
+
+test('Call writeMD5FileDest with BAD(NULL) Arg1 AND BAD(NULL) Arg2', t => {
+  t.plan(1);
+
+  const rslt = Promise.resolve(utils.writeMD5FileDest(null, null));
+  rslt.then(data => {
+    t.false(data);
+    t.end();
+  });
+});
+
+test('Call writeMD5FileDest with GOOD(FILE) Arg1 AND BAD(NULL) Arg2', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': 'file contents here\nThis is the line 2',
+      'test2.txt': 'file contents here\nThis is the line 2'
+    }
+  });
+
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test2.txt'));
+  rsltPromise.then(r => {
+    const rslt = Promise.resolve(utils.writeMD5FileDest(r, null));
+    rslt.then(data => {
+      mock.restore();
+      t.false(data);
+      t.end();
+    });
+  });
+});
+
+test('Call writeMD5FileDest with BAD(NULL) Arg1 AND GOOD(FILE) Arg2(Array)', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': 'file contents here\nThis is the line 2',
+      'test2.txt': 'file contents here\nThis is the line 2'
+    }
+  });
+
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test2.txt'));
+  rsltPromise.then(r => {
+    const rslt = Promise.resolve(utils.writeMD5FileDest(null, r));
+    rslt.then(data => {
+      mock.restore();
+      t.false(data);
+      t.end();
+    });
+  });
+});
+
+test('Call writeMD5FileDest with GOOD(FILE) Arg1(Array) AND GOOD(FILE) Arg2(Array)', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': 'file contents here\nThis is the line 2',
+      'test2.txt': 'file contents here\nThis is the line 2'
+    }
+  });
+
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test2.txt'));
+  rsltPromise.then(r => {
+    const rslt = Promise.resolve(utils.writeMD5FileDest(r, r));
+    rslt.then(data => {
+      mock.restore();
+      t.true(data);
+      t.end();
+    });
   });
 });

@@ -153,6 +153,11 @@ const sortFileDest = async pFile => {
 
 // Write in a file or in a console, all the MD5 results
 const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, pArgvRewrite, pArgvNoSpace) => {
+  if (!Array.isArray(pFilesToAdd) || !Array.isArray(pFilesToRemove)) {
+    console.log(error('\nwriteMD5FileDest(pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, pArgvRewrite, pArgvNoSpace) : pFilesToAdd / pFilesToRemove => Should be arrays'));
+    return false;
+  }
+
   // If we want to rewrite completely the file. Delete and create again it.
   if (pArgvDest && fs.existsSync(pArgvDest) && !pArgvUpdate && pArgvRewrite) {
     fs.unlinkSync(pArgvDest);
@@ -166,19 +171,23 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
 
   pFilesToAdd.forEach((file, index, arr) => {
     console.log(notice(`${index + 1} / ${arr.length}`));
-    const md5 = md5File.sync(file);
+    if (fs.existsSync(file)) {
+      const md5 = md5File.sync(file);
 
-    // We add _ instead of space to have a pretty display in the file
-    // If the argument --nospace is given
-    if (pArgvNoSpace) {
-      file = file.split(' ').join('_');
-    }
+      // We add _ instead of space to have a pretty display in the file
+      // If the argument --nospace is given
+      if (pArgvNoSpace) {
+        file = file.split(' ').join('_');
+      }
 
-    // We try to add lines only if the argument --dest is filled.
-    if (pArgvDest) {
-      fs.appendFileSync(pArgvDest, `${md5} : ${file}\n`);
+      // We try to add lines only if the argument --dest is filled.
+      if (pArgvDest) {
+        fs.appendFileSync(pArgvDest, `${md5} : ${file}\n`);
+      } else {
+        console.log(notice(`${md5} : ${file} \n`));
+      }
     } else {
-      console.log(`${md5} : ${file} \n`);
+      console.log(error(`The file "${file}" can't be read. Be sure it exists.\n`));
     }
   });
 
@@ -215,7 +224,9 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
       quickDumpMD5FileDest(sourceArray, pArgvDest);
     });
   }
+
   console.log(success('Get every MD5 with successful !'));
+  return true;
 };
 
 module.exports = {

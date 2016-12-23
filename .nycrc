@@ -1,0 +1,16 @@
+{
+  "include": [
+    "tmpTests/**/*.js"
+  ],
+  "exclude": [
+    "tmpTests/**/*.spec.js",
+    "tmpTests/index.js",
+    "tmpTests/generate-check-md5.js"
+  ],
+  "reporter": [
+    "lcov",
+    "text-summary"
+  ],
+  "all": true,
+  "check-coverage": true
+}
