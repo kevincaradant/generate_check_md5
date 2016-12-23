@@ -10,9 +10,9 @@
     "check": "npm run lint -s && dependency-check ./package.json",
     "pretest": "babel --plugins transform-remove-console --optional runtime src tests -d tmpTests",
     "test": "tape -r babel-register tmpTests/**/*.js | tspec",
-    "test:watch": "watch-run -i -p \"tests/**/*.js\" npm run test",
+    "test:watch": "onchange \"tests/**/*.js\" \"src/**/*.js\" -i -p -- npm run test",
     "compile": "babel --optional runtime src -d bin",
-    "compile:watch": "watch-run -i -p \"src/**/*.js\" npm run compile",
+    "compile:watch": "onchange \"src/**/*.js\" -i -p -- npm run compile",
     "build": "npm run compile",
     "postbuild": "npm run check -s && npm run test -s",
     "coverage": "nyc --reporter=lcov --reporter=text npm run test",
@@ -70,10 +70,10 @@
     "eslint": "3.12.2",
     "eslint-config-xo-space": "0.15.0",
     "mock-fs": "3.12.1",
-    "nyc": "8.1.0",
+    "nyc": "10.0.0",
+    "onchange": "3.2.0",
     "rimraf": "2.5.4",
     "tap-spec": "4.1.1",
-    "tape": "4.6.3",
-    "watch-run": "1.2.4"
+    "tape": "4.6.3"
   }
 }

@@ -28,7 +28,7 @@ test('Call checkHelp without Arg1 & Arg2', t => {
 });
 
 // findElemInArray
-test('Call findElemInArray with two same arrays', t => {
+test('Call findElemInArray with Arg1(Array) = Arg2(Array)', t => {
   t.plan(1);
   const arrayElements1 = ['p1', 'p2', 'p3'];
   const arrayElements2 = ['p1', 'p2', 'p3'];
@@ -36,7 +36,7 @@ test('Call findElemInArray with two same arrays', t => {
   t.end();
 });
 
-test('Call findElemInArray with two different arrays (1 element is diff)', t => {
+test('Call findElemInArray with Arg1(Array) != Arg2(Array) / 1/3 diff', t => {
   t.plan(1);
   const arrayElements1 = ['p1', 'p2', 'p4'];
   const arrayElements2 = ['p1', 'p2', 'p3'];
@@ -44,7 +44,7 @@ test('Call findElemInArray with two different arrays (1 element is diff)', t => 
   t.end();
 });
 
-test('Call findElemInArray with two different arrays (all elements are diff)', t => {
+test('Call findElemInArray with Arg1(Array) != Arg2(Array) / 3/3 diff', t => {
   t.plan(1);
   const arrayElements1 = ['p11', 'p22', 'p4'];
   const arrayElements2 = ['p1', 'p2', 'p3'];
@@ -53,7 +53,7 @@ test('Call findElemInArray with two different arrays (all elements are diff)', t
 });
 
 // findAtLeastOneElemInArray
-test('Call findAtLeastOneElemInArray with two same arrays', t => {
+test('Call findAtLeastOneElemInArray with Arg1(Array) = Arg2(Array)', t => {
   t.plan(1);
   const arrayElements1 = ['p1', 'p2', 'p3'];
   const arrayElements2 = ['p1', 'p2', 'p3'];
@@ -61,7 +61,7 @@ test('Call findAtLeastOneElemInArray with two same arrays', t => {
   t.end();
 });
 
-test('Call findAtLeastOneElemInArray with two different arrays (1 element is diff)', t => {
+test('Call findAtLeastOneElemInArray with Arg1(Array) != Arg2(Array) / 1/3 diff', t => {
   t.plan(1);
   const arrayElements1 = ['p1', 'p2', 'p4'];
   const arrayElements2 = ['p1', 'p2', 'p3'];
@@ -69,7 +69,7 @@ test('Call findAtLeastOneElemInArray with two different arrays (1 element is dif
   t.end();
 });
 
-test('Call findAtLeastOneElemInArray with two different arrays (all elements are diff)', t => {
+test('Call findAtLeastOneElemInArray with Arg1(Array) != Arg2(Array) / 3/3 diff', t => {
   t.plan(1);
   const arrayElements1 = ['p11', 'p33', 'p4'];
   const arrayElements2 = ['p1', 'p2', 'p3'];
@@ -78,7 +78,7 @@ test('Call findAtLeastOneElemInArray with two different arrays (all elements are
 });
 
 // checkAllParamsFromUser
-test('Call checkAllParamsFromUser with one bad params', t => {
+test('Call checkAllParamsFromUser with Arg1(Array) != Arg2(Array) / 1/3 diff', t => {
   t.plan(1);
   const arrayUserParams = ['p1', 'p2', 'p4'];
   const arrayAuthorizeParams = ['p1', 'p2', 'p3'];
@@ -86,7 +86,7 @@ test('Call checkAllParamsFromUser with one bad params', t => {
   t.end();
 });
 
-test('Call checkAllParamsFromUser with all good params', t => {
+test('Call checkAllParamsFromUser with Arg1(Array) = Arg2(Array)', t => {
   t.plan(1);
   const arrayUserParams = ['p1', 'p2', 'p3'];
   const arrayAuthorizeParams = ['p1', 'p2', 'p3'];
@@ -95,7 +95,7 @@ test('Call checkAllParamsFromUser with all good params', t => {
 });
 
 // isExistAtLeastOneParamFromUser
-test('Call isExistAtLeastOneParamFromUser with one bad params', t => {
+test('Call isExistAtLeastOneParamFromUser with Arg1(Array) != Arg2(Array) / 1/3 diff', t => {
   t.plan(1);
   const arrayUserParams = ['p1', 'p2', 'p4'];
   const arrayAuthorizeParams = ['p1', 'p2', 'p3'];
@@ -103,7 +103,7 @@ test('Call isExistAtLeastOneParamFromUser with one bad params', t => {
   t.end();
 });
 
-test('Call isExistAtLeastOneParamFromUser with one good params', t => {
+test('Call isExistAtLeastOneParamFromUser with Arg1(Array) != Arg2(Array) / 2/3 diff', t => {
   t.plan(1);
   const arrayUserParams = ['p1', 'p5', 'p4'];
   const arrayAuthorizeParams = ['p1', 'p2', 'p3'];
@@ -111,7 +111,7 @@ test('Call isExistAtLeastOneParamFromUser with one good params', t => {
   t.end();
 });
 
-test('Call isExistAtLeastOneParamFromUser with all bad params', t => {
+test('Call isExistAtLeastOneParamFromUser with Arg1(Array) != Arg2(Array) / 3/3 diff', t => {
   t.plan(1);
   const arrayUserParams = ['p4', 'p5', 'p6'];
   const arrayAuthorizeParams = ['p1', 'p2', 'p3'];
@@ -119,7 +119,7 @@ test('Call isExistAtLeastOneParamFromUser with all bad params', t => {
   t.end();
 });
 
-test('Call isExistAtLeastOneParamFromUser with all good params', t => {
+test('Call isExistAtLeastOneParamFromUser with Arg1(Array) = Arg2(Array)', t => {
   t.plan(1);
   const arrayUserParams = ['p1', 'p2', 'p3'];
   const arrayAuthorizeParams = ['p1', 'p2', 'p3'];
@@ -128,19 +128,28 @@ test('Call isExistAtLeastOneParamFromUser with all good params', t => {
 });
 
 // isPathCorrect
-test('Call isPathCorrect with a path argument without any path', t => {
+test('Call isPathCorrect with NO Arg1', t => {
   t.plan(1);
   t.false(checks.isPathCorrect());
   t.end();
 });
 
-test('Call isPathCorrect with a path argument without string path', t => {
+test('Call isPathCorrect with BAD Arg1(Number)', t => {
   t.plan(1);
   t.false(checks.isPathCorrect(12));
   t.end();
 });
 
-test('Call isPathCorrect with a argument with a bad string path', t => {
+test('Call isPathCorrect with BAD(NULL) Arg1', t => {
+  t.plan(1);
+  const rslt = Promise.resolve(checks.isPathCorrect(null));
+  rslt.then(data => {
+    t.false(data);
+    t.end();
+  });
+});
+
+test('Call isPathCorrect with BAD(FILE) Arg1(String)', t => {
   t.plan(1);
   const rslt = Promise.resolve(checks.isPathCorrect('null'));
   rslt.then(data => {
@@ -149,7 +158,7 @@ test('Call isPathCorrect with a argument with a bad string path', t => {
   });
 });
 
-test('Call isPathCorrect with a argument with a good path', t => {
+test('Call isPathCorrect with GOOD(FOLDER) Arg1(String)', t => {
   t.plan(1);
   const rslt = Promise.resolve(checks.isPathCorrect(__dirname));
   rslt.then(data => {
@@ -158,30 +167,43 @@ test('Call isPathCorrect with a argument with a good path', t => {
   });
 });
 
-test('Call isPathCorrect with a argument with a file path', t => {
+test('Call isPathCorrect with BAD(FILE) Arg1(String)', t => {
+  const mock = require('mock-fs');
   t.plan(1);
-  const rslt = Promise.resolve(checks.isPathCorrect(path.join(__dirname, '/checks.spec.js')));
+  mock({
+    'path/to/dir': {
+      'test.txt': 'file contents here\nThis is the line 2'
+    }
+  });
+
+  const rslt = Promise.resolve(checks.isPathCorrect('path/to/dir/test.txt'));
   rslt.then(data => {
+    mock.restore();
     t.false(data);
     t.end();
   });
 });
 
 // isDestCorrect
-test('Call isDestCorrect with a dest argument without path', t => {
+test('Call isDestCorrect with NO Arg1', t => {
   t.plan(1);
   t.true(checks.isDestCorrect());
   t.end();
 });
 
-// isDestCorrect
-test('Call isDestCorrect with a dest argument without string path', t => {
+test('Call isDestCorrect with BAD Arg1(Number)', t => {
   t.plan(1);
   t.false(checks.isDestCorrect(12));
   t.end();
 });
 
-test('Call isDestCorrect with a argument with a bad string path', t => {
+test('Call isDestCorrect with BAD(NULL) Arg1', t => {
+  t.plan(1);
+  t.true(checks.isDestCorrect(null));
+  t.end();
+});
+
+test('Call isDestCorrect with BAD Arg1(String)', t => {
   t.plan(1);
   const rslt = Promise.resolve(checks.isDestCorrect(path.join(__dirname, '/test.txt')));
   rslt.then(data => {
@@ -190,7 +212,7 @@ test('Call isDestCorrect with a argument with a bad string path', t => {
   });
 });
 
-test('Call isDestCorrect with a argument with a good path', t => {
+test('Call isDestCorrect with GOOD(FILE) Arg1(String)', t => {
   t.plan(1);
   const rslt = Promise.resolve(checks.isDestCorrect(path.join(__dirname, '/checks.spec.js')));
   rslt.then(data => {
@@ -199,7 +221,7 @@ test('Call isDestCorrect with a argument with a good path', t => {
   });
 });
 
-test('Call isDestCorrect with a argument with a folder path', t => {
+test('Call isDestCorrect with BAD(FOLDER) Arg1(String)', t => {
   t.plan(1);
   const rslt = Promise.resolve(checks.isDestCorrect(__dirname));
   rslt.then(data => {
@@ -209,19 +231,19 @@ test('Call isDestCorrect with a argument with a folder path', t => {
 });
 
 // isSourceCorrect
-test('Call isSourceCorrect with a source argument without path', t => {
+test('Call isSourceCorrect with NO Arg1', t => {
   t.plan(1);
   t.false(checks.isSourceCorrect());
   t.end();
 });
 
-test('Call isSourceCorrect with a source argument without string path', t => {
+test('Call isSourceCorrect with BAD Arg1(Number)', t => {
   t.plan(1);
   t.false(checks.isSourceCorrect(12));
   t.end();
 });
 
-test('Call isSourceCorrect with a argument with a bad string path', t => {
+test('Call isSourceCorrect with BAD(FILE) Arg1(String)', t => {
   t.plan(1);
   const rslt = Promise.resolve(checks.isSourceCorrect('null'));
   rslt.then(data => {
@@ -230,16 +252,35 @@ test('Call isSourceCorrect with a argument with a bad string path', t => {
   });
 });
 
-test('Call isSourceCorrect with a argument with a good path', t => {
+test('Call isSourceCorrect with BAD(NULL) Arg1(String)', t => {
   t.plan(1);
-  const rslt = Promise.resolve(checks.isSourceCorrect(path.join(__dirname, '/checks.spec.js')));
+  const rslt = Promise.resolve(checks.isSourceCorrect(null));
   rslt.then(data => {
+    t.false(data);
+    t.end();
+  });
+});
+
+test('Call isSourceCorrect with GOOD(FILE) Arg1(String)', t => {
+  const mock = require('mock-fs');
+
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': 'file contents here\nThis is the line 2'
+    }
+  });
+
+  const rslt = Promise.resolve(checks.isSourceCorrect('path/to/dir/test.txt'));
+  rslt.then(data => {
+    mock.restore();
     t.true(data);
     t.end();
   });
 });
 
-test('Call isSourceCorrect with a argument with a folder path', t => {
+test('Call isSourceCorrect with BAD(FOLDER) Arg1(String)', t => {
   t.plan(1);
   const rslt = Promise.resolve(checks.isSourceCorrect(__dirname));
   rslt.then(data => {
@@ -249,19 +290,19 @@ test('Call isSourceCorrect with a argument with a folder path', t => {
 });
 
 // isCompareCorrect
-test('Call isCompareCorrect with a compare argument without  path', t => {
+test('Call isCompareCorrect with NO Arg1', t => {
   t.plan(1);
   t.false(checks.isCompareCorrect());
   t.end();
 });
 
-test('Call isCompareCorrect with a compare argument without string path', t => {
+test('Call isCompareCorrect with BAD Arg1(Number)', t => {
   t.plan(1);
   t.false(checks.isCompareCorrect(12));
   t.end();
 });
 
-test('Call isCompareCorrect with a argument with a bad string path', t => {
+test('Call isCompareCorrect with BAD(FILE) Arg1(String)', t => {
   t.plan(1);
   const rslt = Promise.resolve(checks.isCompareCorrect('null'));
   rslt.then(data => {
@@ -270,16 +311,35 @@ test('Call isCompareCorrect with a argument with a bad string path', t => {
   });
 });
 
-test('Call isCompareCorrect with a argument with a good path', t => {
+test('Call isCompareCorrect with BAD(NULL) Arg1(String)', t => {
   t.plan(1);
-  const rslt = Promise.resolve(checks.isCompareCorrect(path.join(__dirname, '/checks.spec.js')));
+  const rslt = Promise.resolve(checks.isCompareCorrect(null));
   rslt.then(data => {
+    t.false(data);
+    t.end();
+  });
+});
+
+test('Call isCompareCorrect with GOOD(FILE) Arg1(String)', t => {
+  const mock = require('mock-fs');
+
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': 'file contents here\nThis is the line 2'
+    }
+  });
+
+  const rslt = Promise.resolve(checks.isCompareCorrect('path/to/dir/test.txt'));
+  rslt.then(data => {
+    mock.restore();
     t.true(data);
     t.end();
   });
 });
 
-test('Call isCompareCorrect with a argument with a folder path', t => {
+test('Call isCompareCorrect with BAD(FOLDER) Arg1(String)', t => {
   t.plan(1);
   const rslt = Promise.resolve(checks.isCompareCorrect(__dirname));
   rslt.then(data => {
@@ -289,71 +349,77 @@ test('Call isCompareCorrect with a argument with a folder path', t => {
 });
 
 // showPathError
-test('Call showPathError with a argument at true', t => {
+test('Call showPathError with Arg1(Boolean / True)', t => {
   t.plan(1);
   t.true(checks.showPathError(true));
   t.end();
 });
 
-test('Call showPathError with a argument at false', t => {
+test('Call showPathError with Arg1(Boolean / False)', t => {
   t.plan(1);
   t.false(checks.showPathError(false));
   t.end();
 });
 
 // showDestError
-test('Call showDestError with a argument at true', t => {
+test('Call showDestError with Arg1(Boolean / True)', t => {
   t.plan(1);
   t.true(checks.showDestError(true));
   t.end();
 });
 
+test('Call showDestError with Arg1(Boolean / False)', t => {
+  t.plan(1);
+  t.true(checks.showDestError(false));
+  t.end();
+});
+
 // showSourceError
-test('Call showSourceError with a argument at true', t => {
+test('Call showSourceError with Arg1(Boolean / True)', t => {
   t.plan(1);
   t.true(checks.showSourceError(true));
   t.end();
 });
 
-test('Call showSourceError with a argument at false', t => {
+test('Call showSourceError with Arg1(Boolean / False)', t => {
   t.plan(1);
   t.false(checks.showSourceError(false));
   t.end();
 });
 
 // showCompareError
-test('Call showCompareError with a argument at true', t => {
+test('Call showCompareError with Arg1(Boolean / True)', t => {
   t.plan(1);
   t.true(checks.showCompareError(true));
   t.end();
 });
 
-test('Call showCompareError with a argument at false', t => {
+test('Call showCompareError with Arg1(Boolean / False)', t => {
   t.plan(1);
   t.false(checks.showCompareError(false));
   t.end();
 });
 
 // showRewriteUpdateError
-test('Call showRewriteUpdateError with two args at true', t => {
+test('Call showRewriteUpdateError with Arg1(Boolean / True) and Arg2(Boolean / True)', t => {
   t.plan(1);
   t.false(checks.showRewriteUpdateError(true, true));
   t.end();
 });
 
-test('Call showRewriteUpdateError with the first argument at true and the second argument at false', t => {
+test('Call showRewriteUpdateError with Arg1(Boolean / True) and Arg2(Boolean / False)', t => {
   t.plan(1);
   t.true(checks.showRewriteUpdateError(true, false));
   t.end();
 });
 
-test('Call showRewriteUpdateError with the first argument at false and the second argument at true', t => {
+test('Call showRewriteUpdateError with Arg1(Boolean / False) and Arg2(Boolean / True)', t => {
   t.plan(1);
   t.true(checks.showRewriteUpdateError(false, true));
   t.end();
 });
 
-test('Call showRewriteUpdateError with two args at false', t => {
+test('Call showRewriteUpdateError with Arg1(Boolean / False) and Arg2(Boolean / False)', t => {
   t.plan(1);
   t.true(checks.showRewriteUpdateError(false, false));
   t.end();

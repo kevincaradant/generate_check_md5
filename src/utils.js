@@ -3,6 +3,7 @@
 // -----------------
 require('babel-core/register');
 require('babel-polyfill');
+
 const md5File = require('md5-file');
 const fs = require('fs');
 const LineByLineReader = require('line-by-line');
@@ -14,7 +15,13 @@ const success = clc.green.bold;
 const notice = clc.blue.bold;
 
 // A simple method to read line by line a file
-const readFile = pFile => {
+const readFile = async pFile => {
+  const rslt = await Promise.resolve(checks.isSourceCorrect(pFile));
+  if (!rslt) {
+    console.log(error('\readFile(pFile): pFile => pFile is wrong'));
+    return false;
+  }
+
   const lineByLineReader = new LineByLineReader(pFile);
   const pArrayResults = [];
 
@@ -37,6 +44,7 @@ const readFile = pFile => {
 // For each line of a the pCompareArray. We check if the content is included in the pSourceArray.
 const checkMD5 = (pArraySource, pArrayCompare) => {
   if (!Array.isArray(pArraySource) || !Array.isArray(pArrayCompare)) {
+    console.log(error('\ncheckMD5(pArraySource, pArrayCompare) : pArraySource / pArrayCompare => Should be arrays'));
     return false;
   }
 
@@ -62,8 +70,8 @@ const checkMD5 = (pArraySource, pArrayCompare) => {
 // Analyse and get each md5 line by line for the two files ( pSource and pCompare )
 const compareMD5 = async (pFileSource, pFileCompare) => {
   const rslts = await Promise.all([checks.isSourceCorrect(pFileSource), checks.isCompareCorrect(pFileCompare)]);
-
   if (rslts.includes(false)) {
+    console.log(error('\ncompareMD5(pFileSource, pFileCompare): pFileSource /  pFileCompare => pFileSource or/and pFileCompare are wrong'));
     return false;
   }
 
@@ -76,12 +84,14 @@ const compareMD5 = async (pFileSource, pFileCompare) => {
 
 // Build an array with only the new files which are not present in the md5 file (--dest)
 const analyseMD5 = async (pFileSource, pFilesPath, pArgvNoSpace) => {
-  const rslt = Promise.resolve(checks.isSourceCorrect(pFileSource));
-  rslt.then(data => {
-    if (!data || !Array.isArray(pFilesPath)) {
-      return false;
-    }
-  });
+  const rslt = await Promise.resolve(checks.isSourceCorrect(pFileSource));
+  if (!rslt) {
+    console.log(error('\nanalyseMD5(pFileSource, pFilesPath, pArgvNoSpace): pFileSource => pFileSource is wrong'));
+    return false;
+  } else if (!Array.isArray(pFilesPath)) {
+    console.log(error('\nanalyseMD5(pFileSource, pFilesPath, pArgvNoSpace): pFilesPath => Should be an array'));
+    return false;
+  }
 
   return new Promise(resolve => {
     readFile(pFileSource).then(data => {
@@ -95,30 +105,49 @@ const analyseMD5 = async (pFileSource, pFilesPath, pArgvNoSpace) => {
         getNewFilesToAddArray = pFilesPath.filter(line => !sourceArrayNameFiles.includes(line));
         getFilesToRemoveArray = sourceArrayNameFiles.filter(line => !pFilesPath.includes(line));
       }
-      resolve({getNewFilesToAddArray, getFilesToRemoveArray});
+      return resolve({getNewFilesToAddArray, getFilesToRemoveArray});
     });
   });
 };
 
 // Useful to remove / and write again a file
-const quickDumpMD5FileDest = (files, pArgvDest) => {
-  if (pArgvDest && fs.existsSync(pArgvDest)) {
+const quickDumpMD5FileDest = async (pFiles, pArgvDest) => {
+  if (!Array.isArray(pFiles)) {
+    console.log(error('\nquickDumpMD5FileDest(pFiles, pArgvDest): pFiles => Should be an array'));
+    return false;
+  }
+
+  const rslt = await Promise.resolve(checks.isDestCorrect(pArgvDest));
+  if (!rslt) {
+    console.log(error('quickDumpMD5FileDest(pFile, pArgvDest) : pArgvDest => pArgvDest is wrong'));
+    return false;
+  }
+
+  if (fs.existsSync(pArgvDest)) {
     fs.unlinkSync(pArgvDest);
-    files.forEach(file => {
+    pFiles.forEach(file => {
       fs.appendFileSync(pArgvDest, `${file}\n`);
     });
-  } else {
-    console.log(error(`Error to find the file "--dest" at: ${pArgvDest}`));
+    return true;
   }
+
+  console.log(error(`Error to find the file "--dest" at: ${pArgvDest}`));
+  return false;
 };
 
 // Custom Sort to order by ASC
-const sortFileDest = (pFile, pArgvDest) => {
-  readFile(pFile).then(data => {
-    const sourceArray = data.map(line => line.split(' : ')).sort((e1, e2) => e1[1] > e2[1]).map(l => l.join(' : '));
+const sortFileDest = async pFile => {
+  const rslt = await Promise.resolve(checks.isSourceCorrect(pFile));
+  if (!rslt) {
+    console.log(error('sortFileDest(pFile) : pFile => pFile is wrong'));
+    return false;
+  }
 
-    // Read an array and  Write it directly in a file
-    quickDumpMD5FileDest(sourceArray, pArgvDest);
+  return new Promise(resolve => {
+    readFile(pFile).then(data => {
+      const sourceArray = data.map(line => line.split(' : ')).sort((e1, e2) => e1[1] > e2[1]).map(l => l.join(' : '));
+      return resolve(sourceArray);
+    });
   });
 };
 
@@ -181,7 +210,10 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
 
   // Sort the output file in the case of an update
   if (pArgvDest && !pArgvRewrite) {
-    sortFileDest(`${pArgvDest}`, pArgvDest);
+    sortFileDest(`${pArgvDest}`).then(sourceArray => {
+      // Read an array and  Write it directly in a file
+      quickDumpMD5FileDest(sourceArray, pArgvDest);
+    });
   }
   console.log(success('Get every MD5 with successful !'));
 };
