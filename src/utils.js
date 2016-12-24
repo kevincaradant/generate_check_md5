@@ -85,8 +85,6 @@ const compareMD5 = async (pFileSource, pFileCompare) => {
 // Build an array with only the new files which are not present in the md5 file (--dest)
 const analyseMD5 = async (pFileSource, pFilesPath, pArgvNoSpace) => {
   const rslt = await Promise.resolve(checks.isSourceCorrect(pFileSource));
-  const pFilesPathAfterTransform = pFilesPath.map(line => line.split(' ').join('_'));
-
   if (!rslt) {
     console.log(error('\nanalyseMD5(pFileSource, pFilesPath, pArgvNoSpace): pFileSource => pFileSource is wrong'));
     return false;
@@ -94,6 +92,8 @@ const analyseMD5 = async (pFileSource, pFilesPath, pArgvNoSpace) => {
     console.log(error('\nanalyseMD5(pFileSource, pFilesPath, pArgvNoSpace): pFilesPath => Should be an array'));
     return false;
   }
+
+  const pFilesPathAfterTransform = pFilesPath.map(line => line.split(' ').join('_'));
 
   return new Promise(resolve => {
     readFile(pFileSource).then(data => {
@@ -150,6 +150,7 @@ const quickDumpMD5FileDest = async (pFiles, pArgvDest) => {
   }
 
   console.log(error(`GENERATOR MODE: Error to find the file "--dest" at: ${pArgvDest}`));
+
   return false;
 };
 
@@ -189,7 +190,6 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
 
   pFilesToAdd.forEach((file, index, arr) => {
     console.log(notice(`${index + 1} / ${arr.length}`));
-
 
     if (fs.existsSync(file)) {
       const md5 = md5File.sync(file);

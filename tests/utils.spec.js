@@ -510,6 +510,28 @@ test('Call quickDumpMD5FileDest with BAD(NULL) Arg1 != with GOOD(FILE) Arg2(Stri
   });
 });
 
+test('Call quickDumpMD5FileDest with  GOOD(FILES) Arg1(Array) != with BAD(NULL) Arg2', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': 'file contents here\nThis is the line 2',
+      'test2.txt': 'file contents here\nThis is the line 2'
+    }
+  });
+
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test2.txt'));
+  rsltPromise.then(r => {
+    const rslt = Promise.resolve(utils.quickDumpMD5FileDest(r, null));
+    rslt.then(data => {
+      mock.restore();
+      t.false(data);
+      t.end();
+    });
+  });
+});
+
 test('Call quickDumpMD5FileDest with BAD(NULL) Arg1 != with BAD(FILE) Arg2(String)', t => {
   t.plan(1);
   const rslt = Promise.resolve(utils.quickDumpMD5FileDest(null, 'path/to/dir/test2.txt'));
