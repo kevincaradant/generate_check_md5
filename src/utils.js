@@ -85,6 +85,8 @@ const compareMD5 = async (pFileSource, pFileCompare) => {
 // Build an array with only the new files which are not present in the md5 file (--dest)
 const analyseMD5 = async (pFileSource, pFilesPath, pArgvNoSpace) => {
   const rslt = await Promise.resolve(checks.isSourceCorrect(pFileSource));
+  const pFilesPathAfterTransform = pFilesPath.map(line => line.split(' ').join('_'));
+
   if (!rslt) {
     console.log(error('\nanalyseMD5(pFileSource, pFilesPath, pArgvNoSpace): pFileSource => pFileSource is wrong'));
     return false;
@@ -106,7 +108,7 @@ const analyseMD5 = async (pFileSource, pFilesPath, pArgvNoSpace) => {
         });
         getFilesToRemoveArray = sourceArrayNameFiles.filter(line => {
           if (line) {
-            return !pFilesPath.includes(line.split(' ').join('_'));
+            return !pFilesPathAfterTransform.includes(line);
           }
         });
       } else {
@@ -187,6 +189,8 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
 
   pFilesToAdd.forEach((file, index, arr) => {
     console.log(notice(`${index + 1} / ${arr.length}`));
+
+
     if (fs.existsSync(file)) {
       const md5 = md5File.sync(file);
 
@@ -217,15 +221,10 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
     // For each files to add in dest file
     pFilesToRemove.forEach((file, index, arr) => {
       console.log(notice(`${index + 1} / ${arr.length}`));
-      // We add _ instead of space to have a pretty display in the file
-      // If the argument --nospace is given
-      if (pArgvNoSpace) {
-        file = file.split(' ').join('_');
-      }
 
       const body = fs.readFileSync(pArgvDest).toString();
       // 36 is to have the line including the hash of the line and not only the name of the file
-      const idx = (body.indexOf(file)) - 36;
+      const idx = (body.indexOf(file)) - 35;
       if (idx > -1) {
         const output = body.substr(0, idx) + body.substr(idx + file.length + 36);
         fs.writeFileSync(pArgvDest, output);

@@ -99,10 +99,9 @@ exports.generate = () => {
           // If we haven't any argument or --update argument and the file with --dest path is already existing
           if (!argv.rewrite && fs.existsSync(argv.dest)) {
             // We analyze to count the difference between the --path and --dest path
-            utils.analyseMD5(argv.dest, filesPath).then(data => {
+            utils.analyseMD5(argv.dest, filesPath, argv.nospace).then(data => {
               const elementsToUpdate = data;
               console.log(warn(`GENERATOR MODE: Following file: ${argv.dest} already existing. Update in progress.`));
-
               if (elementsToUpdate.getNewFilesToAddArray.length === 0 && elementsToUpdate.getFilesToRemoveArray.length === 0) {
                 console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
               } else {
