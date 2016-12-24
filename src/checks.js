@@ -27,7 +27,7 @@ const showHelp = () => {
   --source "/path/to/the/md5_file_source_its_the_reference.txt/"
   --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
-  To generate AND compare md5 files in the same :
+  To generate AND compare md5 files in the same time:
   --path "/path/to/the/my_directory_with_files/"
   --dest "/path/to/write/file_md5_results.txt"
   --source "/path/to/the/md5_file_source_its_the_reference.txt/"
@@ -136,6 +136,13 @@ const isDestCorrect = pArgvDest => {
       fs.stat(pArgvDest, (err, stats) => {
         if (err && err.code === 'ENOENT') {
           console.log(notice('\nArgument --dest: New file located at ' + pArgvDest + ' will be created'));
+          // If openSync returns 2 when it's a successful.
+          // fs.closeSync returns undefined if it's arg has 2 as value.
+          // So if we get undefined, it's a successful otherwise we have an other code.
+          if (typeof fs.closeSync(fs.openSync(pArgvDest, 'a')) !== 'undefined') {
+            return resolve(false);
+          }
+          console.log(notice('\nArgument --dest: New file ' + pArgvDest + ' created with successful'));
           return resolve(true);
         } else if (err) {
           console.log(error(`\nArgument --dest: ${err}`));
@@ -221,7 +228,7 @@ const showPathError = pArgvPath => {
 // Return false: --dest arg doesn't not exist
 const showDestError = pArgvDest => {
   if (!pArgvDest) {
-    console.log(warn('\nArgument --dest: You should give the destination path to write the results in a file.') + notice('\nUse: --dest "your/path/and/your-file.txt".\nIn the moment, the results will be only show in the console.'));
+    console.log(warn('\nArgument --dest: You should give the destination path to write the results in a file.\nUse: --dest "your/path/and/your-file.txt".\nIn the moment, the results will be only show in the console.'));
   }
   return true;
 };

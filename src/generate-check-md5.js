@@ -57,80 +57,83 @@ exports.generate = () => {
     }
   }
 
-  /* eslint array-callback-return: 0 */
-  if ((!argv.source && !argv.compare && argv.source !== '' && argv.compare !== '')) {
-    (async () => {
+  (async function () {
+    /* eslint array-callback-return: 0 */
+    if ((argv.path || argv.dest) && !argv.source && !argv.compare) {
       const rslts = await Promise.all([checks.isPathCorrect(argv.path), checks.showPathError(argv.path), checks.isDestCorrect(argv.dest), checks.showDestError(argv.dest)]);
-      rslts.map(r => {
-        if (!r) {
-          process.exit(0);
-        }
-      });
-    })();
-  } else {
-    (async () => {
-      const rslts = await Promise.all([checks.isSourceCorrect(argv.source), checks.showSourceError(argv.source), checks.isCompareCorrect(argv.compare), checks.showCompareError(argv.compare)]);
-      rslts.map(r => {
-        if (!r) {
-          process.exit(0);
-        }
-      });
-    })();
-  }
-
-  // ------------------
-  // --- END CHECKS ---
-  // ------------------
-
-  // ------------
-  // --- ALGO ---
-  // ------------
-  // IF we have the --path argument
-  if (argv.path) {
-    try {
-      // Get all files including in --path argument
-      const filesPath = recursiveReadSync(argv.path);
-      console.log(notice(`${filesPath.length} file${filesPath.length > 1 ? 's' : ''} detected.`));
-
-      // If we have a file to write the results
-      if (argv.dest) {
-        // If we haven't any argument or --update argument and the file with --dest path is already existing
-        if (!argv.rewrite && fs.existsSync(argv.dest)) {
-          // We analyze to count the difference between the --path and --dest path
-          utils.analyseMD5(argv.dest, filesPath).then(data => {
-            const elementsToUpdate = data;
-            console.log(warn(`Following file: ${argv.dest} alreading existing`));
-
-            if (elementsToUpdate.getNewFilesToAddArray.length === 0 && elementsToUpdate.getFilesToRemoveArray.length === 0) {
-              console.log(success('No difference detected between the --path and --dest arguments'));
-            } else {
-              console.log(success(`${elementsToUpdate.getNewFilesToAddArray.length + elementsToUpdate.getFilesToRemoveArray.length} difference detected between the data gave via --path and --dest arguments`));
-              utils.writeMD5FileDest(elementsToUpdate.getNewFilesToAddArray, elementsToUpdate.getFilesToRemoveArray, argv.dest, argv.update, argv.rewrite, argv.nospace);
-            }
-          });
-          // Otherwise if we have a --dest path but the file doesn't exist yet or we have the --rewrite argument
-        } else if (!fs.existsSync(argv.dest) || argv.rewrite) {
-          // We search and write all MD5 hash in a file or a console
-          utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
-        } else {
-          // ERROR UNKNOWN. Need a new else if to catch why
-          console.log(error('Error unknown detected. Please try --help or --h to resolve the problem. Otherwise, you can create a new issue on github and copy/paste the command line which generates this error'));
-        }
-      } else {
-        // Otherwise, we haven't dest argument to write it in file
-        // We will show the results only in the console
-        utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
+      if (rslts.includes(false)) {
+        process.exit(0);
       }
-    } catch (err) {
-      console.log(error(err));
+    } else if ((argv.source || argv.compare) && !argv.path && !argv.dest) {
+      const rslts = await Promise.all([checks.isSourceCorrect(argv.source), checks.showSourceError(argv.source), checks.isCompareCorrect(argv.compare), checks.showCompareError(argv.compare)]);
+      if (rslts.includes(false)) {
+        process.exit(0);
+      }
+    } else {
+      const rslts = await Promise.all([checks.isPathCorrect(argv.path), checks.showPathError(argv.path), checks.isDestCorrect(argv.dest), checks.showDestError(argv.dest)]);
+      if (rslts.includes(false)) {
+        process.exit(0);
+      }
+      const rslts2 = await Promise.all([checks.isSourceCorrect(argv.source), checks.showSourceError(argv.source), checks.isCompareCorrect(argv.compare), checks.showCompareError(argv.compare)]);
+      if (rslts2.includes(false)) {
+        process.exit(0);
+      }
     }
-  }
 
-  // If we are in the compare mode
-  if (argv.source && argv.compare) {
-    utils.compareMD5(argv.source, argv.compare);
-  }
-  // ----------------
-  // --- END ALGO ---
-  // ----------------
+    // ------------------
+    // --- END CHECKS ---
+    // ------------------
+
+    // ------------
+    // --- ALGO ---
+    // ------------
+    // IF we have the --path argument
+    if (argv.path) {
+      try {
+        // Get all files including in --path argument
+        const filesPath = recursiveReadSync(argv.path);
+        console.log(notice(`\nGENERATOR MODE: ${filesPath.length} file${filesPath.length > 1 ? 's' : ''} detected.`));
+
+        // If we have a file to write the results
+        if (argv.dest) {
+          // If we haven't any argument or --update argument and the file with --dest path is already existing
+          if (!argv.rewrite && fs.existsSync(argv.dest)) {
+            // We analyze to count the difference between the --path and --dest path
+            utils.analyseMD5(argv.dest, filesPath).then(data => {
+              const elementsToUpdate = data;
+              console.log(warn(`GENERATOR MODE: Following file: ${argv.dest} already existing. Update in progress.`));
+
+              if (elementsToUpdate.getNewFilesToAddArray.length === 0 && elementsToUpdate.getFilesToRemoveArray.length === 0) {
+                console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
+              } else {
+                console.log(success(`${elementsToUpdate.getNewFilesToAddArray.length + elementsToUpdate.getFilesToRemoveArray.length} difference detected between the data gave via --path and --dest arguments`));
+                utils.writeMD5FileDest(elementsToUpdate.getNewFilesToAddArray, elementsToUpdate.getFilesToRemoveArray, argv.dest, argv.update, argv.rewrite, argv.nospace);
+              }
+            });
+            // Otherwise if we have a --dest path but the file doesn't exist yet or we have the --rewrite argument
+          } else if (!fs.existsSync(argv.dest) || argv.rewrite) {
+            // We search and write all MD5 hash in a file or a console
+            utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
+          } else {
+            // ERROR UNKNOWN. Need a new else if to catch why
+            console.log(error('GENERATOR MODE: Unknown error detected. Please try --help or --h to resolve the problem. Otherwise, you can create a new issue on github and copy/paste the command line which generates this error'));
+          }
+        } else {
+          // Otherwise, we haven't dest argument to write it in file
+          // We will show the results only in the console
+          utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
+        }
+      } catch (err) {
+        console.log(error(err));
+      }
+    }
+
+    // If we are in the compare mode
+    if (argv.source && argv.compare) {
+      utils.compareMD5(argv.source, argv.compare);
+    }
+    // ----------------
+    // --- END ALGO ---
+    // ----------------
+  })();
 };

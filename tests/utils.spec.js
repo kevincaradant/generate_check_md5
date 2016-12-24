@@ -500,7 +500,7 @@ test('Call quickDumpMD5FileDest with GOOD(FILES) Arg1(Array) != with BAD(FILE) A
     const rslt = Promise.resolve(utils.quickDumpMD5FileDest(r, 'path/to/dir/test3.txt'));
     rslt.then(data => {
       mock.restore();
-      t.false(data);
+      t.true(data);
       t.end();
     });
   });

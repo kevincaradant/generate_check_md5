@@ -18,7 +18,7 @@ const notice = clc.blue.bold;
 const readFile = async pFile => {
   const rslt = await Promise.resolve(checks.isSourceCorrect(pFile));
   if (!rslt) {
-    console.log(error('\readFile(pFile): pFile => pFile is wrong'));
+    console.log(error('\nreadFile(pFile): pFile => pFile is wrong'));
     return false;
   }
 
@@ -55,13 +55,13 @@ const checkMD5 = (pArraySource, pArrayCompare) => {
   pArrayCompare.map(md5 => {
     stateErrorMD5 = pArraySource.includes(md5) ? 0 : 1;
     if (stateErrorMD5) {
-      console.log(error(`Error with: ${md5}`));
+      console.log(error(`\nCOMPARATOR MODE: Error with the MD5 line: ${md5}`));
       cptErrorMD5++;
     }
   });
 
   if (!cptErrorMD5) {
-    console.log(success('No error MD5 detected'));
+    console.log(success('\nCOMPARATOR MODE: No error MD5 detected'));
   }
 
   return true;
@@ -119,7 +119,7 @@ const quickDumpMD5FileDest = async (pFiles, pArgvDest) => {
 
   const rslt = await Promise.resolve(checks.isDestCorrect(pArgvDest));
   if (!rslt) {
-    console.log(error('quickDumpMD5FileDest(pFile, pArgvDest) : pArgvDest => pArgvDest is wrong'));
+    console.log(error('\nquickDumpMD5FileDest(pFile, pArgvDest) : pArgvDest => pArgvDest is wrong'));
     return false;
   }
 
@@ -131,7 +131,7 @@ const quickDumpMD5FileDest = async (pFiles, pArgvDest) => {
     return true;
   }
 
-  console.log(error(`Error to find the file "--dest" at: ${pArgvDest}`));
+  console.log(error(`GENERATOR MODE: Error to find the file "--dest" at: ${pArgvDest}`));
   return false;
 };
 
@@ -139,7 +139,7 @@ const quickDumpMD5FileDest = async (pFiles, pArgvDest) => {
 const sortFileDest = async pFile => {
   const rslt = await Promise.resolve(checks.isSourceCorrect(pFile));
   if (!rslt) {
-    console.log(error('sortFileDest(pFile) : pFile => pFile is wrong'));
+    console.log(error('\nsortFileDest(pFile) : pFile => pFile is wrong'));
     return false;
   }
 
@@ -163,7 +163,7 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
     fs.unlinkSync(pArgvDest);
   }
 
-  console.log(notice(`\nLine to add in --dest path file:`));
+  console.log(notice(`\nGENERATOR MODE: Line to add in --dest path file:`));
   // For each files to add in dest file
   if (pFilesToAdd.length === 0) {
     console.log(notice('0 / 0'));
@@ -187,12 +187,12 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
         console.log(notice(`${md5} : ${file} \n`));
       }
     } else {
-      console.log(error(`The file "${file}" can't be read. Be sure it exists.\n`));
+      console.log(error(`\nGENERATOR MODE: The file "${file}" can't be read. Be sure it exists.`));
     }
   });
 
   if (pArgvDest) {
-    console.log(notice(`\nLine to remove from --dest path file:`));
+    console.log(notice(`\nGENERATOR MODE: Line to remove from --dest path file:`));
 
     if (pFilesToRemove.length === 0) {
       console.log(notice('0 / 0'));
@@ -225,7 +225,7 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
     });
   }
 
-  console.log(success('Get every MD5 with successful !'));
+  console.log(success('\nGENERATOR MODE: Get every MD5 with successful !'));
   return true;
 };
 
