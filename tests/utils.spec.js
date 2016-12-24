@@ -343,23 +343,67 @@ test('Call compareMD5 with GOOD(FILE) Arg1(String) != with BAD(NULL) Arg2', t =>
 });
 
 // // analyseMD5
-test('Call analyseMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array) AND Arg3(Boolean / True)', t => {
+test('Call analyseMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array) ADD_LINES', t => {
   const mock = require('mock-fs');
   t.plan(1);
 
   mock({
     'path/to/dir': {
-      'test.txt': 'file contents here\nThis is the line 2',
-      'test1.txt': 'file contents here\nThis is the line 2'
+      'test.txt': 'file cotents here\nThis is the line 2',
+      'test1.txt': 'file contents here\nTis is the line 2'
     }
   });
 
-  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test.txt'));
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test1.txt'));
   rsltPromise.then(r => {
     const rslt = Promise.resolve(utils.analyseMD5('path/to/dir/test.txt', r));
     rslt.then(data => {
       mock.restore();
       t.true(data);
+      t.end();
+    });
+  });
+});
+
+test('Call analyseMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array)  REMOVE_LINES', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': 'This is the line 2\n Tis is the line 2',
+      'test1.txt': 'This is the line 2'
+    }
+  });
+
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test1.txt'));
+  rsltPromise.then(r => {
+    const rslt = Promise.resolve(utils.analyseMD5('path/to/dir/test.txt', r, false));
+    rslt.then(data => {
+      mock.restore();
+      t.true(data);
+      t.end();
+    });
+  });
+});
+
+test('Call analyseMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array) AND Arg3(Boolean / True) ADD_REMOVE_LINES', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': '1234567 : Ths is the line 2',
+      'test1.txt': '123567 : This is the line 2'
+    }
+  });
+
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test.txt'));
+  rsltPromise.then(r => {
+    const rslt = Promise.resolve(utils.analyseMD5('path/to/dir/test1.txt', r, true));
+    rslt.then(data => {
+      mock.restore();
+      t.deepEquals(data, {getFilesToRemoveArray: ['This is the line 2'], getNewFilesToAddArray: ['1234567 : Ths is the line 2']});
       t.end();
     });
   });

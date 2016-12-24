@@ -99,11 +99,27 @@ const analyseMD5 = async (pFileSource, pFilesPath, pArgvNoSpace) => {
       let getFilesToRemoveArray = [];
       const sourceArrayNameFiles = data.map(line => line.split(' : ')[1]);
       if (pArgvNoSpace) {
-        getNewFilesToAddArray = pFilesPath.filter(line => !sourceArrayNameFiles.includes(line.split(' ').join('_')));
-        getFilesToRemoveArray = sourceArrayNameFiles.filter(line => !pFilesPath.includes(line.split(' ').join('_')));
+        getNewFilesToAddArray = pFilesPath.filter(line => {
+          if (line) {
+            return !sourceArrayNameFiles.includes(line.split(' ').join('_'));
+          }
+        });
+        getFilesToRemoveArray = sourceArrayNameFiles.filter(line => {
+          if (line) {
+            return !pFilesPath.includes(line.split(' ').join('_'));
+          }
+        });
       } else {
-        getNewFilesToAddArray = pFilesPath.filter(line => !sourceArrayNameFiles.includes(line));
-        getFilesToRemoveArray = sourceArrayNameFiles.filter(line => !pFilesPath.includes(line));
+        getNewFilesToAddArray = pFilesPath.filter(line => {
+          if (line) {
+            return !sourceArrayNameFiles.includes(line);
+          }
+        });
+        getFilesToRemoveArray = sourceArrayNameFiles.filter(line => {
+          if (line) {
+            return !pFilesPath.includes(line);
+          }
+        });
       }
       return resolve({getNewFilesToAddArray, getFilesToRemoveArray});
     });

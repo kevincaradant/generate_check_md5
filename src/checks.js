@@ -140,6 +140,7 @@ const isDestCorrect = pArgvDest => {
           // fs.closeSync returns undefined if it's arg has 2 as value.
           // So if we get undefined, it's a successful otherwise we have an other code.
           if (typeof fs.closeSync(fs.openSync(pArgvDest, 'a')) !== 'undefined') {
+            console.log(error('\nArgument --dest: Error during the creation of the new file ' + pArgvDest));
             return resolve(false);
           }
           console.log(notice('\nArgument --dest: New file ' + pArgvDest + ' created with successful'));
