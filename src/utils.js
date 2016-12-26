@@ -52,8 +52,8 @@ const checkMD5 = (pArraySource, pArrayCompare) => {
   let cptErrorMD5 = 0;
 
   /* eslint array-callback-return: 0 */
-  pArrayCompare.map(md5 => {
-    stateErrorMD5 = pArraySource.includes(md5) ? 0 : 1;
+  pArraySource.map(md5 => {
+    stateErrorMD5 = pArrayCompare.includes(md5) ? 0 : 1;
     if (stateErrorMD5) {
       console.log(error(`\nCOMPARATOR MODE: Error with the MD5 line: ${md5}`));
       cptErrorMD5++;
