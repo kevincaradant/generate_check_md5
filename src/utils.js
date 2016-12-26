@@ -154,6 +154,35 @@ const quickDumpMD5FileDest = async (pFiles, pArgvDest) => {
   return false;
 };
 
+// Order an array using the natural way
+const naturalCompare = (a, b) => {
+  if (typeof a !== 'string' || typeof b !== 'string') {
+    console.log(error('\nnaturalCompare(a, b) : a/b => a or b are wrong'));
+    return false;
+  }
+
+  const ax = [];
+  const bx = [];
+
+  a.replace(/(\d+)|(\D+)/g, (_, $1, $2) => {
+    ax.push([$1 || Infinity, $2 || '']);
+  });
+
+  b.replace(/(\d+)|(\D+)/g, (_, $1, $2) => {
+    bx.push([$1 || Infinity, $2 || '']);
+  });
+
+  while (ax.length && bx.length) {
+    const an = ax.shift();
+    const bn = bx.shift();
+    const nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
+    if (nn) {
+      return nn;
+    }
+  }
+  return ax.length - bx.length;
+};
+
 // Custom Sort to order by ASC
 const sortFileDest = async pFile => {
   const rslt = await Promise.resolve(checks.isSourceCorrect(pFile));
@@ -164,7 +193,7 @@ const sortFileDest = async pFile => {
 
   return new Promise(resolve => {
     readFile(pFile).then(data => {
-      const sourceArray = data.map(line => line.split(' : ')).sort((e1, e2) => e1[1] > e2[1]).map(l => l.join(' : '));
+      const sourceArray = data.map(line => line.split(' : ')).sort((e1, e2) => naturalCompare(e1[1], e2[1])).map(l => l.join(' : '));
       return resolve(sourceArray);
     });
   });
@@ -249,6 +278,7 @@ module.exports = {
   compareMD5,
   analyseMD5,
   checkMD5,
+  naturalCompare,
   sortFileDest,
   quickDumpMD5FileDest,
   writeMD5FileDest

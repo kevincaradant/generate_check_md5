@@ -572,6 +572,80 @@ test('Call quickDumpMD5FileDest with GOOD(FILES) Arg1(Array) != with BAD(FILE) A
   });
 });
 
+// naturalCompare
+test('Call naturalCompare with Line 1 < Line 2 (String)', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': '111111111111 : file contents here\n22222222222 : This is the line 2'
+    }
+  });
+
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test.txt'));
+  rsltPromise.then(r => {
+    const rslt = Promise.resolve(utils.naturalCompare(r[0], r[1]));
+    rslt.then(data => {
+      mock.restore();
+      t.ok(data > 0);
+      t.end();
+    });
+  });
+});
+
+test('Call naturalCompare with Line 2 < Line 1 (String)', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': '1111111111111 : file contents here\n2222222222222222222 : This is the line 2'
+    }
+  });
+
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test.txt'));
+  rsltPromise.then(r => {
+    const rslt = Promise.resolve(utils.naturalCompare(r[0], r[1]));
+    rslt.then(data => {
+      mock.restore();
+      t.ok(data < 0);
+      t.end();
+    });
+  });
+});
+
+test('Call naturalCompare with Line 2(String) = Line 1 (String)', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': '1111111111111 : file contents here\n1111111111111 : file contents here'
+    }
+  });
+
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test.txt'));
+  rsltPromise.then(r => {
+    const rslt = Promise.resolve(utils.naturalCompare(r[0], r[1]));
+    rslt.then(data => {
+      mock.restore();
+      t.ok(data === 0);
+      t.end();
+    });
+  });
+});
+
+test('Call naturalCompare with BAD(null) Arg1 && BAD(null) Arg2', t => {
+  t.plan(1);
+
+  const rslt = Promise.resolve(utils.naturalCompare(null, null));
+  rslt.then(data => {
+    t.false(data);
+    t.end();
+  });
+});
+
 // sortFileDest
 test('Call sortFileDest with GOOD(FILE) Arg1(String)', t => {
   const mock = require('mock-fs');
