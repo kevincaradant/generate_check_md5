@@ -103,6 +103,10 @@ gcmd5 your_arguments --update
 
 // To rewrite completely your md5 files got with --dest :
 gcmd5 your_arguments  --rewrite
+
+// To sort using the natural sort on the file with --dest :
+gcmd5 your_other_args --dest "your_file" --sort
+
 ```
 
 -----------------------------------
@@ -182,6 +186,9 @@ node index.js your_arguments --update
 
 // To rewrite completely your md5 files got with --dest :
 node index.js your_arguments  --rewrite
+
+// To sort using the natural sort on the file with --dest :
+node index.js your_other_args --dest "your_file" --sort
 ```
 
 ## License
