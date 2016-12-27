@@ -1,7 +1,6 @@
 // -----------------
 // --- FUNCTIONS ---
 // -----------------
-require('babel-core/register');
 require('babel-polyfill');
 
 const md5File = require('md5-file');
