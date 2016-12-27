@@ -202,12 +202,12 @@ const sortFileDest = async pFile => {
 // Write in a file or in a console, all the MD5 results
 const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, pArgvRewrite, pArgvNoSpace) => {
   if (!Array.isArray(pFilesToAdd) || !Array.isArray(pFilesToRemove)) {
-    console.log(error('\nwriteMD5FileDest(pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, pArgvRewrite, pArgvNoSpace) : pFilesToAdd / pFilesToRemove => Should be arrays'));
+    console.log(error('\nwriteMD5FileDest(pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, pArgvRewrite, pArgvNoSpace, pSort) : pFilesToAdd / pFilesToRemove => Should be arrays'));
     return false;
   }
 
   // If we want to rewrite completely the file. Delete and create again it.
-  if (pArgvDest && fs.existsSync(pArgvDest) && !pArgvUpdate && pArgvRewrite) {
+  if (pArgvDest && fs.existsSync(pArgvDest) && pArgvRewrite) {
     fs.unlinkSync(pArgvDest);
   }
 
@@ -258,14 +258,6 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
         const output = body.substr(0, idx) + body.substr(idx + file.length + 36);
         fs.writeFileSync(pArgvDest, output);
       }
-    });
-  }
-
-  // Sort the output file in the case of an update
-  if (pArgvDest && !pArgvRewrite) {
-    sortFileDest(`${pArgvDest}`).then(sourceArray => {
-      // Read an array and  Write it directly in a file
-      quickDumpMD5FileDest(sourceArray, pArgvDest);
     });
   }
 

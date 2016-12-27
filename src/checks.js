@@ -34,6 +34,8 @@ const showHelp = () => {
   --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
   OPTIONS:
+  To sort the output file with the arg --dest :
+  --sort
 
   To rename files name in the file of results without space :
   --nospace
