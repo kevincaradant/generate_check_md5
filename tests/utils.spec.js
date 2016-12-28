@@ -1,5 +1,6 @@
 const utils = require('./utils.js');
 const test = require('tape');
+const path = require('path');
 
 // readRecursiveFolders
 test('Call readRecursiveFolders with GOOD Path String', t => {
@@ -22,7 +23,14 @@ test('Call readRecursiveFolders with GOOD Path String', t => {
   const rslt = Promise.resolve(utils.recursiveFolders('path/to/'));
   rslt.then(data => {
     mock.restore();
-    t.deepEqual(data, ['path\\to\\dir\\test.txt', 'path\\to\\dir\\test2.txt', 'path\\to\\dir\\test3.txt', 'path\\to\\dir2\\test.txt', 'path\\to\\dir2\\test2.txt', 'path\\to\\dir2\\test3.txt']);
+    const p1 = path.normalize('path/to/dir/test.txt');
+    const p2 = path.normalize('path/to/dir/test2.txt');
+    const p3 = path.normalize('path/to/dir/test3.txt');
+    const p4 = path.normalize('path/to/dir2/test.txt');
+    const p5 = path.normalize('path/to/dir2/test2.txt');
+    const p6 = path.normalize('path/to/dir2/test3.txt');
+
+    t.deepEqual(data, [p1, p2, p3, p4, p5, p6]);
     t.end();
   });
 });
