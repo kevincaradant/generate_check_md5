@@ -55,7 +55,7 @@
     "cli-color": "1.1.0",
     "line-by-line": "0.1.5",
     "md5-file": "3.1.1",
-    "recursive-readdir": "git+https://github.com/popod/recursive-readdir.git#patch-2",
+    "recursive-readdir": "git+https://github.com/kevincaradant/recursive-readdir.git",
     "yargs": "6.5.0"
   },
   "devDependencies": {
