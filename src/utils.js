@@ -8,6 +8,7 @@ const fs = require('fs');
 const LineByLineReader = require('line-by-line');
 const clc = require('cli-color');
 const checks = require('./checks.js');
+const recursive = require('recursive-readdir');
 
 const error = clc.red.bold;
 const success = clc.green.bold;
@@ -198,6 +199,23 @@ const sortFileDest = async pFile => {
   });
 };
 
+const recursiveFolders = pArgvPath => {
+  return new Promise(resolve => {
+    recursive(pArgvPath, {forceContinue: true}, (err, files) => {
+      if (err) {
+        console.log(error(err));
+        console.log('\nError ignored..., the analyze is continuing');
+      }
+
+      if (!files) {
+        return resolve([]);
+      }
+
+      return resolve(files);
+    });
+  });
+};
+
 // Write in a file or in a console, all the MD5 results
 const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, pArgvRewrite, pArgvNoSpace) => {
   if (!Array.isArray(pFilesToAdd) || !Array.isArray(pFilesToRemove)) {
@@ -266,6 +284,7 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
 
 module.exports = {
   readFile,
+  recursiveFolders,
   compareMD5,
   analyseMD5,
   checkMD5,

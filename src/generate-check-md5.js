@@ -6,7 +6,6 @@ const checks = require('./checks.js');
 const utils = require('./utils.js');
 const argv = require('yargs').argv;
 const fs = require('fs');
-const recursiveReadSync = require('recursive-readdir-sync');
 const clc = require('cli-color');
 
 exports.generate = () => {
@@ -80,7 +79,6 @@ exports.generate = () => {
         process.exit(0);
       }
     }
-
     // ------------------
     // --- END CHECKS ---
     // ------------------
@@ -92,61 +90,61 @@ exports.generate = () => {
     if (argv.path) {
       try {
         // Get all files including in --path argument
-        const filesPath = recursiveReadSync(argv.path);
-        console.log(notice(`\nGENERATOR MODE: ${filesPath.length} file${filesPath.length > 1 ? 's' : ''} detected.`));
-
-        // If we have a file to write the results
-        if (argv.dest) {
-          // If we haven't any argument or --update argument and the file with --dest path is already existing
-          if (!argv.rewrite && fs.existsSync(argv.dest)) {
-            // We analyze to count the difference between the --path and --dest path
-            utils.analyseMD5(argv.dest, filesPath, argv.nospace).then(data => {
-              const elementsToUpdate = data;
-              console.log(warn(`GENERATOR MODE: Following file: ${argv.dest} already existing. Update in progress.`));
-              if (elementsToUpdate.getNewFilesToAddArray.length === 0 && elementsToUpdate.getFilesToRemoveArray.length === 0) {
-                // Sort the output file in the case of an update
-                if (argv.sort) {
-                  utils.sortFileDest(`${argv.dest}`).then(sourceArray => {
-                    // Read an array and  Write it directly in a file
-                    utils.quickDumpMD5FileDest(sourceArray, argv.dest);
-                    console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
-                  });
+        utils.recursiveFolders(argv.path).then(filesPath => {
+          console.log(notice(`\nGENERATOR MODE: ${filesPath.length} file${filesPath.length > 1 ? 's' : ''} detected.`));
+          // If we have a file to write the results
+          if (argv.dest) {
+            // If we haven't any argument or --update argument and the file with --dest path is already existing
+            if (!argv.rewrite && fs.existsSync(argv.dest)) {
+              // We analyze to count the difference between the --path and --dest path
+              utils.analyseMD5(argv.dest, filesPath, argv.nospace).then(data => {
+                const elementsToUpdate = data;
+                console.log(warn(`GENERATOR MODE: Update in progress.`));
+                if (elementsToUpdate.getNewFilesToAddArray.length === 0 && elementsToUpdate.getFilesToRemoveArray.length === 0) {
+                  // Sort the output file in the case of an update
+                  if (argv.sort) {
+                    utils.sortFileDest(`${argv.dest}`).then(sourceArray => {
+                      // Read an array and  Write it directly in a file
+                      utils.quickDumpMD5FileDest(sourceArray, argv.dest);
+                      console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
+                    });
+                  }
+                  console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
+                } else {
+                  console.log(success(`${elementsToUpdate.getNewFilesToAddArray.length + elementsToUpdate.getFilesToRemoveArray.length} difference detected between the data gave via --path and --dest arguments`));
+                  utils.writeMD5FileDest(elementsToUpdate.getNewFilesToAddArray, elementsToUpdate.getFilesToRemoveArray, argv.dest, argv.update, argv.rewrite, argv.nospace);
+                  // Sort the output file in the case where we have anything to update
+                  if (argv.sort) {
+                    utils.sortFileDest(`${argv.dest}`).then(sourceArray => {
+                      // Read an array and  Write it directly in a file
+                      utils.quickDumpMD5FileDest(sourceArray, argv.dest);
+                      console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
+                    });
+                  }
                 }
-                console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
-              } else {
-                console.log(success(`${elementsToUpdate.getNewFilesToAddArray.length + elementsToUpdate.getFilesToRemoveArray.length} difference detected between the data gave via --path and --dest arguments`));
-                utils.writeMD5FileDest(elementsToUpdate.getNewFilesToAddArray, elementsToUpdate.getFilesToRemoveArray, argv.dest, argv.update, argv.rewrite, argv.nospace);
-                // Sort the output file in the case where we have anything to update
-                if (argv.sort) {
-                  utils.sortFileDest(`${argv.dest}`).then(sourceArray => {
-                    // Read an array and  Write it directly in a file
-                    utils.quickDumpMD5FileDest(sourceArray, argv.dest);
-                    console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
-                  });
-                }
-              }
-            });
-            // Otherwise if we have a --dest path but the file doesn't exist yet or we have the --rewrite argument
-          } else if (!fs.existsSync(argv.dest) || argv.rewrite) {
-            // We search and write all MD5 hash in a file or a console
-            utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
-            // Sort the output file in the case of an rewrite
-            if (argv.sort) {
-              utils.sortFileDest(`${argv.dest}`).then(sourceArray => {
-                // Read an array and  Write it directly in a file
-                utils.quickDumpMD5FileDest(sourceArray, argv.dest);
-                console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
               });
+              // Otherwise if we have a --dest path but the file doesn't exist yet or we have the --rewrite argument
+            } else if (!fs.existsSync(argv.dest) || argv.rewrite) {
+              // We search and write all MD5 hash in a file or a console
+              utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
+              // Sort the output file in the case of an rewrite
+              if (argv.sort) {
+                utils.sortFileDest(`${argv.dest}`).then(sourceArray => {
+                  // Read an array and  Write it directly in a file
+                  utils.quickDumpMD5FileDest(sourceArray, argv.dest);
+                  console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
+                });
+              }
+            } else {
+              // ERROR UNKNOWN. Need a new else if to catch why
+              console.log(error('GENERATOR MODE: Unknown error detected. Please try --help or --h to resolve the problem. Otherwise, you can create a new issue on github and copy/paste the command line which generates this error'));
             }
           } else {
-            // ERROR UNKNOWN. Need a new else if to catch why
-            console.log(error('GENERATOR MODE: Unknown error detected. Please try --help or --h to resolve the problem. Otherwise, you can create a new issue on github and copy/paste the command line which generates this error'));
+            // Otherwise, we haven't dest argument to write it in file
+            // We will show the results only in the console
+            utils.writeMD5FileDest(filesPath, []);
           }
-        } else {
-          // Otherwise, we haven't dest argument to write it in file
-          // We will show the results only in the console
-          utils.writeMD5FileDest(filesPath, []);
-        }
+        });
       } catch (err) {
         console.log(error(err));
       }

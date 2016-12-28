@@ -1,6 +1,42 @@
 const utils = require('./utils.js');
 const test = require('tape');
 
+// readRecursiveFolders
+test('Call readRecursiveFolders with GOOD Path String', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': 'file contents here\nThis is the line 2',
+      'test2.txt': 'file contents here\nThis is the line 2',
+      'test3.txt': 'file contents here\nThis is the line 2'
+    },
+    'path/to/dir2': {
+      'test.txt': 'file contents here\nThis is the line 2',
+      'test2.txt': 'file contents here\nThis is the line 2',
+      'test3.txt': 'file contents here\nThis is the line 2'
+    }
+  });
+
+  const rslt = Promise.resolve(utils.recursiveFolders('path/to/'));
+  rslt.then(data => {
+    mock.restore();
+    t.deepEqual(data, ['path\\to\\dir\\test.txt', 'path\\to\\dir\\test2.txt', 'path\\to\\dir\\test3.txt', 'path\\to\\dir2\\test.txt', 'path\\to\\dir2\\test2.txt', 'path\\to\\dir2\\test3.txt']);
+    t.end();
+  });
+});
+
+test('Call readRecursiveFolders with BAD Path String', t => {
+  t.plan(1);
+
+  const rslt = Promise.resolve(utils.recursiveFolders('path/to/dir'));
+  rslt.then(data => {
+    t.deepEqual(data, []);
+    t.end();
+  });
+});
+
 // readFile
 test('Call readFile with GOOD(File) Arg1(String)', t => {
   const mock = require('mock-fs');
