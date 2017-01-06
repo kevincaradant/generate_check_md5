@@ -97,29 +97,54 @@ const isExistAtLeastOneParamFromUser = (pArgumentsAllowedArray, pArgumentsSendBy
   return true;
 };
 
+const checkStateFiles = (pResolve, pFile, pTypeArg) => {
+  fs.stat(pFile, (err, stats) => {
+    console.log(pFile);
+    if (err && err.code === 'ENOENT') {
+      if (pTypeArg === 'dest') {
+        console.log(notice(`\nArgument --${pTypeArg}: New file located at ' + pFile + ' will be created`));
+        if (typeof fs.closeSync(fs.openSync(pFile, 'a')) !== 'undefined') {
+          console.log(error(`\nArgument --${pTypeArg}: Error during the creation of the new file ` + pFile));
+          return pResolve(false);
+        }
+        console.log(notice(`\nArgument --${pTypeArg}: New file ' + pArgvDest + ' created with successful`));
+        return pResolve(true);
+      }
+      console.log(err);
+      console.log(error(`\nArgument --${pTypeArg}: No file found. Check your path`));
+      return pResolve(false);
+    } else if (err) {
+      console.log(error(`\nArgument --${pTypeArg}: ${err}`));
+      return pResolve(false);
+    }	else if (stats.isFile()) {
+      if (pTypeArg === 'path') {
+        console.log(error(`\nArgument --${pTypeArg}: Is a file instead of a directory`));
+        return pResolve(false);
+      }
+    } else if (stats.isDirectory()) {
+      if (pTypeArg === 'source' || pTypeArg === 'compare' || pTypeArg === 'dest') {
+        console.log(error(`\nArgument --${pTypeArg}: Is a directory instead of a file`));
+        return pResolve(false);
+      }
+    }
+    return pResolve(true);
+  });
+};
+
 // Return true: --path arg is correct
 // Return false: --path arg is not correct
 const isPathCorrect = pArgvPath => {
   if (pArgvPath) {
-    if (typeof pArgvPath !== 'string') {
-      console.log(error('\nArgument --path: The path is not correct.') + notice('\nUse: --path "your/path/and/your-folder-name"'));
+    if (!Array.isArray(pArgvPath)) {
+      console.log(error('\nArgument --path: The path is not correct.') + notice('\nUse: --path "your/path/and/your-folder-name1" "your/path/and/your-folder2-name"'));
       return false;
     }
 
-    return new Promise(resolve => {
-      fs.stat(pArgvPath, (err, stats) => {
-        if (err && err.code === 'ENOENT') {
-          console.log(error(`\nArgument --path: No file found. Check your path`));
-          return resolve(false);
-        } else if (err) {
-          console.log(error(`\nArgument --path: ${err}`));
-          return resolve(false);
-        }	else if (stats.isFile()) {
-          console.log(error(`\nArgument --path: Is a file instead of a directory`));
-          return resolve(false);
-        }
-        return resolve(true);
-      });
+    return new Promise(async resolve => {
+      const rslts = await Promise.all(pArgvPath.map(async file => {
+        checkStateFiles(resolve, file, 'path');
+      }));
+      return resolve(rslts);
     });
   }
   return false;
@@ -129,33 +154,14 @@ const isPathCorrect = pArgvPath => {
 // Return false: --dest arg is not correct
 const isDestCorrect = pArgvDest => {
   if (pArgvDest) {
+    console.log(pArgvDest);
     if (typeof pArgvDest !== 'string') {
       console.log(error('\nArgument --dest: The path is not correct.') + notice('\nUse: --dest "your/path/and/your-file.txt"'));
       return false;
     }
 
     return new Promise(resolve => {
-      fs.stat(pArgvDest, (err, stats) => {
-        if (err && err.code === 'ENOENT') {
-          console.log(notice('\nArgument --dest: New file located at ' + pArgvDest + ' will be created'));
-          // If openSync returns 2 when it's a successful.
-          // fs.closeSync returns undefined if it's arg has 2 as value.
-          // So if we get undefined, it's a successful otherwise we have an other code.
-          if (typeof fs.closeSync(fs.openSync(pArgvDest, 'a')) !== 'undefined') {
-            console.log(error('\nArgument --dest: Error during the creation of the new file ' + pArgvDest));
-            return resolve(false);
-          }
-          console.log(notice('\nArgument --dest: New file ' + pArgvDest + ' created with successful'));
-          return resolve(true);
-        } else if (err) {
-          console.log(error(`\nArgument --dest: ${err}`));
-          return resolve(false);
-        }	else if (stats.isDirectory()) {
-          console.log(error(`\nArgument --dest: Is a directory instead of a file`));
-          return resolve(false);
-        }
-        return resolve(true);
-      });
+      checkStateFiles(resolve, pArgvDest, 'dest');
     });
   }
   return true;
@@ -171,19 +177,7 @@ const isSourceCorrect = pArgvSource => {
     }
 
     return new Promise(resolve => {
-      fs.stat(pArgvSource, (err, stats) => {
-        if (err && err.code === 'ENOENT') {
-          console.log(error(`\nArgument --source: No file found. Check your path`));
-          return resolve(false);
-        } else if (err) {
-          console.log(error(`\nArgument --source: ${err}`));
-          return resolve(false);
-        }	else if (stats.isDirectory()) {
-          console.log(error(`\nArgument --source: Is a directory instead of a file`));
-          return resolve(false);
-        }
-        return resolve(true);
-      });
+      checkStateFiles(resolve, pArgvSource, 'source');
     });
   }
   return false;
@@ -199,19 +193,7 @@ const isCompareCorrect = pArgvCompare => {
     }
 
     return new Promise(resolve => {
-      fs.stat(pArgvCompare, (err, stats) => {
-        if (err && err.code === 'ENOENT') {
-          console.log(error(`\nArgument --compare: No file found. Check your path`));
-          return resolve(false);
-        } else if (err) {
-          console.log(error(`\nArgument --compare: ${err}`));
-          return resolve(false);
-        }	else if (stats.isDirectory()) {
-          console.log(error(`\nArgument --compare: Is a directory instead of a file`));
-          return resolve(false);
-        }
-        return resolve(true);
-      });
+      checkStateFiles(resolve, pArgvCompare, 'compare');
     });
   }
   return false;
@@ -221,7 +203,7 @@ const isCompareCorrect = pArgvCompare => {
 // Return false: --path arg doesn't not exist
 const showPathError = pArgvPath => {
   if (!pArgvPath) {
-    console.log(error('\nArgument --path: You should give the path of a folder to analyze it.') + notice('\nUse: --path "your/path/and/your-folder-name"'));
+    console.log(error('\nArgument --path: You should give the path of a folder to analyze it.') + notice('\nUse: --path "your/path/and/your-folder-name1" "your/path/and/your-folder-name2"'));
     return false;
   }
   return true;
@@ -273,6 +255,7 @@ const showRewriteUpdateError = (pArgvUpdate, pArgvRewrite) => {
 module.exports = {
   checkHelp,
   showHelp,
+  checkStateFiles,
   findAtLeastOneElemInArray,
   findElemInArray,
   checkAllParamsFromUser,

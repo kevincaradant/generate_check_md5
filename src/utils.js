@@ -200,20 +200,30 @@ const sortFileDest = async pFile => {
 };
 
 const recursiveFolders = pArgvPath => {
-  return new Promise(resolve => {
-    recursive(pArgvPath, {forceContinue: true}, (err, files) => {
-      if (err) {
-        console.log(error(err));
-        console.log('\nError ignored..., the analyze is continuing');
-      }
+  if (Array.isArray(pArgvPath)) {
+    return new Promise(async resolve => {
+      const rslts = await Promise.all(pArgvPath.map(file => {
+        return new Promise(resolve => {
+          recursive(file, {forceContinue: true}, (err, files) => {
+            if (err) {
+              console.log(error(err));
+              console.log('\nError ignored..., the analyze is continuing');
+            }
 
-      if (!files) {
-        return resolve([]);
-      }
+            if (!files) {
+              resolve([]);
+              return;
+            }
 
-      return resolve(files);
+            resolve(files);
+          });
+        });
+      }));
+
+      return resolve([].concat.apply([], rslts));
     });
-  });
+  }
+  return Promise.resolve(false);
 };
 
 // Write in a file or in a console, all the MD5 results
@@ -226,6 +236,16 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
   // If we want to rewrite completely the file. Delete and create again it.
   if (pArgvDest && fs.existsSync(pArgvDest) && pArgvRewrite) {
     fs.unlinkSync(pArgvDest);
+  }
+
+  // If we want update the file, we create always a backup .bak of the --dest path
+  if (pArgvDest && fs.existsSync(pArgvDest) && !pArgvRewrite) {
+    try {
+      fs.writeFileSync(pArgvDest + '.bak', fs.readFileSync(pArgvDest));
+      console.log(success(`Backup of ${pArgvDest} successful!`));
+    } catch (err) {
+      console.log(error(err));
+    }
   }
 
   console.log(notice(`\nGENERATOR MODE: Line to add in --dest path file:`));

@@ -4,7 +4,7 @@
 
 const checks = require('./checks.js');
 const utils = require('./utils.js');
-const argv = require('yargs').argv;
+const argv = require('yargs').array('path').argv;
 const fs = require('fs');
 const clc = require('cli-color');
 
@@ -88,65 +88,58 @@ exports.generate = () => {
     // ------------
     // IF we have the --path argument
     if (argv.path) {
-      try {
-        // Get all files including in --path argument
-        utils.recursiveFolders(argv.path).then(filesPath => {
-          console.log(notice(`\nGENERATOR MODE: ${filesPath.length} file${filesPath.length > 1 ? 's' : ''} detected.`));
-          // If we have a file to write the results
-          if (argv.dest) {
-            // If we haven't any argument or --update argument and the file with --dest path is already existing
-            if (!argv.rewrite && fs.existsSync(argv.dest)) {
-              // We analyze to count the difference between the --path and --dest path
-              utils.analyseMD5(argv.dest, filesPath, argv.nospace).then(data => {
-                const elementsToUpdate = data;
-                console.log(warn(`GENERATOR MODE: Update in progress.`));
-                if (elementsToUpdate.getNewFilesToAddArray.length === 0 && elementsToUpdate.getFilesToRemoveArray.length === 0) {
-                  // Sort the output file in the case of an update
-                  if (argv.sort) {
-                    utils.sortFileDest(`${argv.dest}`).then(sourceArray => {
-                      // Read an array and  Write it directly in a file
-                      utils.quickDumpMD5FileDest(sourceArray, argv.dest);
-                      console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
-                    });
-                  }
-                  console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
-                } else {
-                  console.log(success(`${elementsToUpdate.getNewFilesToAddArray.length + elementsToUpdate.getFilesToRemoveArray.length} difference detected between the data gave via --path and --dest arguments`));
-                  utils.writeMD5FileDest(elementsToUpdate.getNewFilesToAddArray, elementsToUpdate.getFilesToRemoveArray, argv.dest, argv.update, argv.rewrite, argv.nospace);
-                  // Sort the output file in the case where we have anything to update
-                  if (argv.sort) {
-                    utils.sortFileDest(`${argv.dest}`).then(sourceArray => {
-                      // Read an array and  Write it directly in a file
-                      utils.quickDumpMD5FileDest(sourceArray, argv.dest);
-                      console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
-                    });
-                  }
-                }
-              });
-              // Otherwise if we have a --dest path but the file doesn't exist yet or we have the --rewrite argument
-            } else if (!fs.existsSync(argv.dest) || argv.rewrite) {
-              // We search and write all MD5 hash in a file or a console
-              utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
-              // Sort the output file in the case of an rewrite
-              if (argv.sort) {
-                utils.sortFileDest(`${argv.dest}`).then(sourceArray => {
-                  // Read an array and  Write it directly in a file
-                  utils.quickDumpMD5FileDest(sourceArray, argv.dest);
-                  console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
-                });
-              }
-            } else {
-              // ERROR UNKNOWN. Need a new else if to catch why
-              console.log(error('GENERATOR MODE: Unknown error detected. Please try --help or --h to resolve the problem. Otherwise, you can create a new issue on github and copy/paste the command line which generates this error'));
+      // Get all files including in --path argument
+      // If simple string
+      const filesPath = await utils.recursiveFolders(argv.path);
+      console.log(notice(`\nGENERATOR MODE: ${filesPath.length} file${filesPath.length > 1 ? 's' : ''} detected.`));
+      // If we have a file to write the results
+      if (argv.dest) {
+        // No --rewrite arg and the file with --dest path is already existing. (We can have --update arg)
+        if (!argv.rewrite && fs.existsSync(argv.dest)) {
+          // We analyze to count the difference between the --path and --dest path
+          const differenceDetected = await Promise.resolve(utils.analyseMD5(argv.dest, filesPath, argv.nospace));
+          console.log(warn(`GENERATOR MODE: Update in progress.`));
+          // If we don't have any diff
+          if (differenceDetected.getNewFilesToAddArray.length === 0 && differenceDetected.getFilesToRemoveArray.length === 0) {
+            // Sort the output file in the case of an update
+            if (argv.sort) {
+              // If we want update the file, we create always a backup .bak of the --dest path
+              fs.writeFileSync(argv.dest + '.bak', fs.readFileSync(argv.dest));
+              console.log(success(`Backup of ${argv.dest} successful!`));
+              const filesToSort = await Promise.resolve(utils.sortFileDest(`${argv.dest}`));
+              utils.quickDumpMD5FileDest(filesToSort, argv.dest);
+              console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
             }
+            console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
           } else {
-            // Otherwise, we haven't dest argument to write it in file
-            // We will show the results only in the console
-            utils.writeMD5FileDest(filesPath, []);
+            console.log(success(`${differenceDetected.getNewFilesToAddArray.length + differenceDetected.getFilesToRemoveArray.length} difference detected between the data gave via --path and --dest arguments`));
+            utils.writeMD5FileDest(differenceDetected.getNewFilesToAddArray, differenceDetected.getFilesToRemoveArray, argv.dest, argv.update, argv.rewrite, argv.nospace);
+            // Sort the output file in the case where we have anything to update
+            if (argv.sort) {
+              const filesToSort = await Promise.resolve(utils.sortFileDest(`${argv.dest}`));
+              utils.quickDumpMD5FileDest(filesToSort, argv.dest);
+              console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
+            }
           }
-        });
-      } catch (err) {
-        console.log(error(err));
+          // Otherwise if we have a --dest path but the file doesn't exist yet or we have the --rewrite argument
+        } else if (argv.rewrite || !fs.existsSync(argv.dest)) {
+          // We search and write all MD5 hash in a file or a console
+          utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
+          // Sort the output file in the case of an rewrite
+          if (argv.sort) {
+            const filesToSort = await Promise.resolve(utils.sortFileDest(`${argv.dest}`));
+            utils.quickDumpMD5FileDest(filesToSort, argv.dest);
+            console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
+          }
+        } else {
+          // ERROR UNKNOWN. Need a new else if to catch why
+          console.log(error('GENERATOR MODE: Unknown error detected. Please try --help or --h to resolve the problem. Otherwise, you can create a new issue on github and copy/paste the command line which generates this error'));
+        }
+      } else {
+        // Otherwise, we haven't dest argument to write it in file
+        // We will show the results only in the console
+        console.log(filesPath);
+        utils.writeMD5FileDest(filesPath, []);
       }
     }
 

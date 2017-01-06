@@ -158,9 +158,9 @@ test('Call isPathCorrect with BAD(FILE) Arg1(String)', t => {
   });
 });
 
-test('Call isPathCorrect with GOOD(FOLDER) Arg1(String)', t => {
+test('Call isPathCorrect with GOOD(FOLDER) Arg1(Array)', t => {
   t.plan(1);
-  const rslt = Promise.resolve(checks.isPathCorrect(__dirname));
+  const rslt = Promise.resolve(checks.isPathCorrect([__dirname]));
   rslt.then(data => {
     t.true(data);
     t.end();

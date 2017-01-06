@@ -3,7 +3,7 @@ const test = require('tape');
 const path = require('path');
 
 // readRecursiveFolders
-test('Call readRecursiveFolders with GOOD Path String', t => {
+test('Call readRecursiveFolders with GOOD Path Strings Array', t => {
   const mock = require('mock-fs');
   t.plan(1);
 
@@ -20,7 +20,7 @@ test('Call readRecursiveFolders with GOOD Path String', t => {
     }
   });
 
-  const rslt = Promise.resolve(utils.recursiveFolders('path/to/'));
+  const rslt = Promise.resolve(utils.recursiveFolders(['path/to/']));
   rslt.then(data => {
     mock.restore();
     const p1 = path.normalize('path/to/dir/test.txt');
@@ -35,10 +35,10 @@ test('Call readRecursiveFolders with GOOD Path String', t => {
   });
 });
 
-test('Call readRecursiveFolders with BAD Path String', t => {
+test('Call readRecursiveFolders with BAD Path Strings Array', t => {
   t.plan(1);
 
-  const rslt = Promise.resolve(utils.recursiveFolders('path/to/dir'));
+  const rslt = Promise.resolve(utils.recursiveFolders(['path/to/dir']));
   rslt.then(data => {
     t.deepEqual(data, []);
     t.end();
