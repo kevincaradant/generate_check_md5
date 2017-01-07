@@ -248,10 +248,12 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
     }
   }
 
-  console.log(notice(`\nGENERATOR MODE: Line to add in --dest path file:`));
-  // For each files to add in dest file
-  if (pFilesToAdd.length === 0) {
-    console.log(notice('0 / 0'));
+  if (pArgvDest) {
+    console.log(notice(`\nGENERATOR MODE: Line to add in --dest path file:`));
+    // For each files to add in dest file
+    if (pFilesToAdd.length === 0) {
+      console.log(notice('0 / 0'));
+    }
   }
 
   pFilesToAdd.forEach((file, index, arr) => {
@@ -298,7 +300,7 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
     });
   }
 
-  console.log(success('\nGENERATOR MODE: Get every MD5 with successful !'));
+  console.log(success('\nGENERATOR MODE: Done !'));
   return true;
 };
 

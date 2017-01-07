@@ -138,7 +138,6 @@ exports.generate = () => {
       } else {
         // Otherwise, we haven't dest argument to write it in file
         // We will show the results only in the console
-        console.log(filesPath);
         utils.writeMD5FileDest(filesPath, []);
       }
     }

@@ -97,9 +97,10 @@ const isExistAtLeastOneParamFromUser = (pArgumentsAllowedArray, pArgumentsSendBy
   return true;
 };
 
+// Return true if paths are corrects
+// Return false if the path with the argument is bad or something goes wrong
 const checkStateFiles = (pResolve, pFile, pTypeArg) => {
   fs.stat(pFile, (err, stats) => {
-    console.log(pFile);
     if (err && err.code === 'ENOENT') {
       if (pTypeArg === 'dest') {
         console.log(notice(`\nArgument --${pTypeArg}: New file located at ' + pFile + ' will be created`));
@@ -144,7 +145,7 @@ const isPathCorrect = pArgvPath => {
       const rslts = await Promise.all(pArgvPath.map(async file => {
         checkStateFiles(resolve, file, 'path');
       }));
-      return resolve(rslts);
+      resolve(rslts);
     });
   }
   return false;
@@ -154,7 +155,6 @@ const isPathCorrect = pArgvPath => {
 // Return false: --dest arg is not correct
 const isDestCorrect = pArgvDest => {
   if (pArgvDest) {
-    console.log(pArgvDest);
     if (typeof pArgvDest !== 'string') {
       console.log(error('\nArgument --dest: The path is not correct.') + notice('\nUse: --dest "your/path/and/your-file.txt"'));
       return false;
