@@ -79,16 +79,16 @@ npm install -g generate_check_md5
 
 ```js
 // To generate MD5 on console (only) :
-gcmd5 --path "/path/to/the/my_directory_with_files/"
+gcmd5 --path "/path/to/the/my_directory_with_files1/" "/path/to/the/my_directory_with_files2/"
 
 // To generate MD5 and write it in the file :
-gcmd5 --path "/path/to/the/my_directory_with_files/" --dest "/path/to/write/file_md5_results.txt"
+gcmd5 --path "/path/to/the/my_directory_with_files1/" "/path/to/the/my_directory_with_files2/" --dest "/path/to/write/file_md5_results.txt"
 
 // To compare two md5 files :
 gcmd5 --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
 // To generate AND compare md5 files in the same :
-gcmd5 --path "/path/to/the/my_directory_with_files/" --dest "/path/to/write/file_md5_results.txt" --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
+gcmd5 --path "/path/to/the/my_directory_with_files1/" "/path/to/the/my_directory_with_files2/" --dest "/path/to/write/file_md5_results.txt" --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
 //------------------------------------  OPTIONAL: ------------------------------------
 // To rename files name in the file of results without space :
@@ -162,16 +162,16 @@ Tape the command: `npm install`
 
 ```js
 // To generate MD5 on console (only) :
-node index.js --path "/path/to/the/my_directory_with_files/"
+node index.js --path "/path/to/the/my_directory_with_files/1" "/path/to/the/my_directory_with_files/2"
 
 // To generate MD5 and write it in the file :
-node index.js --path "/path/to/the/my_directory_with_files/" --dest "/path/to/write/file_md5_results.txt"
+node index.js --path "/path/to/the/my_directory_with_files1/" "/path/to/the/my_directory_with_files2/" --dest "/path/to/write/file_md5_results.txt"
 
 // To compare two md5 files :
 node index.js --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
 // To generate AND compare md5 files in the same :
-node index.js --path "/path/to/the/my_directory_with_files/" --dest "/path/to/write/file_md5_results.txt" --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
+node index.js --path "/path/to/the/my_directory_with_files2/" "/path/to/the/my_directory_with_files2/" --dest "/path/to/write/file_md5_results.txt" --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
 //------------------------------------  OPTIONAL: ------------------------------------
 // To rename files name in the file of results without space :
