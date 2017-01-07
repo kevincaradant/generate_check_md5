@@ -825,3 +825,26 @@ test('Call writeMD5FileDest with GOOD(FILE) Arg1(Array) AND GOOD(FILE) Arg2(Arra
     });
   });
 });
+
+test('Call writeMD5FileDest with GOOD(FILE) Arg1(Array) AND GOOD(FILE) Arg2(Array) with DEST ARG AND NOSPACE ARG', t => {
+  const mock = require('mock-fs');
+  t.plan(1);
+
+  mock({
+    'path/to/dir': {
+      'test.txt': 'file contents here',
+      'test2.txt': 'file contents here',
+      'test3.txt': 'file contents here\nThis is the line 2'
+    }
+  });
+
+  const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test2.txt'));
+  rsltPromise.then(r => {
+    const rslt = Promise.resolve(utils.writeMD5FileDest(r, r, 'path/to/dir/test3.txt', false, false, true));
+    rslt.then(data => {
+      mock.restore();
+      t.true(data);
+      t.end();
+    });
+  });
+});
