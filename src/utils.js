@@ -94,12 +94,18 @@ const analyseMD5 = async (pFileSource, pFilesPath, pArgvNoSpace) => {
   }
 
   const pFilesPathAfterTransform = pFilesPath.map(line => line.split(' ').join('_'));
-
+  let sourceArrayNameFiles = '';
   return new Promise(resolve => {
     readFile(pFileSource).then(data => {
       let getNewFilesToAddArray = [];
       let getFilesToRemoveArray = [];
-      const sourceArrayNameFiles = data.map(line => line.split(' : ')[1]);
+
+      if (process.platform === 'win32') {
+        sourceArrayNameFiles = data.map(line => (line.split(' : ')[1]).split('/').join('\\'));
+      } else {
+        sourceArrayNameFiles = data.map(line => (line.split(' : ')[1]).split('\\').join('/'));
+      }
+
       if (pArgvNoSpace) {
         getNewFilesToAddArray = pFilesPath.filter(line => {
           if (line) {
@@ -272,7 +278,10 @@ const writeMD5FileDest = (pFilesToAdd, pFilesToRemove, pArgvDest, pArgvUpdate, p
       if (pArgvDest) {
         fs.appendFileSync(pArgvDest, `${md5} : ${file}\n`);
       } else {
-        console.log(notice(`${md5} : ${file} \n`));
+        // To have always the same syntax in the file (Windows / Linux / Mac)
+        // I choosed the Linux syntax for the path
+        const fileGeneric = file.split('\\').join('/');
+        console.log(notice(`${md5} : ${fileGeneric} \n`));
       }
     } else {
       console.log(error(`\nGENERATOR MODE: The file "${file}" can't be read. Be sure it exists.`));

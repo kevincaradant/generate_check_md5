@@ -393,8 +393,8 @@ test('Call analyseMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Arra
 
   mock({
     'path/to/dir': {
-      'test.txt': 'file cotents here\nThis is the line 2',
-      'test1.txt': 'file contents here\nTis is the line 2'
+      'test.txt': 'file cotents : here\nThis is the : line 2',
+      'test1.txt': 'file contents : here\nTis is the : line 2'
     }
   });
 
@@ -415,8 +415,8 @@ test('Call analyseMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Arra
 
   mock({
     'path/to/dir': {
-      'test.txt': 'This is the line 2\n Tis is the line 2',
-      'test1.txt': 'This is the line 2'
+      'test.txt': 'This is the : line 2\n Tis is the : line 2',
+      'test1.txt': 'This is the : line 2'
     }
   });
 
