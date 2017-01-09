@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "rootDir": "./src",
+        "outDir": "./bin",
+        "allowJs": true,
+        "lib": ["es5", "es2015.promise", "es2016.array.include"],
+        "target": "es5",
+        "noImplicitAny": true,
+        "noEmitOnError": true,
+        "declaration": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "sourceMap": true
+    },
+
+    "include": [
+        "src/**/*"
+    ],
+
+    "exclude": [
+        "node_modules",
+        "bin",
+        "coverage",
+        "img",
+        "tests",
+        "tmpTests"
+    ]
+}

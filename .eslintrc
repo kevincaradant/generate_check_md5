@@ -1,6 +1,0 @@
-{
-"extends": "xo-space/esnext",
-"rules": {
-  "max-params": [1,6]    // limits the number of parameters that can be used in the function declaration. (off by default)
-}
-}

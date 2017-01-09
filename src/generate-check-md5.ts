@@ -2,19 +2,19 @@
 // --- CONST AND GLOBAL VAR ---
 // ----------------------------
 
-const checks = require('./checks.js');
-const utils = require('./utils.js');
+import * as checks from './checks';
+import * as utils from './utils';
 const argv = require('yargs').array('path').argv;
-const fs = require('fs');
-const clc = require('cli-color');
+import * as fs from 'fs';
+import * as clc from 'cli-color';
 
-exports.generate = () => {
-  const error = clc.red.bold;
-  const success = clc.green.bold;
-  const warn = clc.yellow.bold;
-  const notice = clc.blue.bold;
+export const generate = (): any => {
+  const error: any = clc.red.bold;
+  const success: any = clc.green.bold;
+  const warn:any = clc.yellow.bold;
+  const notice:any = clc.blue.bold;
 
-  const argumentsAllowedArray = [
+  const argumentsAllowedArray: Array<string> = [
     'path',
     'nospace',
     'dest',
@@ -25,7 +25,7 @@ exports.generate = () => {
     'sort'
   ];
 
-  const argumentsSendByUser = Object.keys(argv).filter(obj => obj !== '$0' && obj !== '_');
+  const argumentsSendByUser: Array<string> = Object.keys(argv).filter(obj => obj !== '$0' && obj !== '_');
 
   // ----------------------------
   // --- CONST AND GLOBAL VAR ---
@@ -36,7 +36,7 @@ exports.generate = () => {
   // ------------------
 
   // Check: If the user want show the help list
-  if (!checks.checkHelp(argv.h, argv.help)) {
+  if (!checks.checkHelp(argv.h, argv.help)){
     return;
   }
 
@@ -60,7 +60,7 @@ exports.generate = () => {
   (async function () {
     /* eslint array-callback-return: 0 */
     if ((argv.path || argv.dest) && !argv.source && !argv.compare) {
-      const rslts = await Promise.all([checks.isPathCorrect(argv.path), checks.showPathError(argv.path), checks.isDestCorrect(argv.dest), checks.showDestError(argv.dest)]);
+      const rslts: Array<boolean> = await Promise.all([checks.isPathCorrect(argv.path), checks.showPathError(argv.path), checks.isDestCorrect(argv.dest), checks.showDestError(argv.dest)]);
       if (rslts.includes(false)) {
         process.exit(0);
       }
@@ -90,33 +90,33 @@ exports.generate = () => {
     if (argv.path) {
       // Get all files including in --path argument
       // If simple string
-      const filesPath = await utils.recursiveFolders(argv.path);
+      const filesPath: Array<string> = await utils.recursiveFolders(argv.path);
       console.log(notice(`\nGENERATOR MODE: ${filesPath.length} file${filesPath.length > 1 ? 's' : ''} detected.`));
       // If we have a file to write the results
       if (argv.dest) {
         // No --rewrite arg and the file with --dest path is already existing. (We can have --update arg)
         if (!argv.rewrite && fs.existsSync(argv.dest)) {
           // We analyze to count the difference between the --path and --dest path
-          const differenceDetected = await Promise.resolve(utils.analyseMD5(argv.dest, filesPath, argv.nospace));
+          const differenceDetected: {getNewFilesToAddSet:Set<string>, getFilesToRemoveSet:Set<string>} = await Promise.resolve<any>(utils.analyseMD5(argv.dest, filesPath, argv.nospace));
           console.log(warn(`GENERATOR MODE: Update in progress.`));
           // If we don't have any diff
-          if (differenceDetected.getNewFilesToAddArray.length === 0 && differenceDetected.getFilesToRemoveArray.length === 0) {
+          if (differenceDetected.getNewFilesToAddSet.size === 0 && differenceDetected.getFilesToRemoveSet.size === 0) {
             // Sort the output file in the case of an update
             if (argv.sort) {
               // If we want update the file, we create always a backup .bak of the --dest path
               fs.writeFileSync(argv.dest + '.bak', fs.readFileSync(argv.dest));
               console.log(success(`Backup of ${argv.dest} successful!`));
-              const filesToSort = await Promise.resolve(utils.sortFileDest(`${argv.dest}`));
+              const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${argv.dest}`));
               utils.quickDumpMD5FileDest(filesToSort, argv.dest);
               console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
             }
             console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
           } else {
-            console.log(success(`${differenceDetected.getNewFilesToAddArray.length + differenceDetected.getFilesToRemoveArray.length} difference detected between the data gave via --path and --dest arguments`));
-            utils.writeMD5FileDest(differenceDetected.getNewFilesToAddArray, differenceDetected.getFilesToRemoveArray, argv.dest, argv.update, argv.rewrite, argv.nospace);
+            console.log(success(`${differenceDetected.getNewFilesToAddSet.size + differenceDetected.getFilesToRemoveSet.size} difference detected between the data gave via --path and --dest arguments`));
+            utils.writeMD5FileDest(differenceDetected.getNewFilesToAddSet, differenceDetected.getFilesToRemoveSet, argv.dest, argv.update, argv.rewrite, argv.nospace);
             // Sort the output file in the case where we have anything to update
             if (argv.sort) {
-              const filesToSort = await Promise.resolve(utils.sortFileDest(`${argv.dest}`));
+              const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${argv.dest}`));
               utils.quickDumpMD5FileDest(filesToSort, argv.dest);
               console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
             }
@@ -127,7 +127,7 @@ exports.generate = () => {
           utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
           // Sort the output file in the case of an rewrite
           if (argv.sort) {
-            const filesToSort = await Promise.resolve(utils.sortFileDest(`${argv.dest}`));
+            const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${argv.dest}`));
             utils.quickDumpMD5FileDest(filesToSort, argv.dest);
             console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
           }
@@ -138,7 +138,7 @@ exports.generate = () => {
       } else {
         // Otherwise, we haven't dest argument to write it in file
         // We will show the results only in the console
-        utils.writeMD5FileDest(filesPath, []);
+        utils.writeMD5FileDest(filesPath, [], false, false, false, false);
       }
     }
 

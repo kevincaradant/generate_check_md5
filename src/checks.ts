@@ -1,9 +1,9 @@
-const fs = require('fs');
-const clc = require('cli-color');
+import * as fs from 'fs';
+import * as clc from 'cli-color';
 
-const error = clc.red.bold;
-const warn = clc.yellow.bold;
-const notice = clc.blue.bold;
+const error: any = clc.red.bold;
+const warn: any = clc.yellow.bold;
+const notice: any = clc.blue.bold;
 
 // --------------
 // --- CHECKS ---
@@ -12,7 +12,7 @@ const notice = clc.blue.bold;
 // TRUE => Everything is good
 
 // Show the help text
-const showHelp = () => {
+export const showHelp = (): string => {
   return `
   PARAMS:
 
@@ -53,7 +53,7 @@ const showHelp = () => {
 
 // Return true: Help arg not called
 // Return false: Help arg was called
-const checkHelp = (pArgvH, pArgvHelp) => {
+export const checkHelp = (pArgvH: string, pArgvHelp: string): boolean => {
   if (pArgvH || pArgvHelp) {
     console.log(notice(showHelp()));
     return false;
@@ -63,7 +63,7 @@ const checkHelp = (pArgvH, pArgvHelp) => {
 
 // Return true if all the elements in pArr are included in pHaystack
 // Return false if at least one arg in pArr is not included in pHaystack
-const findElemInArray = (pHaystack, pArr) => {
+export const findElemInArray = (pHaystack: Array<string>, pArr: Array<string>): boolean => {
   return pArr.every(v => {
     return pHaystack.indexOf(v) >= 0;
   });
@@ -71,7 +71,7 @@ const findElemInArray = (pHaystack, pArr) => {
 
 // Return true if at least one element in pArr is included in pHaystack
 // Return false if any arg in pArr are included in pHaystack
-const findAtLeastOneElemInArray = (pHaystack, pArr) => {
+export const findAtLeastOneElemInArray = (pHaystack: Array<string>, pArr: Array<string>): boolean => {
   return pArr.some(v => {
     return pHaystack.indexOf(v) >= 0;
   });
@@ -79,7 +79,7 @@ const findAtLeastOneElemInArray = (pHaystack, pArr) => {
 
 // Return true: ALl arguments exists.
 // Return false: One or more arguments doesn't exist
-const checkAllParamsFromUser = (pArgumentsAllowedArray, pArgumentsSendByUser) => {
+export const checkAllParamsFromUser = (pArgumentsAllowedArray: Array<string>, pArgumentsSendByUser: Array<string>): boolean => {
   if (!findElemInArray(pArgumentsAllowedArray, pArgumentsSendByUser)) {
     console.log(error('\nYou doesn\'t use allowed params.') + notice('\nDo --h or --help for more informations'));
     return false;
@@ -89,7 +89,7 @@ const checkAllParamsFromUser = (pArgumentsAllowedArray, pArgumentsSendByUser) =>
 
 // Return true: At least  one argument exists.
 // Return false: Any argument exist
-const isExistAtLeastOneParamFromUser = (pArgumentsAllowedArray, pArgumentsSendByUser) => {
+export const isExistAtLeastOneParamFromUser = (pArgumentsAllowedArray: Array<string>, pArgumentsSendByUser: Array<string>): boolean => {
   if (!findAtLeastOneElemInArray(pArgumentsAllowedArray, pArgumentsSendByUser)) {
     console.log(error('\nYou should pass valid arguments to use this module'));
     return false;
@@ -99,8 +99,8 @@ const isExistAtLeastOneParamFromUser = (pArgumentsAllowedArray, pArgumentsSendBy
 
 // Return true if paths are corrects
 // Return false if the path with the argument is bad or something goes wrong
-const checkStateFiles = (pResolve, pFile, pTypeArg) => {
-  fs.stat(pFile, (err, stats) => {
+export const checkStateFiles = (pResolve: any, pFile: string, pTypeArg: string): boolean => {
+  fs.stat(pFile, (err: any, stats: any) => {
     if (err && err.code === 'ENOENT') {
       if (pTypeArg === 'dest') {
         console.log(notice(`\nArgument --${pTypeArg}: New file located at ' + pFile + ' will be created`));
@@ -117,7 +117,7 @@ const checkStateFiles = (pResolve, pFile, pTypeArg) => {
     } else if (err) {
       console.log(error(`\nArgument --${pTypeArg}: ${err}`));
       return pResolve(false);
-    }	else if (stats.isFile()) {
+    } else if (stats.isFile()) {
       if (pTypeArg === 'path') {
         console.log(error(`\nArgument --${pTypeArg}: Is a file instead of a directory`));
         return pResolve(false);
@@ -130,78 +130,79 @@ const checkStateFiles = (pResolve, pFile, pTypeArg) => {
     }
     return pResolve(true);
   });
+  return false;
 };
 
 // Return true: --path arg is correct
 // Return false: --path arg is not correct
-const isPathCorrect = pArgvPath => {
+export const isPathCorrect = (pArgvPath: Array<string>): Promise<boolean> => {
   if (pArgvPath) {
     if (!Array.isArray(pArgvPath)) {
       console.log(error('\nArgument --path: The path is not correct.') + notice('\nUse: --path "your/path/and/your-folder-name1" "your/path/and/your-folder2-name"'));
-      return false;
+      return new Promise(resolve => resolve(false));
     }
 
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       const rslts = await Promise.all(pArgvPath.map(async file => {
         checkStateFiles(resolve, file, 'path');
       }));
       resolve(rslts);
     });
   }
-  return false;
+  // return new Promise(resolve => false);
 };
 
 // Return true: --dest arg is correct
 // Return false: --dest arg is not correct
-const isDestCorrect = pArgvDest => {
+export const isDestCorrect = (pArgvDest: string): Promise<boolean> => {
   if (pArgvDest) {
     if (typeof pArgvDest !== 'string') {
       console.log(error('\nArgument --dest: The path is not correct.') + notice('\nUse: --dest "your/path/and/your-file.txt"'));
-      return false;
+      return new Promise(resolve => resolve(false));
     }
 
     return new Promise(resolve => {
       checkStateFiles(resolve, pArgvDest, 'dest');
     });
   }
-  return true;
+  return new Promise(resolve => resolve(true));
 };
 
 // Return true: --source arg is correct
 // Return false: --source arg is not correct
-const isSourceCorrect = pArgvSource => {
+export const isSourceCorrect = (pArgvSource: string): Promise<boolean> => {
   if (pArgvSource) {
     if (typeof pArgvSource !== 'string') {
       console.log(error('\nArgument --source: The path is not correct.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
-      return false;
+      return new Promise(resolve => resolve(false));
     }
 
     return new Promise(resolve => {
       checkStateFiles(resolve, pArgvSource, 'source');
     });
   }
-  return false;
+  return new Promise(resolve => resolve(false));
 };
 
 // Return true: --compare arg is correct
 // Return false: --compare arg is not correct
-const isCompareCorrect = pArgvCompare => {
+export const isCompareCorrect = (pArgvCompare: string): Promise<boolean> => {
   if (pArgvCompare) {
     if (typeof pArgvCompare !== 'string') {
       console.log(error('\nArgument --compare: The path is not correct.') + notice('\nUse: --compare "your/path/and/your-compare-file.txt"'));
-      return false;
+      return new Promise(resolve => resolve(false));
     }
 
     return new Promise(resolve => {
       checkStateFiles(resolve, pArgvCompare, 'compare');
     });
   }
-  return false;
+  return new Promise(resolve => resolve(false));
 };
 
 // Return true: --path arg exist
 // Return false: --path arg doesn't not exist
-const showPathError = pArgvPath => {
+export const showPathError = (pArgvPath: string): boolean => {
   if (!pArgvPath) {
     console.log(error('\nArgument --path: You should give the path of a folder to analyze it.') + notice('\nUse: --path "your/path/and/your-folder-name1" "your/path/and/your-folder-name2"'));
     return false;
@@ -211,7 +212,7 @@ const showPathError = pArgvPath => {
 
 // Return true: --dest arg exist
 // Return false: --dest arg doesn't not exist
-const showDestError = pArgvDest => {
+export const showDestError = (pArgvDest: string): boolean => {
   if (!pArgvDest) {
     console.log(warn('\nArgument --dest: You should give the destination path to write the results in a file.\nUse: --dest "your/path/and/your-file.txt".\nIn the moment, the results will be only show in the console.'));
   }
@@ -220,7 +221,7 @@ const showDestError = pArgvDest => {
 
 // Return true: --source arg exist
 // Return false: --source arg doesn't not exist
-const showSourceError = pArgvSource => {
+export const showSourceError = (pArgvSource: string): boolean  => {
   if (!pArgvSource) {
     console.log(error('\nArgument --source: You should give the path of a folder to compare it.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
     return false;
@@ -230,7 +231,7 @@ const showSourceError = pArgvSource => {
 
 // Return true: --compare arg exist
 // Return false: --compare arg doesn't not exist
-const showCompareError = pArgvCompare => {
+export const showCompareError = (pArgvCompare: string): boolean => {
   if (!pArgvCompare) {
     console.log(error('\nArgument --compare: You should give the path of a folder to compare it.') + notice('\nUse: --compare "your/path/and/your-file.txt"'));
     return false;
@@ -240,7 +241,7 @@ const showCompareError = pArgvCompare => {
 
 // Return true: --rewrite or --update  or any of these arg exist
 // Return false: --rewrite arg doesn't not exist
-const showRewriteUpdateError = (pArgvUpdate, pArgvRewrite) => {
+export const showRewriteUpdateError = (pArgvUpdate: string, pArgvRewrite: string): boolean => {
   if (pArgvUpdate && pArgvRewrite) {
     console.log(error('\nArguments --update && --rewrite: You can\'t give these two parameters in the same time.') + notice('\nUse --update or --rewrite'));
     return false;
@@ -251,22 +252,3 @@ const showRewriteUpdateError = (pArgvUpdate, pArgvRewrite) => {
 // ------------------
 // --- END CHECKS ---
 // ------------------
-
-module.exports = {
-  checkHelp,
-  showHelp,
-  checkStateFiles,
-  findAtLeastOneElemInArray,
-  findElemInArray,
-  checkAllParamsFromUser,
-  isExistAtLeastOneParamFromUser,
-  isPathCorrect,
-  isDestCorrect,
-  isSourceCorrect,
-  isCompareCorrect,
-  showPathError,
-  showDestError,
-  showSourceError,
-  showCompareError,
-  showRewriteUpdateError
-};
