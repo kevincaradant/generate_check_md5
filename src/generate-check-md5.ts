@@ -11,8 +11,8 @@ import * as clc from 'cli-color';
 export const generate = (): any => {
   const error: any = clc.red.bold;
   const success: any = clc.green.bold;
-  const warn:any = clc.yellow.bold;
-  const notice:any = clc.blue.bold;
+  const warn: any = clc.yellow.bold;
+  const notice: any = clc.blue.bold;
 
   const argumentsAllowedArray: Array<string> = [
     'path',
@@ -36,7 +36,7 @@ export const generate = (): any => {
   // ------------------
 
   // Check: If the user want show the help list
-  if (!checks.checkHelp(argv.h, argv.help)){
+  if (!checks.checkHelp(argv.h, argv.help)) {
     return;
   }
 
@@ -90,14 +90,14 @@ export const generate = (): any => {
     if (argv.path) {
       // Get all files including in --path argument
       // If simple string
-      const filesPath: Array<string> = await utils.recursiveFolders(argv.path);
-      console.log(notice(`\nGENERATOR MODE: ${filesPath.length} file${filesPath.length > 1 ? 's' : ''} detected.`));
+      const filesPath: Set<string> = await utils.recursiveFolders(argv.path);
+      console.log(notice(`\nGENERATOR MODE: ${filesPath.size} file${filesPath.size > 1 ? 's' : ''} detected.`));
       // If we have a file to write the results
       if (argv.dest) {
         // No --rewrite arg and the file with --dest path is already existing. (We can have --update arg)
         if (!argv.rewrite && fs.existsSync(argv.dest)) {
           // We analyze to count the difference between the --path and --dest path
-          const differenceDetected: {getNewFilesToAddSet:Set<string>, getFilesToRemoveSet:Set<string>} = await Promise.resolve<any>(utils.analyseMD5(argv.dest, filesPath, argv.nospace));
+          const differenceDetected: {getNewFilesToAddSet: Set<string>, getFilesToRemoveSet: Set<string>} = await Promise.resolve<any>(utils.analyseMD5(argv.dest, filesPath, argv.nospace));
           console.log(warn(`GENERATOR MODE: Update in progress.`));
           // If we don't have any diff
           if (differenceDetected.getNewFilesToAddSet.size === 0 && differenceDetected.getFilesToRemoveSet.size === 0) {
@@ -113,7 +113,7 @@ export const generate = (): any => {
             console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
           } else {
             console.log(success(`${differenceDetected.getNewFilesToAddSet.size + differenceDetected.getFilesToRemoveSet.size} difference detected between the data gave via --path and --dest arguments`));
-            utils.writeMD5FileDest(differenceDetected.getNewFilesToAddSet, differenceDetected.getFilesToRemoveSet, argv.dest, argv.update, argv.rewrite, argv.nospace);
+            utils.writeMD5FileDest(differenceDetected.getNewFilesToAddSet, differenceDetected.getFilesToRemoveSet, argv.dest, argv.rewrite, argv.nospace);
             // Sort the output file in the case where we have anything to update
             if (argv.sort) {
               const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${argv.dest}`));
@@ -124,7 +124,7 @@ export const generate = (): any => {
           // Otherwise if we have a --dest path but the file doesn't exist yet or we have the --rewrite argument
         } else if (argv.rewrite || !fs.existsSync(argv.dest)) {
           // We search and write all MD5 hash in a file or a console
-          utils.writeMD5FileDest(filesPath, [], argv.dest, argv.update, argv.rewrite, argv.nospace);
+          utils.writeMD5FileDest(filesPath, new Set<string>(), argv.dest, argv.rewrite, argv.nospace);
           // Sort the output file in the case of an rewrite
           if (argv.sort) {
             const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${argv.dest}`));
@@ -138,7 +138,7 @@ export const generate = (): any => {
       } else {
         // Otherwise, we haven't dest argument to write it in file
         // We will show the results only in the console
-        utils.writeMD5FileDest(filesPath, [], false, false, false, false);
+        utils.writeMD5FileDest(filesPath, new Set<string>(), null, false, false);
       }
     }
 

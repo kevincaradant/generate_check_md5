@@ -10,3 +10,4 @@ coverage
 npm-debug.log*
 tmpTests
 .nyc_output
+.vscode

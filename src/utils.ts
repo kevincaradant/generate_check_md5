@@ -41,16 +41,16 @@ export const readFile = async (pFile: string): Promise<Array<string>> => {
 
 // For each line of a the pMapCompare. We check if the content is included in the pMapSource.
 export const checkMD5 = (pMapSource: Map<string, string>, pMapCompare: Map<string, string>) => {
-  const getFiles = new Set([...pMapCompare].filter(line => {
-    return !pMapSource.has(line[0]);
-  }));
+  let cptCheck = 0;
+  pMapCompare.forEach((value: string, key: string) => {
+    if (!pMapSource.has(key)) {
+      console.log(error('\nCOMPARATOR MODE: Error with the MD5 line: ') + notice(value + ' : ' + key));
+      cptCheck++;
+    }
+  });
 
-  if (getFiles.size === 0) {
+  if (cptCheck === 0) {
     console.log(success('\nCOMPARATOR MODE: No error MD5 detected'));
-  } else {
-    getFiles.forEach(line => {
-      console.log(error('\nCOMPARATOR MODE: Error with the MD5 line: ') + notice(line[0] + ' : ' + line[1]));
-    });
   }
 
   return true;
@@ -70,11 +70,11 @@ export const compareMD5 = async (pFileSource: string, pFileCompare: string) => {
 };
 
 // Build an array with only the new files which are not present in the md5 file (--dest)
-export const analyseMD5 = async (pFileSource: string, pFilesPath: Array<string>, pArgvNoSpace: string) => {
+export const analyseMD5 = async (pFileSource: string, pFilesPath: Set<string>, pArgvNoSpace: string) => {
   const mapSourceNameFiles = new Map<string, string>();
   const setPathAfterTransform = new Set<string>();
 
-  pFilesPath.map(line => setPathAfterTransform.add(line.split(' ').join('_')));
+  pFilesPath.forEach(line => setPathAfterTransform.add(line.split(' ').join('_')));
   return new Promise(resolve => {
     readFile(pFileSource).then(data => {
       let getNewFilesToAddSet = new Set<string>();
@@ -86,22 +86,22 @@ export const analyseMD5 = async (pFileSource: string, pFilesPath: Array<string>,
         data.map(line => mapSourceNameFiles.set((line.split(' : ')[1]).split('\\').join('/'), line.split(' : ')[0]));
       }
 
-      const keys = Array.from(mapSourceNameFiles.keys());
-
+      const keysSNF = Array.from(mapSourceNameFiles.keys());
+      const keysFP = Array.from(pFilesPath.keys());
       if (pArgvNoSpace) {
-        getNewFilesToAddSet = new Set([...pFilesPath].filter(line => {
+        getNewFilesToAddSet = new Set([...keysFP].filter(line => {
           return !mapSourceNameFiles.has(line.split(' ').join('_'));
         }));
-        getFilesToRemoveSet = new Set(keys.filter(line => {
+        getFilesToRemoveSet = new Set(keysSNF.filter(line => {
           return !setPathAfterTransform.has(line);
         }));
       } else {
-        getNewFilesToAddSet = new Set([...pFilesPath].filter(line => {
+        getNewFilesToAddSet = new Set([...keysFP].filter(line => {
           return !mapSourceNameFiles.has(line);
         }));
 
-        getFilesToRemoveSet = new Set([...keys].filter(line => {
-          return !new Set([...pFilesPath]).has(line);
+        getFilesToRemoveSet = new Set([...keysSNF].filter(line => {
+          return !new Set([...keysFP]).has(line);
         }));
       }
       return resolve({ getNewFilesToAddSet, getFilesToRemoveSet });
@@ -163,10 +163,10 @@ export const sortFileDest = async (pFile: string): Promise<Array<string>> => {
   });
 };
 
-export const recursiveFolders = (pArgvPath: Array<string>): Promise<Array<string>> => {
+export const recursiveFolders = (pArgvPath: Array<string>): Promise<Set<string>> => {
   return new Promise(async resolve => {
     const rslts = await Promise.all(pArgvPath.map(file => {
-      return new Promise(resolve => {
+      return new Promise(resolve2 => {
         recursive(file, { forceContinue: true }, (err: any, files: Array<string>) => {
           if (err) {
             console.log(error(err));
@@ -174,11 +174,11 @@ export const recursiveFolders = (pArgvPath: Array<string>): Promise<Array<string
           }
 
           if (!files) {
-            resolve([]);
+            resolve2(new Set<string>());
             return;
           }
 
-          resolve(files);
+          resolve2(files);
         });
       });
     }));
@@ -187,7 +187,7 @@ export const recursiveFolders = (pArgvPath: Array<string>): Promise<Array<string
 };
 
 // Write in a file or in a console, all the MD5 results
-export const writeMD5FileDest = (pFilesToAdd: Map<string, string>, pFilesToRemove: Map<string, string>, pArgvDest: string, pArgvUpdate: string, pArgvRewrite: string, pArgvNoSpace: string) => {
+export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<string>, pArgvDest: string, pArgvRewrite: boolean, pArgvNoSpace: boolean) => {
 
   // If we want to rewrite completely the file. Delete and create again it.
   if (pArgvDest && fs.existsSync(pArgvDest) && pArgvRewrite) {

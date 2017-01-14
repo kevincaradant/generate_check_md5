@@ -3,3 +3,4 @@ tests/
 coverage/
 tmpTests/
 .nyc_output/
+.vscode/

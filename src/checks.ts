@@ -149,7 +149,7 @@ export const isPathCorrect = (pArgvPath: Array<string>): Promise<boolean> => {
       resolve(rslts);
     });
   }
-  // return new Promise(resolve => false);
+  return new Promise(resolve => resolve(false));
 };
 
 // Return true: --dest arg is correct
@@ -221,7 +221,7 @@ export const showDestError = (pArgvDest: string): boolean => {
 
 // Return true: --source arg exist
 // Return false: --source arg doesn't not exist
-export const showSourceError = (pArgvSource: string): boolean  => {
+export const showSourceError = (pArgvSource: string): boolean => {
   if (!pArgvSource) {
     console.log(error('\nArgument --source: You should give the path of a folder to compare it.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
     return false;
