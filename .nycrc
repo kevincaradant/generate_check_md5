@@ -1,16 +1,22 @@
 {
   "include": [
-    "tmpTests/**/*.js"
+    "src/**/*.ts"
   ],
   "exclude": [
-    "tmpTests/**/*.spec.js",
-    "tmpTests/index.js",
-    "tmpTests/generate-check-md5.js"
+    "tests/**/*.spec.js",
+    "bin/**/*",
+    "node_modules/**/*"
   ],
   "reporter": [
     "lcov",
     "text-summary"
   ],
+  "extension": [
+    ".ts"
+  ],
+  "require": [
+      "ts-node/register"
+   ],
   "all": true,
   "check-coverage": true
 }
