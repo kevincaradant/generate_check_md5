@@ -5,28 +5,21 @@ const md5File = require('md5-file');
 import * as fs from 'fs';
 const LineByLineReader = require('line-by-line');
 import * as clc from 'cli-color';
-import * as checks from './checks';
 const recursive = require('recursive-readdir');
 
+const separatorHashName = ' : ';
 const error: any = clc.red.bold;
 const success: any = clc.green.bold;
 const notice: any = clc.blue.bold;
 
 // A simple method to read line by line a file
 export const readFile = async (pFile: string): Promise<Array<string>> => {
-  const rslt: boolean = await Promise.resolve(checks.isSourceCorrect(pFile));
-  if (!rslt) {
-    console.log(error('\nreadFile(pFile): pFile => pFile is wrong'));
-    return new Promise<Array<string>>(resolve => resolve([]));
-  }
-
   const lineByLineReader: any = new LineByLineReader(pFile);
   const pArrayResults: Array<string> = [];
-
-  return new Promise<Array<string>>((resolve, reject) => {
+  return new Promise<Array<string>>((resolve) => {
     lineByLineReader.on('error', (err: string) => {
       console.log(error(err));
-      reject(err);
+      resolve(pArrayResults);
     });
 
     lineByLineReader.on('line', (line: string) => {
@@ -40,11 +33,11 @@ export const readFile = async (pFile: string): Promise<Array<string>> => {
 };
 
 // For each line of a the pMapCompare. We check if the content is included in the pMapSource.
-export const checkMD5 = (pMapSource: Map<string, string>, pMapCompare: Map<string, string>) => {
+export const checkMD5 = (pMapSource: Map<string, string>, pMapCompare: Map<string, string>): boolean => {
   let cptCheck = 0;
   pMapCompare.forEach((value: string, key: string) => {
     if (!pMapSource.has(key)) {
-      console.log(error('\nCOMPARATOR MODE: Error with the MD5 line: ') + notice(value + ' : ' + key));
+      console.log(error('\nCOMPARATOR MODE: Error with the MD5 line: ') + notice(value + separatorHashName + key));
       cptCheck++;
     }
   });
@@ -62,15 +55,15 @@ export const compareMD5 = async (pFileSource: string, pFileCompare: string) => {
   const mapCompare = new Map<string, string>();
 
   const rslts = await Promise.all([readFile(pFileSource), readFile(pFileCompare)]);
-  rslts[0].map(line => mapSource.set(line.split(' : ')[1], line.split(' : ')[0]));
-  rslts[1].map(line => mapCompare.set(line.split(' : ')[1], line.split(' : ')[0]));
+  rslts[0].map(line => mapSource.set(line.split(separatorHashName)[1], line.split(separatorHashName)[0]));
+  rslts[1].map(line => mapCompare.set(line.split(separatorHashName)[1], line.split(separatorHashName)[0]));
 
   checkMD5(mapSource, mapCompare);
   return true;
 };
 
 // Build an array with only the new files which are not present in the md5 file (--dest)
-export const analyseMD5 = async (pFileSource: string, pFilesPath: Set<string>, pArgvNoSpace: string) => {
+export const analyseMD5 = async (pFileSource: string, pFilesPath: Set<string>, pArgvNoSpace?: boolean) => {
   const mapSourceNameFiles = new Map<string, string>();
   const setPathAfterTransform = new Set<string>();
 
@@ -81,13 +74,14 @@ export const analyseMD5 = async (pFileSource: string, pFilesPath: Set<string>, p
       let getFilesToRemoveSet = new Set<string>();
 
       if (process.platform === 'win32') {
-        data.map(line => mapSourceNameFiles.set((line.split(' : ')[1]).split('/').join('\\'), line.split(' : ')[0]));
+        data.map(line => mapSourceNameFiles.set((line.split(separatorHashName)[1]).split('/').join('\\'), line.split(separatorHashName)[0]));
       } else {
-        data.map(line => mapSourceNameFiles.set((line.split(' : ')[1]).split('\\').join('/'), line.split(' : ')[0]));
+        data.map(line => mapSourceNameFiles.set((line.split(separatorHashName)[1]).split('\\').join('/'), line.split(separatorHashName)[0]));
       }
 
       const keysSNF = Array.from(mapSourceNameFiles.keys());
       const keysFP = Array.from(pFilesPath.keys());
+
       if (pArgvNoSpace) {
         getNewFilesToAddSet = new Set([...keysFP].filter(line => {
           return !mapSourceNameFiles.has(line.split(' ').join('_'));
@@ -101,9 +95,10 @@ export const analyseMD5 = async (pFileSource: string, pFilesPath: Set<string>, p
         }));
 
         getFilesToRemoveSet = new Set([...keysSNF].filter(line => {
-          return !new Set([...keysFP]).has(line);
+          return !pFilesPath.has(line);
         }));
       }
+
       return resolve({ getNewFilesToAddSet, getFilesToRemoveSet });
     });
   });
@@ -118,9 +113,7 @@ export const quickDumpMD5FileDest = async (pFiles: Array<string>, pArgvDest: str
     });
     return true;
   }
-
   console.log(error(`GENERATOR MODE: Error to find the file "--dest" at: ${pArgvDest}`));
-
   return false;
 };
 
@@ -128,7 +121,8 @@ export const quickDumpMD5FileDest = async (pFiles: Array<string>, pArgvDest: str
 export const naturalCompare = (a: string, b: string) => {
   const ax: Array<any> = [];
   const bx: Array<any> = [];
-
+console.log(a);
+console.log(b);
   a.replace(/(\d+)|(\D+)/g, (_, $1, $2): any => {
     ax.push([$1 || Infinity, $2 || '']);
   });
@@ -150,22 +144,16 @@ export const naturalCompare = (a: string, b: string) => {
 
 // Custom Sort to order by ASC
 export const sortFileDest = async (pFile: string): Promise<Array<string>> => {
-  const rslt = await Promise.resolve(checks.isSourceCorrect(pFile));
-  if (!rslt) {
-    console.log(error('\nsortFileDest(pFile) : pFile => pFile is wrong'));
-    return new Promise<Array<string>>(resolve => resolve([]));
-  }
-
   return new Promise<Array<string>>(async resolve => {
-    let rsltsReadFile = await readFile(pFile);
-    rsltsReadFile = rsltsReadFile.map(line => line.split(' : ')).sort((e1, e2) => naturalCompare(e1[1], e2[1])).map(l => l.join(' : '));
+    let rsltsReadFile: Array<string> = await readFile(pFile);
+    rsltsReadFile = rsltsReadFile.map(line => line.split(separatorHashName)).sort((e1, e2) => naturalCompare(e1[1], e2[1])).map(l => l.join(separatorHashName));
     return resolve(rsltsReadFile);
   });
 };
 
-export const recursiveFolders = (pArgvPath: Array<string>): Promise<Set<string>> => {
+export const recursiveFolders = (pArgvPath: Array<string>): Promise<Array<Set<string>>> => {
   return new Promise(async resolve => {
-    const rslts = await Promise.all(pArgvPath.map(file => {
+    const rslts: Array<Set<string>> = await Promise.all<any>(pArgvPath.map(file => {
       return new Promise(resolve2 => {
         recursive(file, { forceContinue: true }, (err: any, files: Array<string>) => {
           if (err) {
@@ -177,17 +165,16 @@ export const recursiveFolders = (pArgvPath: Array<string>): Promise<Set<string>>
             resolve2(new Set<string>());
             return;
           }
-
-          resolve2(files);
+          resolve2(new Set<string>(files));
         });
       });
     }));
-    return resolve([].concat.apply([], rslts));
+    return resolve(rslts);
   });
 };
 
 // Write in a file or in a console, all the MD5 results
-export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<string>, pArgvDest: string, pArgvRewrite: boolean, pArgvNoSpace: boolean) => {
+export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<string>, pArgvRewrite?: boolean, pArgvNoSpace?: boolean, pArgvDest?: string) => {
 
   // If we want to rewrite completely the file. Delete and create again it.
   if (pArgvDest && fs.existsSync(pArgvDest) && pArgvRewrite) {
@@ -229,12 +216,12 @@ export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<s
 
       // We try to add lines only if the argument --dest is filled.
       if (pArgvDest) {
-        fs.appendFileSync(pArgvDest, `${md5} : ${file}\n`);
+        fs.appendFileSync(pArgvDest, `${md5}${separatorHashName}${file}\n`);
       } else {
         // To have always the same syntax in the file (Windows / Linux / Mac)
         // I choosed the Linux syntax for the path
         const fileGeneric = file.split('\\').join('/');
-        console.log(notice(`${md5} : ${fileGeneric} \n`));
+        console.log(notice(`${md5}${separatorHashName}${fileGeneric} \n`));
       }
     } else {
       console.log(error(`\nGENERATOR MODE: The file "${file}" can't be read. Be sure it exists.`));

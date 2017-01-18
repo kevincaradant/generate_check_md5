@@ -2,16 +2,17 @@
     "name": "generate_check_md5",
     "version": "1.11.0",
     "description": "Generate and compare MD5 files",
-    "main": "./src/index.js",
+    "main": "./src/index.ts",
     "scripts": {
         "start": "npm run build",
         "clean": "rimraf bin && rimraf coverage",
         "lint": "tslint './src/**/*.ts' ",
         "check": "npm run lint -s && dependency-check ./package.json",
-        "test": "tape -r tmpTests/**/*.js | tspec",
-        "test:watch": "onchange \"tests/**/*.js\" \"src/**/*.js\" -i -p -- npm run test",
+        "pretest": "tsc",
+        "test": "tape bin/tests/**/*.spec.js | tspec",
+        "test:watch": "onchange \"tests/**/*.ts\" \"src/**/*.ts\" -i -p -- npm run test",
         "compile": "tsc",
-        "compile:watch": "onchange \"src/**/*.js\" -i -p -- npm run compile",
+        "compile:watch": "onchange \"src/**/*.ts\" -i -p -- npm run compile",
         "build": "npm run compile",
         "postbuild": "npm run check -s && npm run test -s",
         "coverage": "nyc npm run test",
@@ -30,7 +31,7 @@
         "url": "git+https://github.com/kevincaradant/generate_check_md5.git"
     },
     "bin": {
-        "gcmd5": "./bin/index.js"
+        "gcmd5": "./bin/src/index.js"
     },
     "preferGlobal": true,
     "keywords": [
@@ -69,6 +70,8 @@
         "rimraf": "2.5.4",
         "tap-spec": "4.1.1",
         "tape": "4.6.3",
+        "ts-node": "2.0.0",
+        "tslib": "1.5.0",
         "tslint": "4.3.1",
         "typescript": "2.1.5"
     }

@@ -1,37 +1,36 @@
 {
     "compilerOptions": {
-        "rootDir": "./src",
         "outDir": "./bin",
         "allowJs": true,
         "typeRoots": ["node_modules/@types"],
         "types": ["node", "promise", "cli-color", "yargs"],
-        "lib": ["es5", "es2017", "es2015.promise", "es2016.array.include"],
+        "lib": ["es5", "es2017", "es2015.promise"],
         "target": "es5",
         "noImplicitAny": true,
         "noEmit": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
-        "noEmitHelpers": false,
+        "importHelpers": true,
+        "noEmitHelpers": true,
         "noEmitOnError": true,
         "removeComments": true,
         "preserveConstEnums": true,
         "noUnusedLocals": true,
-        "strictNullChecks": false,
+        "strictNullChecks": true,
         "noUnusedParameters": true,
         "sourceMap": true
     },
 
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "tests/**/*"
     ],
 
     "exclude": [
         "./node_modules",
         "./bin",
         "./coverage",
-        "./img",
-        "./tests",
-        "./tmpTests"
+        "./img"
     ]
 }

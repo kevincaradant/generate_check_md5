@@ -90,15 +90,15 @@ export const generate = (): any => {
     if (argv.path) {
       // Get all files including in --path argument
       // If simple string
-      const filesPath: Set<string> = await utils.recursiveFolders(argv.path);
-      console.log(notice(`\nGENERATOR MODE: ${filesPath.size} file${filesPath.size > 1 ? 's' : ''} detected.`));
+      const filesPath = await utils.recursiveFolders(argv.path);
+      console.log(notice(`\nGENERATOR MODE: ${filesPath[0].size} file${filesPath[0].size > 1 ? 's' : ''} detected.`));
       // If we have a file to write the results
       if (argv.dest) {
         // No --rewrite arg and the file with --dest path is already existing. (We can have --update arg)
         if (!argv.rewrite && fs.existsSync(argv.dest)) {
           // We analyze to count the difference between the --path and --dest path
-          const differenceDetected: {getNewFilesToAddSet: Set<string>, getFilesToRemoveSet: Set<string>} = await Promise.resolve<any>(utils.analyseMD5(argv.dest, filesPath, argv.nospace));
           console.log(warn(`GENERATOR MODE: Update in progress.`));
+          const differenceDetected: {getNewFilesToAddSet: Set<string>, getFilesToRemoveSet: Set<string>} = await Promise.resolve<any>(utils.analyseMD5(argv.dest, filesPath[0], argv.nospace));
           // If we don't have any diff
           if (differenceDetected.getNewFilesToAddSet.size === 0 && differenceDetected.getFilesToRemoveSet.size === 0) {
             // Sort the output file in the case of an update
@@ -124,7 +124,7 @@ export const generate = (): any => {
           // Otherwise if we have a --dest path but the file doesn't exist yet or we have the --rewrite argument
         } else if (argv.rewrite || !fs.existsSync(argv.dest)) {
           // We search and write all MD5 hash in a file or a console
-          utils.writeMD5FileDest(filesPath, new Set<string>(), argv.dest, argv.rewrite, argv.nospace);
+          utils.writeMD5FileDest(filesPath[0], new Set<string>(), argv.dest, argv.rewrite, argv.nospace);
           // Sort the output file in the case of an rewrite
           if (argv.sort) {
             const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${argv.dest}`));
@@ -138,7 +138,7 @@ export const generate = (): any => {
       } else {
         // Otherwise, we haven't dest argument to write it in file
         // We will show the results only in the console
-        utils.writeMD5FileDest(filesPath, new Set<string>(), null, false, false);
+        utils.writeMD5FileDest(filesPath[0], new Set<string>(), false, false);
       }
     }
 

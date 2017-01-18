@@ -53,7 +53,7 @@ export const showHelp = (): string => {
 
 // Return true: Help arg not called
 // Return false: Help arg was called
-export const checkHelp = (pArgvH: string, pArgvHelp: string): boolean => {
+export const checkHelp = (pArgvH?: boolean, pArgvHelp?: boolean): boolean => {
   if (pArgvH || pArgvHelp) {
     console.log(notice(showHelp()));
     return false;
@@ -154,7 +154,7 @@ export const isPathCorrect = (pArgvPath: Array<string>): Promise<boolean> => {
 
 // Return true: --dest arg is correct
 // Return false: --dest arg is not correct
-export const isDestCorrect = (pArgvDest: string): Promise<boolean> => {
+export const isDestCorrect = (pArgvDest?: string): Promise<boolean> => {
   if (pArgvDest) {
     if (typeof pArgvDest !== 'string') {
       console.log(error('\nArgument --dest: The path is not correct.') + notice('\nUse: --dest "your/path/and/your-file.txt"'));
@@ -170,7 +170,7 @@ export const isDestCorrect = (pArgvDest: string): Promise<boolean> => {
 
 // Return true: --source arg is correct
 // Return false: --source arg is not correct
-export const isSourceCorrect = (pArgvSource: string): Promise<boolean> => {
+export const isSourceCorrect = (pArgvSource?: string): Promise<boolean> => {
   if (pArgvSource) {
     if (typeof pArgvSource !== 'string') {
       console.log(error('\nArgument --source: The path is not correct.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
@@ -186,7 +186,7 @@ export const isSourceCorrect = (pArgvSource: string): Promise<boolean> => {
 
 // Return true: --compare arg is correct
 // Return false: --compare arg is not correct
-export const isCompareCorrect = (pArgvCompare: string): Promise<boolean> => {
+export const isCompareCorrect = (pArgvCompare?: string): Promise<boolean> => {
   if (pArgvCompare) {
     if (typeof pArgvCompare !== 'string') {
       console.log(error('\nArgument --compare: The path is not correct.') + notice('\nUse: --compare "your/path/and/your-compare-file.txt"'));
@@ -202,7 +202,7 @@ export const isCompareCorrect = (pArgvCompare: string): Promise<boolean> => {
 
 // Return true: --path arg exist
 // Return false: --path arg doesn't not exist
-export const showPathError = (pArgvPath: string): boolean => {
+export const showPathError = (pArgvPath: Array<string>): boolean => {
   if (!pArgvPath) {
     console.log(error('\nArgument --path: You should give the path of a folder to analyze it.') + notice('\nUse: --path "your/path/and/your-folder-name1" "your/path/and/your-folder-name2"'));
     return false;
@@ -212,7 +212,7 @@ export const showPathError = (pArgvPath: string): boolean => {
 
 // Return true: --dest arg exist
 // Return false: --dest arg doesn't not exist
-export const showDestError = (pArgvDest: string): boolean => {
+export const showDestError = (pArgvDest: boolean): boolean => {
   if (!pArgvDest) {
     console.log(warn('\nArgument --dest: You should give the destination path to write the results in a file.\nUse: --dest "your/path/and/your-file.txt".\nIn the moment, the results will be only show in the console.'));
   }
@@ -221,7 +221,7 @@ export const showDestError = (pArgvDest: string): boolean => {
 
 // Return true: --source arg exist
 // Return false: --source arg doesn't not exist
-export const showSourceError = (pArgvSource: string): boolean => {
+export const showSourceError = (pArgvSource: boolean): boolean => {
   if (!pArgvSource) {
     console.log(error('\nArgument --source: You should give the path of a folder to compare it.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
     return false;
@@ -231,7 +231,7 @@ export const showSourceError = (pArgvSource: string): boolean => {
 
 // Return true: --compare arg exist
 // Return false: --compare arg doesn't not exist
-export const showCompareError = (pArgvCompare: string): boolean => {
+export const showCompareError = (pArgvCompare: boolean): boolean => {
   if (!pArgvCompare) {
     console.log(error('\nArgument --compare: You should give the path of a folder to compare it.') + notice('\nUse: --compare "your/path/and/your-file.txt"'));
     return false;
@@ -241,7 +241,7 @@ export const showCompareError = (pArgvCompare: string): boolean => {
 
 // Return true: --rewrite or --update  or any of these arg exist
 // Return false: --rewrite arg doesn't not exist
-export const showRewriteUpdateError = (pArgvUpdate: string, pArgvRewrite: string): boolean => {
+export const showRewriteUpdateError = (pArgvUpdate: boolean, pArgvRewrite: boolean): boolean => {
   if (pArgvUpdate && pArgvRewrite) {
     console.log(error('\nArguments --update && --rewrite: You can\'t give these two parameters in the same time.') + notice('\nUse --update or --rewrite'));
     return false;
