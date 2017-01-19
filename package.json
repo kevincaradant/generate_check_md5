@@ -6,7 +6,7 @@
     "scripts": {
         "start": "npm run build",
         "clean": "rimraf bin && rimraf coverage",
-        "lint": "tslint './src/**/*.ts' ",
+        "lint": "tslint './src/**/*.ts' 'tests/**/*.ts'",
         "check": "npm run lint -s && dependency-check ./package.json",
         "pretest": "tsc",
         "test": "tape bin/tests/**/*.spec.js | tspec",
@@ -51,8 +51,6 @@
     },
     "homepage": "https://github.com/kevincaradant/generate_check_md5#readme",
     "dependencies": {
-        "@types/cli-color": "0.3.29",
-        "@types/yargs": "6.5.0",
         "cli-color": "1.1.0",
         "line-by-line": "0.1.5",
         "md5-file": "3.1.1",
@@ -62,6 +60,8 @@
     "devDependencies": {
         "@types/node": "7.0.0",
         "@types/promise": "7.1.30",
+        "@types/cli-color": "0.3.29",
+        "@types/yargs": "6.5.0",
         "coveralls": "2.11.15",
         "dependency-check": "2.7.0",
         "mock-fs": "3.12.1",

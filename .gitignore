@@ -2,12 +2,9 @@
 logs
 *.log
 /node_modules
-/bin/generate-check-md5.js
-/bin/checks.js
-/bin/utils.js
+/bin
 tmp
-coverage
+/coverage
 npm-debug.log*
-tmpTests
 .nyc_output
 .vscode

@@ -2,7 +2,6 @@ import * as utils from '../src/utils';
 const test = require('tape');
 const path = require('path');
 (() => {
-
   // readRecursiveFolders
   test('Call readRecursiveFolders with GOOD Path Strings Array', (t: any) => {
     const mock = require('mock-fs');
@@ -324,7 +323,7 @@ const path = require('path');
       const rslt = Promise.resolve(utils.analyseMD5('path/to/dir/test1.txt', setSource, true));
       rslt.then(data => {
         mock.restore();
-        const arr = ['This is the line 2']
+        const arr = ['This is the line 2'];
         const arr2 = ['1234567 : Ths is the line 2'];
         t.deepEquals(data, {getFilesToRemoveSet : new Set(arr), getNewFilesToAddSet: new Set(arr2)});
         t.end();
