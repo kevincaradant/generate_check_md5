@@ -121,8 +121,8 @@ export const quickDumpMD5FileDest = async (pFiles: Array<string>, pArgvDest: str
 export const naturalCompare = (a: string, b: string) => {
   const ax: Array<any> = [];
   const bx: Array<any> = [];
-console.log(a);
-console.log(b);
+  console.log(a);
+  console.log(b);
   a.replace(/(\d+)|(\D+)/g, (_, $1, $2): any => {
     ax.push([$1 || Infinity, $2 || '']);
   });
@@ -173,24 +173,8 @@ export const recursiveFolders = (pArgvPath: Array<string>): Promise<Array<Set<st
   });
 };
 
-// Write in a file or in a console, all the MD5 results
-export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<string>, pArgvRewrite?: boolean, pArgvNoSpace?: boolean, pArgvDest?: string) => {
-
-  // If we want to rewrite completely the file. Delete and create again it.
-  if (pArgvDest && fs.existsSync(pArgvDest) && pArgvRewrite) {
-    fs.unlinkSync(pArgvDest);
-  }
-
-  // If we want update the file, we create always a backup .bak of the --dest path
-  if (pArgvDest && fs.existsSync(pArgvDest) && !pArgvRewrite) {
-    try {
-      fs.writeFileSync(pArgvDest + '.bak', fs.readFileSync(pArgvDest));
-      console.log(success(`\nBackup of ${pArgvDest} successful!`));
-    } catch (err) {
-      console.log(error(err));
-    }
-  }
-
+// Get all path with md5 which have to be add in the dest file
+const getFilesToAdd = (pFilesToAdd: Set<string>, pArgvDest?: string, pArgvNoSpace?: boolean) => {
   if (pArgvDest) {
     console.log(notice(`\nGENERATOR MODE: Line to add in --dest path file:`));
     // For each files to add in dest file
@@ -227,7 +211,10 @@ export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<s
       console.log(error(`\nGENERATOR MODE: The file "${file}" can't be read. Be sure it exists.`));
     }
   }
+};
 
+// Get all path with md5 which have to be remove from the dest file because some paths doesn't exist anymore
+const getFilesToRemove = (pFilesToRemove: Set<string>, pArgvDest?: string): void => {
   if (pArgvDest) {
     console.log(notice(`\nGENERATOR MODE: Line to remove from --dest path file:`));
 
@@ -261,6 +248,30 @@ export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<s
       }
     }
   }
+};
+
+
+
+// Write in a file or in a console, all the MD5 results
+export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<string>, pArgvRewrite?: boolean, pArgvNoSpace?: boolean, pArgvDest?: string) => {
+
+  // If we want to rewrite completely the file. Delete and create again it.
+  if (pArgvDest && fs.existsSync(pArgvDest) && pArgvRewrite) {
+    fs.unlinkSync(pArgvDest);
+  }
+
+  // If we want update the file, we create always a backup .bak of the --dest path
+  if (pArgvDest && fs.existsSync(pArgvDest) && !pArgvRewrite) {
+    try {
+      fs.writeFileSync(pArgvDest + '.bak', fs.readFileSync(pArgvDest));
+      console.log(success(`\nBackup of ${pArgvDest} successful!`));
+    } catch (err) {
+      console.log(error(err));
+    }
+  }
+
+  getFilesToAdd(pFilesToAdd, pArgvDest, pArgvNoSpace);
+  getFilesToRemove(pFilesToRemove, pArgvDest);
 
   console.log(success('\nGENERATOR MODE: Done !'));
   return true;

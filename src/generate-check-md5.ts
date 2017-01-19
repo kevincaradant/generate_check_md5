@@ -57,28 +57,62 @@ export const generate = (): any => {
     }
   }
 
-  (async function () {
+// Check if each argument are typed correctly otherwise we returned an error
+  const checkArgWtOpt = async (pArgvPath?: any, pArgvDest?: any, pArgvSource?: any, pArgvCompare?: any) => {
     /* eslint array-callback-return: 0 */
-    if ((argv.path || argv.dest) && !argv.source && !argv.compare) {
-      const rslts: Array<boolean> = await Promise.all([checks.isPathCorrect(argv.path), checks.showPathError(argv.path), checks.isDestCorrect(argv.dest), checks.showDestError(argv.dest)]);
+    if ((pArgvPath || pArgvDest) && !pArgvSource && !pArgvCompare) {
+      const rslts: Array<boolean> = await Promise.all([checks.isPathCorrect(pArgvPath), checks.showPathError(pArgvPath), checks.isDestCorrect(pArgvDest), checks.showDestError(pArgvDest)]);
       if (rslts.includes(false)) {
         process.exit(0);
       }
-    } else if ((argv.source || argv.compare) && !argv.path && !argv.dest) {
-      const rslts = await Promise.all([checks.isSourceCorrect(argv.source), checks.showSourceError(argv.source), checks.isCompareCorrect(argv.compare), checks.showCompareError(argv.compare)]);
+    } else if ((pArgvSource || pArgvCompare) && !pArgvPath && !pArgvDest) {
+      const rslts = await Promise.all([checks.isSourceCorrect(pArgvSource), checks.showSourceError(pArgvSource), checks.isCompareCorrect(pArgvCompare), checks.showCompareError(pArgvCompare)]);
       if (rslts.includes(false)) {
         process.exit(0);
       }
     } else {
-      const rslts = await Promise.all([checks.isPathCorrect(argv.path), checks.showPathError(argv.path), checks.isDestCorrect(argv.dest), checks.showDestError(argv.dest)]);
+      const rslts = await Promise.all([checks.isPathCorrect(pArgvPath), checks.showPathError(pArgvPath), checks.isDestCorrect(pArgvDest), checks.showDestError(pArgvDest)]);
       if (rslts.includes(false)) {
         process.exit(0);
       }
-      const rslts2 = await Promise.all([checks.isSourceCorrect(argv.source), checks.showSourceError(argv.source), checks.isCompareCorrect(argv.compare), checks.showCompareError(argv.compare)]);
+      const rslts2 = await Promise.all([checks.isSourceCorrect(pArgvSource), checks.showSourceError(pArgvSource), checks.isCompareCorrect(pArgvCompare), checks.showCompareError(pArgvCompare)]);
       if (rslts2.includes(false)) {
         process.exit(0);
       }
     }
+  };
+
+  // It's the cae where we want to analyze the difference with a file and then returned the good results and show them
+  const analyzeAndUpdateAndShowResults = async (pArgvDest: string, pFilesPath: Array<Set<string>>, pArgvNoSpace?: boolean, pArgvSort?: boolean) => {
+    // We analyze to count the difference between the --path and --dest path
+    console.log(warn(`GENERATOR MODE: Update in progress.`));
+    const differenceDetected: { getNewFilesToAddSet: Set<string>, getFilesToRemoveSet: Set<string> } = await Promise.resolve<any>(utils.analyseMD5(pArgvDest, pFilesPath[0], pArgvNoSpace));
+    // If we don't have any diff
+    if (differenceDetected.getNewFilesToAddSet.size === 0 && differenceDetected.getFilesToRemoveSet.size === 0) {
+      // Sort the output file in the case of an update
+      if (pArgvSort) {
+        // If we want update the file, we create always a backup .bak of the --dest path
+        fs.writeFileSync(pArgvDest + '.bak', fs.readFileSync(pArgvDest));
+        console.log(success(`Backup of ${pArgvDest} successful!`));
+        const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${pArgvDest}`));
+        utils.quickDumpMD5FileDest(filesToSort, pArgvDest);
+        console.log(success(`GENERATOR MODE: The output file: ${pArgvDest} was sorted with successful`));
+      }
+      console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
+    } else {
+      console.log(success(`${differenceDetected.getNewFilesToAddSet.size + differenceDetected.getFilesToRemoveSet.size} difference detected between the data gave via --path and --dest arguments`));
+      utils.writeMD5FileDest(differenceDetected.getNewFilesToAddSet, differenceDetected.getFilesToRemoveSet, argv.rewrite, argv.nospace, pArgvDest);
+      // Sort the output file in the case where we have anything to update
+      if (pArgvSort) {
+        const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${pArgvDest}`));
+        utils.quickDumpMD5FileDest(filesToSort, pArgvDest);
+        console.log(success(`GENERATOR MODE: The output file: ${pArgvDest} was sorted with successful`));
+      }
+    }
+  };
+
+  (async function () {
+    await checkArgWtOpt(argv.path, argv.dest, argv.source, argv.compare);
     // ------------------
     // --- END CHECKS ---
     // ------------------
@@ -96,31 +130,7 @@ export const generate = (): any => {
       if (argv.dest) {
         // No --rewrite arg and the file with --dest path is already existing. (We can have --update arg)
         if (!argv.rewrite && fs.existsSync(argv.dest)) {
-          // We analyze to count the difference between the --path and --dest path
-          console.log(warn(`GENERATOR MODE: Update in progress.`));
-          const differenceDetected: {getNewFilesToAddSet: Set<string>, getFilesToRemoveSet: Set<string>} = await Promise.resolve<any>(utils.analyseMD5(argv.dest, filesPath[0], argv.nospace));
-          // If we don't have any diff
-          if (differenceDetected.getNewFilesToAddSet.size === 0 && differenceDetected.getFilesToRemoveSet.size === 0) {
-            // Sort the output file in the case of an update
-            if (argv.sort) {
-              // If we want update the file, we create always a backup .bak of the --dest path
-              fs.writeFileSync(argv.dest + '.bak', fs.readFileSync(argv.dest));
-              console.log(success(`Backup of ${argv.dest} successful!`));
-              const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${argv.dest}`));
-              utils.quickDumpMD5FileDest(filesToSort, argv.dest);
-              console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
-            }
-            console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
-          } else {
-            console.log(success(`${differenceDetected.getNewFilesToAddSet.size + differenceDetected.getFilesToRemoveSet.size} difference detected between the data gave via --path and --dest arguments`));
-            utils.writeMD5FileDest(differenceDetected.getNewFilesToAddSet, differenceDetected.getFilesToRemoveSet, argv.dest, argv.rewrite, argv.nospace);
-            // Sort the output file in the case where we have anything to update
-            if (argv.sort) {
-              const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${argv.dest}`));
-              utils.quickDumpMD5FileDest(filesToSort, argv.dest);
-              console.log(success(`GENERATOR MODE: The output file: ${argv.dest} was sorted with successful`));
-            }
-          }
+          await analyzeAndUpdateAndShowResults(argv.dest, filesPath, argv.nospace, argv.sort);
           // Otherwise if we have a --dest path but the file doesn't exist yet or we have the --rewrite argument
         } else if (argv.rewrite || !fs.existsSync(argv.dest)) {
           // We search and write all MD5 hash in a file or a console
