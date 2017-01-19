@@ -117,16 +117,12 @@ export const checkStateFiles = (pResolve: any, pFile: string, pTypeArg: string):
     } else if (err) {
       console.log(error(`\nArgument --${pTypeArg}: ${err}`));
       return pResolve(false);
-    } else if (stats.isFile()) {
-      if (pTypeArg === 'path') {
+    } else if (stats.isFile() && pTypeArg === 'path') {
         console.log(error(`\nArgument --${pTypeArg}: Is a file instead of a directory`));
         return pResolve(false);
-      }
-    } else if (stats.isDirectory()) {
-      if (pTypeArg === 'source' || pTypeArg === 'compare' || pTypeArg === 'dest') {
+    } else if (stats.isDirectory() && (pTypeArg === 'source' || pTypeArg === 'compare' || pTypeArg === 'dest')) {
         console.log(error(`\nArgument --${pTypeArg}: Is a directory instead of a file`));
         return pResolve(false);
-      }
     }
     return pResolve(true);
   });

@@ -7,38 +7,41 @@
   test('Call showHelp with Arg1', (t: any) => {
     t.plan(1);
     t.deepEqual(checks.showHelp(), `
-    PARAMS:
-    To generate MD5 on console (only) :
-    --path "/path/to/the/my_directory_with_files/"
+  PARAMS:
 
-    To generate MD5 and write it in the file :
-    --path "/path/to/the/my_directory_with_files/"
-    --dest "/path/to/write/file_md5_results.txt"
+  To generate MD5 on console (only) :
+  --path "/path/to/the/my_directory_with_files/"
 
-    To compare md5 files :
-    --source "/path/to/the/md5_file_source_its_the_reference.txt/"
-    --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
+  To generate MD5 and write it in the file :
+  --path "/path/to/the/my_directory_with_files/"
+  --dest "/path/to/write/file_md5_results.txt"
 
-    To generate AND compare md5 files in the same time:
-    --path "/path/to/the/my_directory_with_files/"
-    --dest "/path/to/write/file_md5_results.txt"
-    --source "/path/to/the/md5_file_source_its_the_reference.txt/"
-    --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
+  To compare md5 files :
+  --source "/path/to/the/md5_file_source_its_the_reference.txt/"
+  --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
-    OPTIONS:
-    To sort the output file with the arg --dest :
-    --sort
+  To generate AND compare md5 files in the same time:
+  --path "/path/to/the/my_directory_with_files/"
+  --dest "/path/to/write/file_md5_results.txt"
+  --source "/path/to/the/md5_file_source_its_the_reference.txt/"
+  --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
-    To rename files name in the file of results without space :
-    --nospace
-    Example:  Before: /Folder1/my file for example.mkv a9asd1171dd83e122598af664bd3f785)
-    After: /Folder1/my_file_for_example.mkv a9asd1171dd83e122598af664bd3f785)
+  OPTIONS:
+  To sort the output file with the arg --dest :
+  --sort
 
-    To ask only an update between a path and your md5 files :
-    --update
-    NB: By default, if you don't specify --update or --rewrite, it's the argument --update which is selected
-    To rewrite completely your md5 files got with --dest :
-    --rewrite`);
+  To rename files name in the file of results without space :
+  --nospace
+  Example:
+  Before: /Folder1/my file for example.mkv a9asd1171dd83e122598af664bd3f785)
+  After: /Folder1/my_file_for_example.mkv a9asd1171dd83e122598af664bd3f785)
+
+  To ask only an update between a path and your md5 files :
+  --update
+  NB: By default, if you don't specify --update or --rewrite, it's the argument --update which is selected
+
+  To rewrite completely your md5 files got with --dest :
+  --rewrite`);
     t.end();
   });
 
