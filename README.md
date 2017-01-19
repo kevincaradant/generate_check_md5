@@ -117,9 +117,7 @@ gcmd5 your_other_args --dest "your_file" --sort
 | ---------- | -------   | ------------------------------------- |
 | NodeJS     | > 4.x.x   | [http://node.org](http://nodejs.org/) |
 | Npm        | > 3.x.x   | [http://node.org](http://nodejs.org/) |
-| Rise       | > 2.x.x   | `npm install generator-rise -g`       |
 | Yarn       | > 1.x.x   | `npm install yarn -g`                 |
-| Yeoman     | > 1.x.x   | `npm install yo -g`                   |
 | Auto-cl    | > 3.x.x   | `npm install auto-changelog -g`       |
 
 ### Others Dependencies (Development)
@@ -133,13 +131,13 @@ Tape the command: `npm install`
 ## Usage (Development)
 ### Tasks
 - `$ npm run start`: Like `npm run dev`
-- `$ npm run clean`: Remove the dist and coverage folders
-- `$ npm run lint`: Apply a ESlinter ( xo config ) on the src and tests folders
-- `$ npm run check`: Aply the linter and check if the dependencies required in js files is also present in the package.json
-- `$ npm run pretest`: Before the tests, we start babel if `npm run test` was called
+- `$ npm run clean`: Remove the bin and coverage folders
+- `$ npm run lint`: Apply a TSlinter on the src and tests folders
+- `$ npm run check`: Apply the linter and check if the dependencies required in ts files is also present in the package.json
+- `$ npm run pretest`: Before the tests, we start the ts compiler if `npm run test` was called
 - `$ npm run test`: Execute once all the tests available
-- `$ npm run test:watch`: When the tmpTests or src folder's files change, we do again `npm run test`
-- `$ npm run compile`: Compile all src files with babel and get the dist output folder
+- `$ npm run test:watch`: When the bin or src folder's files change, we do again `npm run test`
+- `$ npm run compile`: Compile all src files with ts compiler and get the bin output folder
 - `$ npm run compile:watch`: When the src folder's files change, we do again `npm run compile`
 - `$ npm run build`: Execute `npm run compile`
 - `$ npm run postbuild`: Execute `npm run check` and `npm run test` after to have execute `npm run build`
@@ -171,7 +169,7 @@ node index.js --path "/path/to/the/my_directory_with_files1/" "/path/to/the/my_d
 node index.js --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
 // To generate AND compare md5 files in the same :
-node index.js --path "/path/to/the/my_directory_with_files2/" "/path/to/the/my_directory_with_files2/" --dest "/path/to/write/file_md5_results.txt" --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
+node index.js --path "/path/to/the/my_directory_with_files1/" "/path/to/the/my_directory_with_files2/" --dest "/path/to/write/file_md5_results.txt" --source "/path/to/the/md5_file_source_its_the_reference.txt/" --compare "/path/to/the/md5_file_to_be_compared_with_source_file.txt/"
 
 //------------------------------------  OPTIONAL: ------------------------------------
 // To rename files name in the file of results without space :
