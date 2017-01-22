@@ -7,22 +7,32 @@ const LineByLineReader = require('line-by-line');
 import * as clc from 'cli-color';
 const recursive = require('recursive-readdir');
 
-const separatorHashName = ' : ';
+const SEPARATORHASHNAME = ' : ';
+const SEPARATORSPACETOCHARACTER = '_';
 const error: any = clc.red.bold;
 const success: any = clc.green.bold;
 const notice: any = clc.blue.bold;
 
+const isFileExist = (pType: any): boolean => {
+  return fs.existsSync(pType);
+};
+
 // A simple method to read line by line a file
-export const readFile = async (pFile: string): Promise<Array<string>> => {
+export const readFile = async (pFile = ''): Promise<Array<string>> => {
+  if (!pFile) {
+    console.error(error('\nMethod readFile: The pFile argument is not correct.'));
+    return new Promise<Array<string>>(resolve => resolve([]));
+  }
+
   const lineByLineReader: any = new LineByLineReader(pFile);
   const pArrayResults: Array<string> = [];
   return new Promise<Array<string>>((resolve) => {
-    lineByLineReader.on('error', (err: string) => {
-      console.log(error(err));
+    lineByLineReader.on('error', (err: any) => {
+      console.error(error(err));
       resolve(pArrayResults);
     });
 
-    lineByLineReader.on('line', (line: string) => {
+    lineByLineReader.on('line', (line = '') => {
       pArrayResults.push(line);
     });
 
@@ -33,11 +43,12 @@ export const readFile = async (pFile: string): Promise<Array<string>> => {
 };
 
 // For each line of a the pMapCompare. We check if the content is included in the pMapSource.
-export const checkMD5 = (pMapSource: Map<string, string>, pMapCompare: Map<string, string>): boolean => {
+export const isPresentMD5FromCompareToSource = (pMapSource: Map<string, string>, pMapCompare: Map<string, string>): boolean => {
   let cptCheck = 0;
-  pMapCompare.forEach((value: string, key: string) => {
-    if (!pMapSource.has(key)) {
-      console.log(error('\nCOMPARATOR MODE: Error with the MD5 line: ') + notice(value + separatorHashName + key));
+  pMapCompare.forEach((md5: string, name: string) => {
+    const md5Values = pMapSource.values();
+    if (!Array.from(md5Values).includes(md5)) {
+      console.error(error('\nCOMPARATOR MODE: Error with the MD5 line: ') + notice(md5 + SEPARATORHASHNAME + name));
       cptCheck++;
     }
   });
@@ -55,65 +66,88 @@ export const compareMD5 = async (pFileSource: string, pFileCompare: string) => {
   const mapCompare = new Map<string, string>();
 
   const rslts = await Promise.all([readFile(pFileSource), readFile(pFileCompare)]);
-  rslts[0].map(line => mapSource.set(line.split(separatorHashName)[1], line.split(separatorHashName)[0]));
-  rslts[1].map(line => mapCompare.set(line.split(separatorHashName)[1], line.split(separatorHashName)[0]));
+  rslts[0].map(line => {
+    const [name = '', md5 = ''] = line.split(SEPARATORHASHNAME) || [];
+    mapSource.set(md5, name);
+  });
+  rslts[1].map(line => {
+    const [name = '', md5 = ''] = line.split(SEPARATORHASHNAME) || [];
+    mapCompare.set(md5, name);
+  });
 
-  checkMD5(mapSource, mapCompare);
+  isPresentMD5FromCompareToSource(mapSource, mapCompare);
   return true;
 };
 
+const buildDataGetFilesToAddRemove = (pLinesFileSource: Array<string>): Map<string, string> => {
+  let namePathSplit = '';
+  let mapSourceNameFiles: Map<string, string> = new Map<string, string>();
+
+  pLinesFileSource.map(line => {
+    const [md5 = '', name = ''] = line.split(SEPARATORHASHNAME) || [];
+    if (process.platform === 'win32') {
+      namePathSplit = name.split('/').join('\\');
+    } else {
+      namePathSplit = name.split('\\').join('/');
+    }
+
+    if (namePathSplit && md5) {
+      mapSourceNameFiles.set(namePathSplit, md5);
+    } else {
+      console.error(error(`Error of parsing skipped with the line: ${line}`));
+    }
+  });
+  return mapSourceNameFiles;
+};
+
 // Build an array with only the new files which are not present in the md5 file (--dest)
-export const analyseMD5 = async (pFileSource: string, pFilesPath: Set<string>, pArgvNoSpace?: boolean) => {
-  const mapSourceNameFiles = new Map<string, string>();
+// Remove also the lines which are not included in the --path but present in the --dest file
+export const updateMD5 = async (pFileSource: string, pFilesPath: Set<string>, pArgvNoSpace = false) => {
+  let mapSourceNameFiles = new Map<string, string>();
   const setPathAfterTransform = new Set<string>();
 
-  pFilesPath.forEach(line => setPathAfterTransform.add(line.split(' ').join('_')));
+  pFilesPath.forEach(line => setPathAfterTransform.add(line.split(' ').join(SEPARATORSPACETOCHARACTER)));
   return new Promise(resolve => {
     readFile(pFileSource).then(data => {
-      let getNewFilesToAddSet = new Set<string>();
-      let getFilesToRemoveSet = new Set<string>();
+      let getNewFilesToAdd = new Set<string>();
+      let getFilesToRemove = new Set<string>();
 
-      if (process.platform === 'win32') {
-        data.map(line => mapSourceNameFiles.set((line.split(separatorHashName)[1]).split('/').join('\\'), line.split(separatorHashName)[0]));
-      } else {
-        data.map(line => mapSourceNameFiles.set((line.split(separatorHashName)[1]).split('\\').join('/'), line.split(separatorHashName)[0]));
-      }
+      mapSourceNameFiles = buildDataGetFilesToAddRemove(data);
 
       const keysSNF = Array.from(mapSourceNameFiles.keys());
       const keysFP = Array.from(pFilesPath.keys());
 
       if (pArgvNoSpace) {
-        getNewFilesToAddSet = new Set([...keysFP].filter(line => {
-          return !mapSourceNameFiles.has(line.split(' ').join('_'));
+        getNewFilesToAdd = new Set([...keysFP].filter(line => {
+          return !mapSourceNameFiles.has(line.split(' ').join(SEPARATORSPACETOCHARACTER));
         }));
-        getFilesToRemoveSet = new Set(keysSNF.filter(line => {
+
+        getFilesToRemove = new Set(keysSNF.filter(line => {
           return !setPathAfterTransform.has(line);
         }));
       } else {
-        getNewFilesToAddSet = new Set([...keysFP].filter(line => {
+        getNewFilesToAdd = new Set([...keysFP].filter(line => {
           return !mapSourceNameFiles.has(line);
         }));
-
-        getFilesToRemoveSet = new Set([...keysSNF].filter(line => {
+        getFilesToRemove = new Set([...keysSNF].filter(line => {
           return !pFilesPath.has(line);
         }));
       }
-
-      return resolve({ getNewFilesToAddSet, getFilesToRemoveSet });
+      return resolve({ getNewFilesToAdd, getFilesToRemove });
     });
   });
 };
 
 // Useful to remove / and write again a file
-export const quickDumpMD5FileDest = async (pFiles: Array<string>, pArgvDest: string): Promise<boolean> => {
-  if (fs.existsSync(pArgvDest)) {
+export const quickDumpMD5FileDest = async (pFiles: Array<string>, pArgvDest = ''): Promise<boolean> => {
+  if (isFileExist(pArgvDest)) {
     fs.unlinkSync(pArgvDest);
     pFiles.forEach(file => {
       fs.appendFileSync(pArgvDest, `${file}\n`);
     });
     return true;
   }
-  console.log(error(`GENERATOR MODE: Error to find the file "--dest" at: ${pArgvDest}`));
+  console.error(error(`GENERATOR MODE: Error to find the file "--dest" at: ${pArgvDest}`));
   return false;
 };
 
@@ -121,8 +155,6 @@ export const quickDumpMD5FileDest = async (pFiles: Array<string>, pArgvDest: str
 export const naturalCompare = (a: string, b: string) => {
   const ax: Array<any> = [];
   const bx: Array<any> = [];
-  console.log(a);
-  console.log(b);
   a.replace(/(\d+)|(\D+)/g, (_, $1, $2): any => {
     ax.push([$1 || Infinity, $2 || '']);
   });
@@ -143,10 +175,10 @@ export const naturalCompare = (a: string, b: string) => {
 };
 
 // Custom Sort to order by ASC
-export const sortFileDest = async (pFile: string): Promise<Array<string>> => {
+export const sortFileDest = async (pFile = ''): Promise<Array<string>> => {
   return new Promise<Array<string>>(async resolve => {
     let rsltsReadFile: Array<string> = await readFile(pFile);
-    rsltsReadFile = rsltsReadFile.map(line => line.split(separatorHashName)).sort((e1, e2) => naturalCompare(e1[1], e2[1])).map(l => l.join(separatorHashName));
+    rsltsReadFile = rsltsReadFile.map(line => line.split(SEPARATORHASHNAME)).sort((e1, e2) => naturalCompare(e1[1], e2[1])).map(l => l.join(SEPARATORHASHNAME));
     return resolve(rsltsReadFile);
   });
 };
@@ -157,8 +189,8 @@ export const recursiveFolders = (pArgvPath: Array<string>): Promise<Array<Set<st
       return new Promise(resolve2 => {
         recursive(file, { forceContinue: true }, (err: any, files: Array<string>) => {
           if (err) {
-            console.log(error(err));
-            console.log('\nError ignored..., the analyze is continuing');
+            console.error(error(err));
+            console.log(notice('\nError ignored..., the analyze is continuing'));
           }
 
           if (!files) {
@@ -174,10 +206,9 @@ export const recursiveFolders = (pArgvPath: Array<string>): Promise<Array<Set<st
 };
 
 // Get all path with md5 which have to be add in the dest file
-const getFilesToAdd = (pFilesToAdd: Set<string>, pArgvDest?: string, pArgvNoSpace?: boolean) => {
+const getFilesToAdd = (pFilesToAdd: Set<string>, pArgvDest = '', pArgvNoSpace = false) => {
   if (pArgvDest) {
     console.log(notice(`\nGENERATOR MODE: Line to add in --dest path file:`));
-    // For each files to add in dest file
     if (pFilesToAdd.size === 0) {
       console.log(notice('0 / 0'));
     }
@@ -189,32 +220,31 @@ const getFilesToAdd = (pFilesToAdd: Set<string>, pArgvDest?: string, pArgvNoSpac
     console.log(notice(`${i + 1} / ${pFilesToAdd.size}`));
     let file: string = getValuesFilesToAdd.next().value;
 
-    if (fs.existsSync(file)) {
+    if (isFileExist(file)) {
       const md5: string = md5File.sync(file);
 
-      // We add _ instead of space to have a pretty display in the file
-      // If the argument --nospace is given
+      // We add SEPARATORSPACETOCHARACTER instead of space to have a pretty display in the file if the argument --nospace is given
       if (pArgvNoSpace) {
-        file = file.split(' ').join('_');
+        file = file.split(' ').join(SEPARATORSPACETOCHARACTER);
       }
 
       // We try to add lines only if the argument --dest is filled.
       if (pArgvDest) {
-        fs.appendFileSync(pArgvDest, `${md5}${separatorHashName}${file}\n`);
+        fs.appendFileSync(pArgvDest, `${md5}${SEPARATORHASHNAME}${file}\n`);
       } else {
         // To have always the same syntax in the file (Windows / Linux / Mac)
         // I choosed the Linux syntax for the path
         const fileGeneric = file.split('\\').join('/');
-        console.log(notice(`${md5}${separatorHashName}${fileGeneric} \n`));
+        console.log(notice(`${md5}${SEPARATORHASHNAME}${fileGeneric} \n`));
       }
     } else {
-      console.log(error(`\nGENERATOR MODE: The file "${file}" can't be read. Be sure it exists.`));
+      console.error(error(`\nGENERATOR MODE: The file "${file}" can't be read. Be sure it exists.`));
     }
   }
 };
 
 // Get all path with md5 which have to be remove from the dest file because some paths doesn't exist anymore
-const getFilesToRemove = (pFilesToRemove: Set<string>, pArgvDest?: string): void => {
+const getFilesToRemove = (pFilesToRemove: Set<string>, pArgvDest = ''): void => {
   if (pArgvDest) {
     console.log(notice(`\nGENERATOR MODE: Line to remove from --dest path file:`));
 
@@ -224,13 +254,13 @@ const getFilesToRemove = (pFilesToRemove: Set<string>, pArgvDest?: string): void
 
     const getValuesFilesToRemove = pFilesToRemove.keys();
 
-    // For each files to add in dest file
     for (let i = 0; i < pFilesToRemove.size; i++) {
       console.log(notice(`${i + 1} / ${pFilesToRemove.size}`));
       const file = getValuesFilesToRemove.next().value;
       const fileWin = file.split('/').join('\\');
       const fileUnix = file.split('\\').join('/');
       const body = fs.readFileSync(pArgvDest).toString();
+
       // 36 is to have the line including the hash of the line and not only the name of the file
       // Try under the Unix format
       const idxUnix = (body.indexOf(fileUnix)) - 35;
@@ -253,20 +283,19 @@ const getFilesToRemove = (pFilesToRemove: Set<string>, pArgvDest?: string): void
 
 
 // Write in a file or in a console, all the MD5 results
-export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<string>, pArgvRewrite?: boolean, pArgvNoSpace?: boolean, pArgvDest?: string) => {
-
+export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<string>, pArgvRewrite = false, pArgvNoSpace = false, pArgvDest = '') => {
   // If we want to rewrite completely the file. Delete and create again it.
-  if (pArgvDest && fs.existsSync(pArgvDest) && pArgvRewrite) {
+  if (pArgvDest && isFileExist(pArgvDest) && pArgvRewrite) {
     fs.unlinkSync(pArgvDest);
   }
 
   // If we want update the file, we create always a backup .bak of the --dest path
-  if (pArgvDest && fs.existsSync(pArgvDest) && !pArgvRewrite) {
+  if (pArgvDest && isFileExist(pArgvDest) && !pArgvRewrite) {
     try {
       fs.writeFileSync(pArgvDest + '.bak', fs.readFileSync(pArgvDest));
       console.log(success(`\nBackup of ${pArgvDest} successful!`));
     } catch (err) {
-      console.log(error(err));
+      console.error(error(err));
     }
   }
 

@@ -10,7 +10,6 @@ const notice: any = clc.blue.bold;
 // --------------
 // FALSE => We have a problem
 // TRUE => Everything is good
-
 // Show the help text
 export const showHelp = (): string => {
   return `
@@ -63,25 +62,25 @@ export const checkHelp = (pArgvH?: boolean, pArgvHelp?: boolean): boolean => {
 
 // Return true if all the elements in pArr are included in pHaystack
 // Return false if at least one arg in pArr is not included in pHaystack
-export const findElemInArray = (pHaystack: Array<string>, pArr: Array<string>): boolean => {
+export const findAllElemInArray = (pHaystack: Array<string>, pArr: Array<string>): boolean => {
   return pArr.every(v => {
-    return pHaystack.indexOf(v) >= 0;
+    return (pHaystack.indexOf(v) >= 0);
   });
 };
 
 // Return true if at least one element in pArr is included in pHaystack
 // Return false if any arg in pArr are included in pHaystack
-export const findAtLeastOneElemInArray = (pHaystack: Array<string>, pArr: Array<string>): boolean => {
+export const isExistElemBetweenTwoArrays = (pHaystack: Array<string>, pArr: Array<string>): boolean => {
   return pArr.some(v => {
     return pHaystack.indexOf(v) >= 0;
   });
 };
 
-// Return true: ALl arguments exists.
+// Return true: All arguments exists.
 // Return false: One or more arguments doesn't exist
 export const checkAllParamsFromUser = (pArgumentsAllowedArray: Array<string>, pArgumentsSendByUser: Array<string>): boolean => {
-  if (!findElemInArray(pArgumentsAllowedArray, pArgumentsSendByUser)) {
-    console.log(error('\nYou doesn\'t use allowed params.') + notice('\nDo --h or --help for more informations'));
+  if (!findAllElemInArray(pArgumentsAllowedArray, pArgumentsSendByUser)) {
+    console.error(error('\nYou doesn\'t use allowed params.') + notice('\nDo --h or --help for more information'));
     return false;
   }
   return true;
@@ -90,117 +89,133 @@ export const checkAllParamsFromUser = (pArgumentsAllowedArray: Array<string>, pA
 // Return true: At least  one argument exists.
 // Return false: Any argument exist
 export const isExistAtLeastOneParamFromUser = (pArgumentsAllowedArray: Array<string>, pArgumentsSendByUser: Array<string>): boolean => {
-  if (!findAtLeastOneElemInArray(pArgumentsAllowedArray, pArgumentsSendByUser)) {
-    console.log(error('\nYou should pass valid arguments to use this module'));
+  if (!isExistElemBetweenTwoArrays(pArgumentsAllowedArray, pArgumentsSendByUser)) {
+    console.error(error('\nYou should pass valid arguments to use this module'));
     return false;
   }
   return true;
 };
 
+const handlingArgvOnErrMessage = (err: any, pFile: string, pTypeArg?: string): boolean => {
+  if (pTypeArg === 'dest') {
+    console.log(notice(`\nArgument --${pTypeArg}: New file located at ${pFile} will be created`));
+    if (typeof fs.closeSync(fs.openSync(pFile, 'a')) !== 'undefined') {
+      console.error(error(`\nArgument --${pTypeArg}: Error during the creation of the new file ` + pFile));
+    } else {
+      console.log(notice(`\nArgument --${pTypeArg}: New file ${pTypeArg} created with successful`));
+    }
+    return true;
+  }
+  else {
+    console.error(err + '\n' + error(`\nArgument --${pTypeArg}: No file found. Check your path`));
+    return false;
+  }
+};
+
+const isPath = (pTypeArg = ''): boolean => {
+  return pTypeArg === 'path';
+};
+
+const isDest = (pTypeArg = ''): boolean => {
+  return pTypeArg === 'dest';
+};
+
+const isCompare = (pTypeArg = ''): boolean => {
+  return pTypeArg === 'compare';
+};
+
+const isSource = (pTypeArg = ''): boolean => {
+  return pTypeArg === 'source';
+};
+
+const isENOENTError = (pError: any): boolean => {
+  return pError && pError.code === 'ENOENT';
+};
+
+const isFile = (pType: any): boolean => {
+  return pType.isFile();
+};
+
+const isDirectory = (pType: any): boolean => {
+  return pType.isDirectory();
+};
+
 // Return true if paths are corrects
 // Return false if the path with the argument is bad or something goes wrong
-export const checkStateFiles = (pResolve: any, pFile: string, pTypeArg: string): boolean => {
-  fs.stat(pFile, (err: any, stats: any) => {
-    if (err && err.code === 'ENOENT') {
-      if (pTypeArg === 'dest') {
-        console.log(notice(`\nArgument --${pTypeArg}: New file located at ' + pFile + ' will be created`));
-        if (typeof fs.closeSync(fs.openSync(pFile, 'a')) !== 'undefined') {
-          console.log(error(`\nArgument --${pTypeArg}: Error during the creation of the new file ` + pFile));
-          return pResolve(false);
-        }
-        console.log(notice(`\nArgument --${pTypeArg}: New file ' + pArgvDest + ' created with successful`));
-        return pResolve(true);
+export const checkStateFiles = (pFile = '', pTypeArg = ''): Promise<boolean> => {
+  return new Promise(resolve => {
+    fs.stat(pFile, (err: any, stats: any) => {
+      if (isENOENTError(err)) {
+        return resolve(handlingArgvOnErrMessage(err, pFile, pTypeArg));
+      } else if (err) {
+        console.error(error(`\nArgument --${pTypeArg}: ${err}`));
+        return resolve(false);
+      } else if (isFile(stats) && isPath(pTypeArg)) {
+        console.error(error(`\nArgument --${pTypeArg}: Is a file instead of a directory`));
+        return resolve(false);
+      } else if (isDirectory(stats) && (isSource(pTypeArg) || isCompare(pTypeArg) || isDest(pTypeArg))) {
+        console.error(error(`\nArgument --${pTypeArg}: Is a directory instead of a file`));
+        return resolve(false);
       }
-      console.log(err);
-      console.log(error(`\nArgument --${pTypeArg}: No file found. Check your path`));
-      return pResolve(false);
-    } else if (err) {
-      console.log(error(`\nArgument --${pTypeArg}: ${err}`));
-      return pResolve(false);
-    } else if (stats.isFile() && pTypeArg === 'path') {
-        console.log(error(`\nArgument --${pTypeArg}: Is a file instead of a directory`));
-        return pResolve(false);
-    } else if (stats.isDirectory() && (pTypeArg === 'source' || pTypeArg === 'compare' || pTypeArg === 'dest')) {
-        console.log(error(`\nArgument --${pTypeArg}: Is a directory instead of a file`));
-        return pResolve(false);
-    }
-    return pResolve(true);
+      return resolve(true);
+    });
   });
-  return false;
 };
 
 // Return true: --path arg is correct
 // Return false: --path arg is not correct
-export const isPathCorrect = (pArgvPath: Array<string>): Promise<boolean> => {
-  if (pArgvPath) {
-    if (!Array.isArray(pArgvPath)) {
-      console.log(error('\nArgument --path: The path is not correct.') + notice('\nUse: --path "your/path/and/your-folder-name1" "your/path/and/your-folder2-name"'));
-      return new Promise(resolve => resolve(false));
-    }
-
-    return new Promise(async (resolve) => {
-      const rslts = await Promise.all(pArgvPath.map(async file => {
-        checkStateFiles(resolve, file, 'path');
-      }));
-      resolve(rslts);
-    });
+export const isPathCorrect = (pArgvPath: Array<string> = []): Promise<boolean> => {
+  if (pArgvPath.length === 0) {
+    console.error(error('\nArgument --path: The path is not correct.') + notice('\nUse: --path "your/path/and/your-folder-name1" "your/path/and/your-folder2-name"'));
+    return new Promise(resolve => resolve(false));
   }
-  return new Promise(resolve => resolve(false));
+
+  return new Promise(async (resolve) => {
+    const rslts = await Promise.all(pArgvPath.map(async file => {
+      return checkStateFiles(file, 'path');
+    }));
+    resolve(rslts);
+  });
 };
 
 // Return true: --dest arg is correct
 // Return false: --dest arg is not correct
-export const isDestCorrect = (pArgvDest?: string): Promise<boolean> => {
-  if (pArgvDest) {
-    if (typeof pArgvDest !== 'string') {
-      console.log(error('\nArgument --dest: The path is not correct.') + notice('\nUse: --dest "your/path/and/your-file.txt"'));
-      return new Promise(resolve => resolve(false));
-    }
-
-    return new Promise(resolve => {
-      checkStateFiles(resolve, pArgvDest, 'dest');
-    });
+export const isDestCorrect = (pArgvDest = ''): Promise<boolean> => {
+  if (typeof (pArgvDest) !== 'string') {
+    console.error(error('\nArgument --dest: The path is not correct.') + notice('\nUse: --dest "your/path/and/your-file.txt"'));
+    return new Promise(resolve => resolve(true));
+  } else if (pArgvDest) {
+    return checkStateFiles(pArgvDest, 'dest');
+  } else {
+    return new Promise(resolve => resolve(true));
   }
-  return new Promise(resolve => resolve(true));
 };
 
 // Return true: --source arg is correct
 // Return false: --source arg is not correct
-export const isSourceCorrect = (pArgvSource?: string): Promise<boolean> => {
-  if (pArgvSource) {
-    if (typeof pArgvSource !== 'string') {
-      console.log(error('\nArgument --source: The path is not correct.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
-      return new Promise(resolve => resolve(false));
-    }
-
-    return new Promise(resolve => {
-      checkStateFiles(resolve, pArgvSource, 'source');
-    });
+export const isSourceCorrect = (pArgvSource = ''): Promise<boolean> => {
+  if (!pArgvSource) {
+    console.error(error('\nArgument --source: The path is not correct.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
+    return new Promise(resolve => resolve(false));
   }
-  return new Promise(resolve => resolve(false));
+  return checkStateFiles(pArgvSource, 'source');
 };
 
 // Return true: --compare arg is correct
 // Return false: --compare arg is not correct
-export const isCompareCorrect = (pArgvCompare?: string): Promise<boolean> => {
-  if (pArgvCompare) {
-    if (typeof pArgvCompare !== 'string') {
-      console.log(error('\nArgument --compare: The path is not correct.') + notice('\nUse: --compare "your/path/and/your-compare-file.txt"'));
-      return new Promise(resolve => resolve(false));
-    }
-
-    return new Promise(resolve => {
-      checkStateFiles(resolve, pArgvCompare, 'compare');
-    });
+export const isCompareCorrect = (pArgvCompare = ''): Promise<boolean> => {
+  if (!pArgvCompare) {
+    console.error(error('\nArgument --compare: The path is not correct.') + notice('\nUse: --compare "your/path/and/your-compare-file.txt"'));
+    return new Promise(resolve => resolve(false));
   }
-  return new Promise(resolve => resolve(false));
+  return checkStateFiles(pArgvCompare, 'compare');
 };
 
 // Return true: --path arg exist
 // Return false: --path arg doesn't not exist
-export const showPathError = (pArgvPath: Array<string>): boolean => {
-  if (!pArgvPath) {
-    console.log(error('\nArgument --path: You should give the path of a folder to analyze it.') + notice('\nUse: --path "your/path/and/your-folder-name1" "your/path/and/your-folder-name2"'));
+export const showPathError = (pArgvPath: Array<string> = []): boolean => {
+  if (pArgvPath.length === 0) {
+    console.error(error('\nArgument --path: You should give the path of a folder to analyze it.') + notice('\nUse: --path "your/path/and/your-folder-name1" "your/path/and/your-folder-name2"'));
     return false;
   }
   return true;
@@ -208,7 +223,7 @@ export const showPathError = (pArgvPath: Array<string>): boolean => {
 
 // Return true: --dest arg exist
 // Return false: --dest arg doesn't not exist
-export const showDestError = (pArgvDest: boolean): boolean => {
+export const showDestError = (pArgvDest = ''): boolean => {
   if (!pArgvDest) {
     console.log(warn('\nArgument --dest: You should give the destination path to write the results in a file.\nUse: --dest "your/path/and/your-file.txt".\nIn the moment, the results will be only show in the console.'));
   }
@@ -217,9 +232,9 @@ export const showDestError = (pArgvDest: boolean): boolean => {
 
 // Return true: --source arg exist
 // Return false: --source arg doesn't not exist
-export const showSourceError = (pArgvSource: boolean): boolean => {
+export const showSourceError = (pArgvSource = ''): boolean => {
   if (!pArgvSource) {
-    console.log(error('\nArgument --source: You should give the path of a folder to compare it.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
+    console.error(error('\nArgument --source: You should give the path of a folder to compare it.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
     return false;
   }
   return true;
@@ -227,9 +242,9 @@ export const showSourceError = (pArgvSource: boolean): boolean => {
 
 // Return true: --compare arg exist
 // Return false: --compare arg doesn't not exist
-export const showCompareError = (pArgvCompare: boolean): boolean => {
+export const showCompareError = (pArgvCompare = ''): boolean => {
   if (!pArgvCompare) {
-    console.log(error('\nArgument --compare: You should give the path of a folder to compare it.') + notice('\nUse: --compare "your/path/and/your-file.txt"'));
+    console.error(error('\nArgument --compare: You should give the path of a folder to compare it.') + notice('\nUse: --compare "your/path/and/your-file.txt"'));
     return false;
   }
   return true;
@@ -237,9 +252,9 @@ export const showCompareError = (pArgvCompare: boolean): boolean => {
 
 // Return true: --rewrite or --update  or any of these arg exist
 // Return false: --rewrite arg doesn't not exist
-export const showRewriteUpdateError = (pArgvUpdate: boolean, pArgvRewrite: boolean): boolean => {
+export const showRewriteUpdateError = (pArgvUpdate = false, pArgvRewrite = false): boolean => {
   if (pArgvUpdate && pArgvRewrite) {
-    console.log(error('\nArguments --update && --rewrite: You can\'t give these two parameters in the same time.') + notice('\nUse --update or --rewrite'));
+    console.error(error('\nArguments --update && --rewrite: You can\'t give these two parameters in the same time.') + notice('\nUse --update or --rewrite'));
     return false;
   }
   return true;

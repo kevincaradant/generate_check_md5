@@ -56,16 +56,14 @@ export const generate = (): any => {
       return;
     }
   }
-
-// Check if each argument are typed correctly otherwise we returned an error
-  const checkArgWtOpt = async (pArgvPath?: any, pArgvDest?: any, pArgvSource?: any, pArgvCompare?: any) => {
-    /* eslint array-callback-return: 0 */
-    if ((pArgvPath || pArgvDest) && !pArgvSource && !pArgvCompare) {
+  // Check if each argument are typed correctly otherwise we returned an error
+  const checkArgWtOpt = async (pArgvPath = [], pArgvDest = '', pArgvSource = '', pArgvCompare = '') => {
+    if ((pArgvPath.length > 0 || pArgvDest) && !pArgvSource && !pArgvCompare) {
       const rslts: Array<boolean> = await Promise.all([checks.isPathCorrect(pArgvPath), checks.showPathError(pArgvPath), checks.isDestCorrect(pArgvDest), checks.showDestError(pArgvDest)]);
       if (rslts.includes(false)) {
         process.exit(0);
       }
-    } else if ((pArgvSource || pArgvCompare) && !pArgvPath && !pArgvDest) {
+    } else if ((pArgvSource || pArgvCompare) && pArgvPath.length === 0 && !pArgvDest) {
       const rslts = await Promise.all([checks.isSourceCorrect(pArgvSource), checks.showSourceError(pArgvSource), checks.isCompareCorrect(pArgvCompare), checks.showCompareError(pArgvCompare)]);
       if (rslts.includes(false)) {
         process.exit(0);
@@ -83,12 +81,13 @@ export const generate = (): any => {
   };
 
   // It's the cae where we want to analyze the difference with a file and then returned the good results and show them
-  const analyzeAndUpdateAndShowResults = async (pArgvDest: string, pFilesPath: Array<Set<string>>, pArgvNoSpace?: boolean, pArgvSort?: boolean) => {
+
+  const analyzeAndUpdateAndShowResults = async (pArgvDest = '', pFilesPath: Array<Set<string>>, pArgvNoSpace = false, pArgvSort = false) => {
     // We analyze to count the difference between the --path and --dest path
     console.log(warn(`GENERATOR MODE: Update in progress.`));
-    const differenceDetected: { getNewFilesToAddSet: Set<string>, getFilesToRemoveSet: Set<string> } = await Promise.resolve<any>(utils.analyseMD5(pArgvDest, pFilesPath[0], pArgvNoSpace));
+    const differenceDetected: { getNewFilesToAdd: Set<string>, getFilesToRemove: Set<string> } = await Promise.resolve<any>(utils.updateMD5(pArgvDest, pFilesPath[0], pArgvNoSpace));
     // If we don't have any diff
-    if (differenceDetected.getNewFilesToAddSet.size === 0 && differenceDetected.getFilesToRemoveSet.size === 0) {
+    if (differenceDetected.getNewFilesToAdd.size === 0 && differenceDetected.getFilesToRemove.size === 0) {
       // Sort the output file in the case of an update
       if (pArgvSort) {
         // If we want update the file, we create always a backup .bak of the --dest path
@@ -100,8 +99,8 @@ export const generate = (): any => {
       }
       console.log(success('GENERATOR MODE: No difference detected. Already up to date.'));
     } else {
-      console.log(success(`${differenceDetected.getNewFilesToAddSet.size + differenceDetected.getFilesToRemoveSet.size} difference detected between the data gave via --path and --dest arguments`));
-      utils.writeMD5FileDest(differenceDetected.getNewFilesToAddSet, differenceDetected.getFilesToRemoveSet, argv.rewrite, argv.nospace, pArgvDest);
+      console.log(success(`${differenceDetected.getNewFilesToAdd.size + differenceDetected.getFilesToRemove.size} difference detected between the data gave via --path and --dest arguments`));
+      utils.writeMD5FileDest(differenceDetected.getNewFilesToAdd, differenceDetected.getFilesToRemove, argv.rewrite, argv.nospace, pArgvDest);
       // Sort the output file in the case where we have anything to update
       if (pArgvSort) {
         const filesToSort: Array<string> = await Promise.resolve<any>(utils.sortFileDest(`${pArgvDest}`));
@@ -111,19 +110,18 @@ export const generate = (): any => {
     }
   };
 
+  // ----------------------
+  // -----  END CHECKS ----
+  // ----------------------
+
   (async function () {
     await checkArgWtOpt(argv.path, argv.dest, argv.source, argv.compare);
-    // ------------------
-    // --- END CHECKS ---
-    // ------------------
-
     // ------------
     // --- ALGO ---
     // ------------
     // IF we have the --path argument
     if (argv.path) {
       // Get all files including in --path argument
-      // If simple string
       const filesPath = await utils.recursiveFolders(argv.path);
       console.log(notice(`\nGENERATOR MODE: ${filesPath[0].size} file${filesPath[0].size > 1 ? 's' : ''} detected.`));
       // If we have a file to write the results
@@ -143,7 +141,7 @@ export const generate = (): any => {
           }
         } else {
           // ERROR UNKNOWN. Need a new else if to catch why
-          console.log(error('GENERATOR MODE: Unknown error detected. Please try --help or --h to resolve the problem. Otherwise, you can create a new issue on github and copy/paste the command line which generates this error'));
+          console.error(error('GENERATOR MODE: Unknown error detected. Please try --help or --h to resolve the problem. Otherwise, you can create a new issue on github and copy/paste the command line which generates this error'));
         }
       } else {
         // Otherwise, we haven't dest argument to write it in file
