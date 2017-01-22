@@ -1,6 +1,6 @@
-  import * as checks from '../src/checks';
-  const test = require('tape');
-  const path = require('path');
+import * as checks from '../src/checks';
+const test = require('tape');
+const path = require('path');
 
 (() => {
   // CheckHelp
@@ -69,53 +69,53 @@
     t.end();
   });
 
-  // findElemInArray
-  test('Call findElemInArray with Arg1(Array) = Arg2(Array)', (t: any) => {
+  // findAllElemInArray
+  test('Call findAllElemInArray with Arg1(Array) = Arg2(Array)', (t: any) => {
     t.plan(1);
     const arrayElements1 = ['p1', 'p2', 'p3'];
     const arrayElements2 = ['p1', 'p2', 'p3'];
-    t.true(checks.findElemInArray(arrayElements1, arrayElements2));
+    t.true(checks.findAllElemInArray(arrayElements1, arrayElements2));
     t.end();
   });
 
-  test('Call findElemInArray with Arg1(Array) != Arg2(Array) / 1/3 diff', (t: any) => {
+  test('Call findAllElemInArray with Arg1(Array) != Arg2(Array) / 1/3 diff', (t: any) => {
     t.plan(1);
     const arrayElements1 = ['p1', 'p2', 'p4'];
     const arrayElements2 = ['p1', 'p2', 'p3'];
-    t.false(checks.findElemInArray(arrayElements1, arrayElements2));
+    t.false(checks.findAllElemInArray(arrayElements1, arrayElements2));
     t.end();
   });
 
-  test('Call findElemInArray with Arg1(Array) != Arg2(Array) / 3/3 diff', (t: any) => {
+  test('Call findAllElemInArray with Arg1(Array) != Arg2(Array) / 3/3 diff', (t: any) => {
     t.plan(1);
     const arrayElements1 = ['p11', 'p22', 'p4'];
     const arrayElements2 = ['p1', 'p2', 'p3'];
-    t.false(checks.findElemInArray(arrayElements1, arrayElements2));
+    t.false(checks.findAllElemInArray(arrayElements1, arrayElements2));
     t.end();
   });
 
-  // findAtLeastOneElemInArray
-  test('Call findAtLeastOneElemInArray with Arg1(Array) = Arg2(Array)', (t: any) => {
+  // isExistElemBetweenTwoArrays
+  test('Call isExistElemBetweenTwoArrays with Arg1(Array) = Arg2(Array)', (t: any) => {
     t.plan(1);
     const arrayElements1 = ['p1', 'p2', 'p3'];
     const arrayElements2 = ['p1', 'p2', 'p3'];
-    t.true(checks.findAtLeastOneElemInArray(arrayElements1, arrayElements2));
+    t.true(checks.isExistElemBetweenTwoArrays(arrayElements1, arrayElements2));
     t.end();
   });
 
-  test('Call findAtLeastOneElemInArray with Arg1(Array) != Arg2(Array) / 1/3 diff', (t: any) => {
+  test('Call isExistElemBetweenTwoArrays with Arg1(Array) != Arg2(Array) / 1/3 diff', (t: any) => {
     t.plan(1);
     const arrayElements1 = ['p1', 'p2', 'p4'];
     const arrayElements2 = ['p1', 'p2', 'p3'];
-    t.true(checks.findAtLeastOneElemInArray(arrayElements1, arrayElements2));
+    t.true(checks.isExistElemBetweenTwoArrays(arrayElements1, arrayElements2));
     t.end();
   });
 
-  test('Call findAtLeastOneElemInArray with Arg1(Array) != Arg2(Array) / 3/3 diff', (t: any) => {
+  test('Call isExistElemBetweenTwoArrays with Arg1(Array) != Arg2(Array) / 3/3 diff', (t: any) => {
     t.plan(1);
     const arrayElements1 = ['p11', 'p33', 'p4'];
     const arrayElements2 = ['p1', 'p2', 'p3'];
-    t.false(checks.findAtLeastOneElemInArray(arrayElements1, arrayElements2));
+    t.false(checks.isExistElemBetweenTwoArrays(arrayElements1, arrayElements2));
     t.end();
   });
 
@@ -243,39 +243,39 @@
   // showDestError
   test('Call showDestError with Arg1(Boolean / True)', (t: any) => {
     t.plan(1);
-    t.true(checks.showDestError(true));
+    t.true(checks.showDestError('true'));
     t.end();
   });
 
   test('Call showDestError with Arg1(Boolean / False)', (t: any) => {
     t.plan(1);
-    t.true(checks.showDestError(false));
+    t.true(checks.showDestError());
     t.end();
   });
 
   // showSourceError
   test('Call showSourceError with Arg1(Boolean / True)', (t: any) => {
     t.plan(1);
-    t.true(checks.showSourceError(true));
+    t.true(checks.showSourceError('true'));
     t.end();
   });
 
   test('Call showSourceError with Arg1(Boolean / False)', (t: any) => {
     t.plan(1);
-    t.false(checks.showSourceError(false));
+    t.false(checks.showSourceError(''));
     t.end();
   });
 
   // showCompareError
   test('Call showCompareError with Arg1(Boolean / True)', (t: any) => {
     t.plan(1);
-    t.true(checks.showCompareError(true));
+    t.true(checks.showCompareError('true'));
     t.end();
   });
 
   test('Call showCompareError with Arg1(Boolean / False)', (t: any) => {
     t.plan(1);
-    t.false(checks.showCompareError(false));
+    t.false(checks.showCompareError());
     t.end();
   });
 

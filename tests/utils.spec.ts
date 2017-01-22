@@ -104,8 +104,8 @@ const path = require('path');
     });
   });
 
-  // checkMD5
-  test('Call checkMD5 with GOOD(FILE) Arg1(String) = with GOOD(FILE) Arg2(String)', (t: any) => {
+  // isPresentMD5FromCompareToSource
+  test('Call isPresentMD5FromCompareToSource with GOOD(FILE) Arg1(String) = with GOOD(FILE) Arg2(String)', (t: any) => {
     const mock = require('mock-fs');
     t.plan(1);
 
@@ -123,16 +123,18 @@ const path = require('path');
       const mapCompare = new Map<string, string>();
       r[0].map(line => mapSource.set(line.split(' : ')[1], line.split(' : ')[0]));
       r[1].map(line => mapCompare.set(line.split(' : ')[1], line.split(' : ')[0]));
-      const rslt = Promise.resolve(utils.checkMD5(mapSource, mapCompare));
+      const rslt = Promise.resolve(utils.isPresentMD5FromCompareToSource(mapSource, mapCompare));
+      console.log('rslt');
+      console.log(rslt);
       rslt.then(data => {
         mock.restore();
-        t.deepEqual(data, true);
+        t.true(data);
         t.end();
       });
     });
   });
 
-  test('Call checkMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILE) Arg2(String)', (t: any) => {
+  test('Call isPresentMD5FromCompareToSource with GOOD(FILE) Arg1(String) != with GOOD(FILE) Arg2(String)', (t: any) => {
     const mock = require('mock-fs');
     t.plan(1);
 
@@ -148,7 +150,7 @@ const path = require('path');
       const mapCompare = new Map<string, string>();
       r[0].map(line => mapSource.set(line.split(' : ')[1], line.split(' : ')[0]));
       r[1].map(line => mapCompare.set(line.split(' : ')[1], line.split(' : ')[0]));
-      const rslt = Promise.resolve(utils.checkMD5(mapSource, mapCompare));
+      const rslt = Promise.resolve(utils.isPresentMD5FromCompareToSource(mapSource, mapCompare));
       rslt.then(data => {
         mock.restore();
         t.deepEqual(data, true);
@@ -252,15 +254,15 @@ const path = require('path');
     });
   });
 
-  // analyseMD5
-  test('Call analyseMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array) ADD_LINES', (t: any) => {
+  // updateMD5
+  test('Call updateMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array) ADD_LINES', (t: any) => {
     const mock = require('mock-fs');
     t.plan(1);
 
     mock({
       'path/to/dir': {
-        'test.txt': 'file cotents : here\nThis is the : line 2',
-        'test1.txt': 'file contents : here\nTis is the : line 2'
+        'test.txt': 'md5 : here1\nmd53 : line 22',
+        'test1.txt': 'md51 : here\nmd56 : line 2'
       }
     });
 
@@ -268,18 +270,18 @@ const path = require('path');
     rsltPromise.then(r => {
       const setSource = new Set<string>();
       r.map(line => setSource.add(line));
-      const rslt = Promise.resolve(utils.analyseMD5('path/to/dir/test.txt', setSource));
+      const rslt = Promise.resolve(utils.updateMD5('path/to/dir/test.txt', setSource));
       rslt.then(data => {
         mock.restore();
-        const arr = ['file contents : here', 'Tis is the : line 2'];
-        const arr2 = ['here', 'line 2'];
-        t.deepEqual(data, {getNewFilesToAddSet: new Set(arr), getFilesToRemoveSet: new Set(arr2)});
+        const arr = ['md51 : here', 'nmd56 : line 2'];
+        const arr2 = ['here1', 'line 22'];
+        t.deepEqual(data, {getNewFilesToAdd: new Set(arr), getFilesToRemove: new Set(arr2)});
         t.end();
       });
     });
   });
 
-  test('Call analyseMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array)  REMOVE_LINES', (t: any) => {
+  test('Call updateMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array)  REMOVE_LINES', (t: any) => {
     const mock = require('mock-fs');
     t.plan(1);
 
@@ -294,18 +296,18 @@ const path = require('path');
     rsltPromise.then(r => {
       const setSource = new Set<string>();
       r.map(line => setSource.add(line));
-      const rslt = Promise.resolve(utils.analyseMD5('path/to/dir/test.txt', setSource, false));
+      const rslt = Promise.resolve(utils.updateMD5('path/to/dir/test.txt', setSource, false));
       rslt.then(data => {
         mock.restore();
         const arr = ['1111111111111111111111 : line 1'];
         const arr2 = ['line 1', 'line 2'];
-        t.deepEqual(data, {getNewFilesToAddSet: new Set(arr), getFilesToRemoveSet: new Set(arr2)});
+        t.deepEqual(data, {getNewFilesToAdd: new Set(arr), getFilesToRemove: new Set(arr2)});
         t.end();
       });
     });
   });
 
-  test('Call analyseMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array) AND Arg3(Boolean / True) ADD_REMOVE_LINES', (t: any) => {
+  test('Call updateMD5 with GOOD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array) AND Arg3(Boolean / True) ADD_REMOVE_LINES', (t: any) => {
     const mock = require('mock-fs');
     t.plan(1);
 
@@ -320,18 +322,18 @@ const path = require('path');
     rsltPromise.then(r => {
       const setSource = new Set<string>();
       r.map(line => setSource.add(line));
-      const rslt = Promise.resolve(utils.analyseMD5('path/to/dir/test1.txt', setSource, true));
+      const rslt = Promise.resolve(utils.updateMD5('path/to/dir/test1.txt', setSource, true));
       rslt.then(data => {
         mock.restore();
         const arr = ['This is the line 2'];
         const arr2 = ['1234567 : Ths is the line 2'];
-        t.deepEquals(data, {getFilesToRemoveSet : new Set(arr), getNewFilesToAddSet: new Set(arr2)});
+        t.deepEquals(data, {getFilesToRemove : new Set(arr), getNewFilesToAdd: new Set(arr2)});
         t.end();
       });
     });
   });
 
-  test('Call analyseMD5 with BAD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array)', (t: any) => {
+  test('Call updateMD5 with BAD(FILE) Arg1(String) != with GOOD(FILES) Arg2(Array)', (t: any) => {
     const mock = require('mock-fs');
     t.plan(1);
 
@@ -346,11 +348,11 @@ const path = require('path');
     rsltPromise.then(r => {
       const setSource = new Set<string>();
       r.map(line => setSource.add(line));
-      const rslt = Promise.resolve(utils.analyseMD5('path/to/dir/test3.txt', setSource));
+      const rslt = Promise.resolve(utils.updateMD5('path/to/dir/test3.txt', setSource));
       rslt.then(data => {
         mock.restore();
         const arr = ['file contents here', 'This is the line 2'];
-        t.deepEquals(data, {getFilesToRemoveSet : new Set(), getNewFilesToAddSet: new Set(arr)});
+        t.deepEquals(data, {getFilesToRemove : new Set(), getNewFilesToAdd: new Set(arr)});
         t.end();
       });
     });
