@@ -58,9 +58,10 @@
         "yargs": "6.6.0"
     },
     "devDependencies": {
-        "@types/node": "7.0.0",
-        "@types/promise": "7.1.30",
         "@types/cli-color": "0.3.29",
+        "@types/node": "7.0.1",
+        "@types/promise": "7.1.30",
+        "@types/rimraf": "0.0.28",
         "@types/yargs": "6.5.0",
         "coveralls": "2.11.15",
         "dependency-check": "2.7.0",

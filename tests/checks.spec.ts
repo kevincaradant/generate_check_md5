@@ -1,4 +1,5 @@
 import * as checks from '../src/checks';
+import * as rimraf from 'rimraf';
 const test = require('tape');
 const path = require('path');
 
@@ -169,11 +170,191 @@ const path = require('path');
     t.end();
   });
 
+  test('Call handlingArgvOnErrMessage with --path Arg', (t: any) => {
+    t.plan(1);
+    const mock = require('mock-fs');
+
+    mock({
+      'path/to/dir': {
+        'test.txt': 'file contents here : This is the line 2',
+        'test1.txt': 'file contents here : This is the line 2'
+      }
+    });
+    mock.restore();
+    t.false(checks._handlingArgvOnErrMessage('My custom error', 'path/to/dir/test.txt', 'path'));
+    t.end();
+  });
+
+  test('Call handlingArgvOnErrMessage with --path dest which can be created', (t: any) => {
+    t.plan(1);
+    const mock = require('mock-fs');
+
+    mock({
+      'path/to/dir': {
+        'test.txt': 'file contents here : This is the line 2',
+        'test1.txt': 'file contents here : This is the line 2'
+      }
+    });
+
+    mock.restore();
+    t.true(checks._handlingArgvOnErrMessage('My custom error', __dirname + 'test2.txt', 'dest'));
+
+    rimraf(__dirname + 'test2.txt', () => {
+      t.end();
+    });
+  });
+
   test('Call isPathCorrect with GOOD(FOLDER) Arg1(Array)', (t: any) => {
     t.plan(1);
     const rslt = Promise.resolve(checks.isPathCorrect([__dirname]));
     rslt.then(data => {
       t.true(data);
+      t.end();
+    });
+  });
+
+  test('Call isPathCorrect with BAD(FOLDER) Arg1(Array)', (t: any) => {
+    t.plan(1);
+    const rslt = Promise.resolve(checks.isPathCorrect([]));
+    rslt.then(data => {
+      t.false(data);
+      t.end();
+    });
+  });
+
+  test('Call isPath with GOOD Arg1(string)', (t: any) => {
+    t.plan(1);
+    let data = checks._isPath('path');
+    t.true(data);
+    t.end();
+  });
+
+  test('Call isPath with BAD Arg1(string)', (t: any) => {
+    t.plan(1);
+    let data = checks._isPath('dest');
+    t.false(data);
+    t.end();
+  });
+
+  test('Call isDest with GOOD Arg1(string)', (t: any) => {
+    t.plan(1);
+    let data = checks._isDest('dest');
+    t.true(data);
+    t.end();
+  });
+
+  test('Call isDest with BAD Arg1(string)', (t: any) => {
+    t.plan(1);
+    let data = checks._isDest();
+    t.false(data);
+    t.end();
+  });
+
+  test('Call isCompare with GOOD Arg1(string)', (t: any) => {
+    t.plan(1);
+    let data = checks._isCompare('compare');
+    t.true(data);
+    t.end();
+  });
+
+  test('Call isCompare with BAD Arg1(string)', (t: any) => {
+    t.plan(1);
+    let data = checks._isCompare();
+    t.false(data);
+    t.end();
+  });
+
+  test('Call isSource with GOOD Arg1(string)', (t: any) => {
+    t.plan(1);
+    let data = checks._isSource('source');
+    t.true(data);
+    t.end();
+  });
+
+  test('Call isSource with BAD Arg1(string)', (t: any) => {
+    t.plan(1);
+    let data = checks._isSource();
+    t.false(data);
+    t.end();
+  });
+
+  test('Call _isENOENTError with GOOD Arg1(object)', (t: any) => {
+    t.plan(1);
+    const error = {
+      code: 'ENOENT'
+    };
+
+    let data = checks._isENOENTError(error);
+    t.true(data);
+    t.end();
+  });
+
+  test('Call _isENOENTError with BAD Arg1(object)', (t: any) => {
+    t.plan(1);
+    const error = {
+      code: 'ENOENT1'
+    };
+
+    let data = checks._isENOENTError(error);
+    t.false(data);
+    t.end();
+  });
+
+  test('Call _isFile with GOOD Arg1(file)', (t: any) => {
+    t.plan(1);
+    const mock = require('mock-fs');
+    const fs = require('fs');
+    mock({
+      'path/to/dir': {
+        'test.txt': 'file contents here : This is the line 2',
+        'test1.txt': 'file contents here : This is the line 2'
+      }
+    });
+
+    fs.stat('path/to/dir/test.txt', (err: any, stats: any) => {
+      mock.restore();
+      console.error(err);
+      t.true(checks._isFile(stats));
+      t.end();
+    });
+  });
+
+  test('Call _isDirectory with BAD Arg1(folder)', (t: any) => {
+    t.plan(1);
+    const mock = require('mock-fs');
+    const fs = require('fs');
+
+    mock({
+      'path/to/dir': {
+        'test.txt': 'file contents here : This is the line 2',
+        'test1.txt': 'file contents here : This is the line 2'
+      }
+    });
+
+    fs.stat('path/to/dir/test.txt', (err: any, stats: any) => {
+      mock.restore();
+      console.error(err);
+      t.false(checks._isDirectory(stats));
+      t.end();
+    });
+  });
+
+  test('Call _isDirectory with GOOD Arg1(folder)', (t: any) => {
+    t.plan(1);
+    const mock = require('mock-fs');
+    const fs = require('fs');
+
+    mock({
+      'path/to/dir': {
+        'test.txt': 'file contents here : This is the line 2',
+        'test1.txt': 'file contents here : This is the line 2'
+      }
+    });
+
+    fs.stat('path/to/dir/', (err: any, stats: any) => {
+      mock.restore();
+      console.error(err);
+      t.true(checks._isDirectory(stats));
       t.end();
     });
   });
@@ -216,12 +397,48 @@ const path = require('path');
     });
   });
 
+  test('Call isSourceCorrect with GOOD Arg1(string)', (t: any) => {
+    t.plan(1);
+    const mock = require('mock-fs');
+
+    mock({
+      'path/to/dir': {
+        'test.txt': 'file contents here : This is the line 2',
+        'test1.txt': 'file contents here : This is the line 2'
+      }
+    });
+
+    const rslt = Promise.resolve(checks.isSourceCorrect('path/to/dir/test.txt'));
+    rslt.then(data => {
+      t.true(data);
+      t.end();
+    });
+  });
+
   // isCompareCorrect
   test('Call isCompareCorrect with NO Arg1', (t: any) => {
     t.plan(1);
     const rslt = Promise.resolve(checks.isCompareCorrect());
     rslt.then(data => {
       t.false(data);
+      t.end();
+    });
+  });
+
+  test('Call isCompareCorrect with GOOD Arg1(string)', (t: any) => {
+    t.plan(1);
+    const mock = require('mock-fs');
+
+    mock({
+      'path/to/dir': {
+        'test.txt': 'file contents here : This is the line 2',
+        'test1.txt': 'file contents here : This is the line 2'
+      }
+    });
+
+    const rslt = Promise.resolve(checks.isCompareCorrect('path/to/dir/test.txt'));
+    rslt.then(data => {
+      t.true(data);
       t.end();
     });
   });
@@ -234,9 +451,9 @@ const path = require('path');
     t.end();
   });
 
-  test('Call showPathError with Arg1(Boolean / False)', (t: any) => {
+  test('Call showPathError with Arg1(Array empty)', (t: any) => {
     t.plan(1);
-    t.true(checks.showPathError(['false']));
+    t.false(checks.showPathError());
     t.end();
   });
 
@@ -247,7 +464,7 @@ const path = require('path');
     t.end();
   });
 
-  test('Call showDestError with Arg1(Boolean / False)', (t: any) => {
+  test('Call showDestError no Arg1', (t: any) => {
     t.plan(1);
     t.true(checks.showDestError());
     t.end();
@@ -260,9 +477,9 @@ const path = require('path');
     t.end();
   });
 
-  test('Call showSourceError with Arg1(Boolean / False)', (t: any) => {
+  test('Call showSourceError with no Arg1', (t: any) => {
     t.plan(1);
-    t.false(checks.showSourceError(''));
+    t.false(checks.showSourceError());
     t.end();
   });
 
@@ -273,7 +490,7 @@ const path = require('path');
     t.end();
   });
 
-  test('Call showCompareError with Arg1(Boolean / False)', (t: any) => {
+  test('Call showCompareError with no Arg1', (t: any) => {
     t.plan(1);
     t.false(checks.showCompareError());
     t.end();

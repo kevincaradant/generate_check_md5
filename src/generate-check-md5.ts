@@ -80,9 +80,8 @@ export const generate = (): any => {
     }
   };
 
-  // It's the cae where we want to analyze the difference with a file and then returned the good results and show them
-
-  const analyzeAndUpdateAndShowResults = async (pArgvDest = '', pFilesPath: Array<Set<string>>, pArgvNoSpace = false, pArgvSort = false) => {
+  // It's the case where we want to analyze the difference with a file and then returned the good results and show them
+  const analyzeAndUpdateAndShowResults = async (pArgvDest = '', pFilesPath: Array<Set<string>>, pArgvNoSpace = false, pArgvSort = false): Promise<void> => {
     // We analyze to count the difference between the --path and --dest path
     console.log(warn(`GENERATOR MODE: Update in progress.`));
     const differenceDetected: { getNewFilesToAdd: Set<string>, getFilesToRemove: Set<string> } = await Promise.resolve<any>(utils.updateMD5(pArgvDest, pFilesPath[0], pArgvNoSpace));

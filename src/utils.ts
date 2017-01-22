@@ -45,9 +45,8 @@ export const readFile = async (pFile = ''): Promise<Array<string>> => {
 // For each line of a the pMapCompare. We check if the content is included in the pMapSource.
 export const isPresentMD5FromCompareToSource = (pMapSource: Map<string, string>, pMapCompare: Map<string, string>): boolean => {
   let cptCheck = 0;
-  pMapCompare.forEach((md5: string, name: string) => {
-    const md5Values = pMapSource.values();
-    if (!Array.from(md5Values).includes(md5)) {
+  pMapCompare.forEach((name: string, md5: string) => {
+    if (!pMapSource.has(md5)) {
       console.error(error('\nCOMPARATOR MODE: Error with the MD5 line: ') + notice(md5 + SEPARATORHASHNAME + name));
       cptCheck++;
     }
@@ -60,7 +59,7 @@ export const isPresentMD5FromCompareToSource = (pMapSource: Map<string, string>,
   return true;
 };
 
-// Analyse and get each md5 line by line for the two files ( pSource and pCompare )
+// Analyze and get each md5 line by line for the two files ( pSource and pCompare )
 export const compareMD5 = async (pFileSource: string, pFileCompare: string) => {
   const mapSource = new Map<string, string>();
   const mapCompare = new Map<string, string>();
@@ -68,18 +67,19 @@ export const compareMD5 = async (pFileSource: string, pFileCompare: string) => {
   const rslts = await Promise.all([readFile(pFileSource), readFile(pFileCompare)]);
   rslts[0].map(line => {
     const [name = '', md5 = ''] = line.split(SEPARATORHASHNAME) || [];
-    mapSource.set(md5, name);
+    mapSource.set(name, md5);
   });
   rslts[1].map(line => {
     const [name = '', md5 = ''] = line.split(SEPARATORHASHNAME) || [];
-    mapCompare.set(md5, name);
+    mapCompare.set(name, md5);
   });
 
   isPresentMD5FromCompareToSource(mapSource, mapCompare);
   return true;
 };
 
-const buildDataGetFilesToAddRemove = (pLinesFileSource: Array<string>): Map<string, string> => {
+// Build the map with all path available in the --dest file
+export const _buildDataGetFilesFromSource = (pLinesFileSource: Array<string>): Map<string, string> => {
   let namePathSplit = '';
   let mapSourceNameFiles: Map<string, string> = new Map<string, string>();
 
@@ -112,7 +112,7 @@ export const updateMD5 = async (pFileSource: string, pFilesPath: Set<string>, pA
       let getNewFilesToAdd = new Set<string>();
       let getFilesToRemove = new Set<string>();
 
-      mapSourceNameFiles = buildDataGetFilesToAddRemove(data);
+      mapSourceNameFiles = _buildDataGetFilesFromSource(data);
 
       const keysSNF = Array.from(mapSourceNameFiles.keys());
       const keysFP = Array.from(pFilesPath.keys());
@@ -129,6 +129,7 @@ export const updateMD5 = async (pFileSource: string, pFilesPath: Set<string>, pA
         getNewFilesToAdd = new Set([...keysFP].filter(line => {
           return !mapSourceNameFiles.has(line);
         }));
+
         getFilesToRemove = new Set([...keysSNF].filter(line => {
           return !pFilesPath.has(line);
         }));
@@ -183,6 +184,7 @@ export const sortFileDest = async (pFile = ''): Promise<Array<string>> => {
   });
 };
 
+// Get all files in the folders and returnded it with a Set
 export const recursiveFolders = (pArgvPath: Array<string>): Promise<Array<Set<string>>> => {
   return new Promise(async resolve => {
     const rslts: Array<Set<string>> = await Promise.all<any>(pArgvPath.map(file => {
@@ -206,7 +208,7 @@ export const recursiveFolders = (pArgvPath: Array<string>): Promise<Array<Set<st
 };
 
 // Get all path with md5 which have to be add in the dest file
-const getFilesToAdd = (pFilesToAdd: Set<string>, pArgvDest = '', pArgvNoSpace = false) => {
+export const _getFilesToAdd = (pFilesToAdd: Set<string>, pArgvDest = '', pArgvNoSpace = false) => {
   if (pArgvDest) {
     console.log(notice(`\nGENERATOR MODE: Line to add in --dest path file:`));
     if (pFilesToAdd.size === 0) {
@@ -244,7 +246,7 @@ const getFilesToAdd = (pFilesToAdd: Set<string>, pArgvDest = '', pArgvNoSpace = 
 };
 
 // Get all path with md5 which have to be remove from the dest file because some paths doesn't exist anymore
-const getFilesToRemove = (pFilesToRemove: Set<string>, pArgvDest = ''): void => {
+export const _getFilesToRemove = (pFilesToRemove: Set<string>, pArgvDest = ''): void => {
   if (pArgvDest) {
     console.log(notice(`\nGENERATOR MODE: Line to remove from --dest path file:`));
 
@@ -299,8 +301,8 @@ export const writeMD5FileDest = (pFilesToAdd: Set<string>, pFilesToRemove: Set<s
     }
   }
 
-  getFilesToAdd(pFilesToAdd, pArgvDest, pArgvNoSpace);
-  getFilesToRemove(pFilesToRemove, pArgvDest);
+  _getFilesToAdd(pFilesToAdd, pArgvDest, pArgvNoSpace);
+  _getFilesToRemove(pFilesToRemove, pArgvDest);
 
   console.log(success('\nGENERATOR MODE: Done !'));
   return true;

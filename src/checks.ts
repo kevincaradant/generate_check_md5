@@ -96,7 +96,10 @@ export const isExistAtLeastOneParamFromUser = (pArgumentsAllowedArray: Array<str
   return true;
 };
 
-const handlingArgvOnErrMessage = (err: any, pFile: string, pTypeArg?: string): boolean => {
+// Check and write a message about the sitation with parameters
+// Return true if it's the --dest argument
+// Return false if it's different of --dest argument
+export const _handlingArgvOnErrMessage = (err: any, pFile: string, pTypeArg?: string): boolean => {
   if (pTypeArg === 'dest') {
     console.log(notice(`\nArgument --${pTypeArg}: New file located at ${pFile} will be created`));
     if (typeof fs.closeSync(fs.openSync(pFile, 'a')) !== 'undefined') {
@@ -112,48 +115,62 @@ const handlingArgvOnErrMessage = (err: any, pFile: string, pTypeArg?: string): b
   }
 };
 
-const isPath = (pTypeArg = ''): boolean => {
+// Return true if it's a --path argument
+// Return false if it's not a --path argument
+export const _isPath = (pTypeArg = ''): boolean => {
   return pTypeArg === 'path';
 };
 
-const isDest = (pTypeArg = ''): boolean => {
+// Return true if it's a --dest argument
+// Return false if it's not a --dest argument
+export const _isDest = (pTypeArg = ''): boolean => {
   return pTypeArg === 'dest';
 };
 
-const isCompare = (pTypeArg = ''): boolean => {
+// Return true if it's a --dest argument
+// Return false if it's not a --dest argument
+export const _isCompare = (pTypeArg = ''): boolean => {
   return pTypeArg === 'compare';
 };
 
-const isSource = (pTypeArg = ''): boolean => {
+// Return true if it's a --source argument
+// Return false if it's not a --source argument
+export const _isSource = (pTypeArg = ''): boolean => {
   return pTypeArg === 'source';
 };
 
-const isENOENTError = (pError: any): boolean => {
+// Return true if --isENOENTError argument is an ENOENT error
+// Return false if --isENOENTError argument is not an ENOENT error
+export const _isENOENTError = (pError: any): boolean => {
   return pError && pError.code === 'ENOENT';
 };
 
-const isFile = (pType: any): boolean => {
+// Return true if --isFile argument is a file
+// Return false if --isFile argument is not a file
+export const _isFile = (pType: any): boolean => {
   return pType.isFile();
 };
 
-const isDirectory = (pType: any): boolean => {
+// Return true if --isDirectory argument is a directory
+// Return false if --isDirectory argument is not a directory
+export const _isDirectory = (pType: any): boolean => {
   return pType.isDirectory();
 };
 
 // Return true if paths are corrects
 // Return false if the path with the argument is bad or something goes wrong
-export const checkStateFiles = (pFile = '', pTypeArg = ''): Promise<boolean> => {
+export const _checkStateFiles = (pFile = '', pTypeArg = ''): Promise<boolean> => {
   return new Promise(resolve => {
     fs.stat(pFile, (err: any, stats: any) => {
-      if (isENOENTError(err)) {
-        return resolve(handlingArgvOnErrMessage(err, pFile, pTypeArg));
+      if (_isENOENTError(err)) {
+        return resolve(_handlingArgvOnErrMessage(err, pFile, pTypeArg));
       } else if (err) {
         console.error(error(`\nArgument --${pTypeArg}: ${err}`));
         return resolve(false);
-      } else if (isFile(stats) && isPath(pTypeArg)) {
+      } else if (_isFile(stats) && _isPath(pTypeArg)) {
         console.error(error(`\nArgument --${pTypeArg}: Is a file instead of a directory`));
         return resolve(false);
-      } else if (isDirectory(stats) && (isSource(pTypeArg) || isCompare(pTypeArg) || isDest(pTypeArg))) {
+      } else if (_isDirectory(stats) && (_isSource(pTypeArg) || _isCompare(pTypeArg) || _isDest(pTypeArg))) {
         console.error(error(`\nArgument --${pTypeArg}: Is a directory instead of a file`));
         return resolve(false);
       }
@@ -172,7 +189,7 @@ export const isPathCorrect = (pArgvPath: Array<string> = []): Promise<boolean> =
 
   return new Promise(async (resolve) => {
     const rslts = await Promise.all(pArgvPath.map(async file => {
-      return checkStateFiles(file, 'path');
+      return _checkStateFiles(file, 'path');
     }));
     resolve(rslts);
   });
@@ -185,7 +202,7 @@ export const isDestCorrect = (pArgvDest = ''): Promise<boolean> => {
     console.error(error('\nArgument --dest: The path is not correct.') + notice('\nUse: --dest "your/path/and/your-file.txt"'));
     return new Promise(resolve => resolve(true));
   } else if (pArgvDest) {
-    return checkStateFiles(pArgvDest, 'dest');
+    return _checkStateFiles(pArgvDest, 'dest');
   } else {
     return new Promise(resolve => resolve(true));
   }
@@ -198,7 +215,7 @@ export const isSourceCorrect = (pArgvSource = ''): Promise<boolean> => {
     console.error(error('\nArgument --source: The path is not correct.') + notice('\nUse: --source "your/path/and/your-source-file.txt"'));
     return new Promise(resolve => resolve(false));
   }
-  return checkStateFiles(pArgvSource, 'source');
+  return _checkStateFiles(pArgvSource, 'source');
 };
 
 // Return true: --compare arg is correct
@@ -208,7 +225,7 @@ export const isCompareCorrect = (pArgvCompare = ''): Promise<boolean> => {
     console.error(error('\nArgument --compare: The path is not correct.') + notice('\nUse: --compare "your/path/and/your-compare-file.txt"'));
     return new Promise(resolve => resolve(false));
   }
-  return checkStateFiles(pArgvCompare, 'compare');
+  return _checkStateFiles(pArgvCompare, 'compare');
 };
 
 // Return true: --path arg exist
