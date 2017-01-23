@@ -43,7 +43,7 @@ export const readFile = async (pFile = ''): Promise<Array<string>> => {
 };
 
 // For each line of a the pMapCompare. We check if the content is included in the pMapSource.
-export const isPresentMD5FromCompareToSource = (pMapSource: Map<string, string>, pMapCompare: Map<string, string>): boolean => {
+export const _isPresentMD5FromCompareToSource = (pMapSource: Map<string, string>, pMapCompare: Map<string, string>): boolean => {
   let cptCheck = 0;
   pMapCompare.forEach((name: string, md5: string) => {
     if (!pMapSource.has(md5)) {
@@ -74,7 +74,7 @@ export const compareMD5 = async (pFileSource: string, pFileCompare: string) => {
     mapCompare.set(name, md5);
   });
 
-  isPresentMD5FromCompareToSource(mapSource, mapCompare);
+  _isPresentMD5FromCompareToSource(mapSource, mapCompare);
   return true;
 };
 

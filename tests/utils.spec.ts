@@ -104,8 +104,8 @@ const path = require('path');
     });
   });
 
-  // isPresentMD5FromCompareToSource
-  test('Call isPresentMD5FromCompareToSource with GOOD(FILE) Arg1(String) = with GOOD(FILE) Arg2(String)', (t: any) => {
+  // _isPresentMD5FromCompareToSource
+  test('Call _isPresentMD5FromCompareToSource with GOOD(FILE) Arg1(String) = with GOOD(FILE) Arg2(String)', (t: any) => {
     const mock = require('mock-fs');
     t.plan(1);
 
@@ -123,7 +123,7 @@ const path = require('path');
       const mapCompare = new Map<string, string>();
       r[0].map(line => mapSource.set(line.split(' : ')[1], line.split(' : ')[0]));
       r[1].map(line => mapCompare.set(line.split(' : ')[1], line.split(' : ')[0]));
-      const rslt = Promise.resolve(utils.isPresentMD5FromCompareToSource(mapSource, mapCompare));
+      const rslt = Promise.resolve(utils._isPresentMD5FromCompareToSource(mapSource, mapCompare));
       console.log('rslt');
       console.log(rslt);
       rslt.then(data => {
@@ -134,7 +134,7 @@ const path = require('path');
     });
   });
 
-  test('Call isPresentMD5FromCompareToSource with GOOD(FILE) Arg1(String) != with GOOD(FILE) Arg2(String)', (t: any) => {
+  test('Call _isPresentMD5FromCompareToSource with GOOD(FILE) Arg1(String) != with GOOD(FILE) Arg2(String)', (t: any) => {
     const mock = require('mock-fs');
     t.plan(1);
 
@@ -150,7 +150,7 @@ const path = require('path');
       const mapCompare = new Map<string, string>();
       r[0].map(line => mapSource.set(line.split(' : ')[1], line.split(' : ')[0]));
       r[1].map(line => mapCompare.set(line.split(' : ')[1], line.split(' : ')[0]));
-      const rslt = Promise.resolve(utils.isPresentMD5FromCompareToSource(mapSource, mapCompare));
+      const rslt = Promise.resolve(utils._isPresentMD5FromCompareToSource(mapSource, mapCompare));
       rslt.then(data => {
         mock.restore();
         t.deepEqual(data, true);
