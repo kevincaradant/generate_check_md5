@@ -374,7 +374,9 @@ const path = require('path');
     const rslt = Promise.resolve(checks.isDestCorrect(path.join(__dirname, '/test.txt')));
     rslt.then(data => {
       t.true(data);
-      t.end();
+      rimraf(__dirname + '/test.txt', () => {
+        t.end();
+      });
     });
   });
 
