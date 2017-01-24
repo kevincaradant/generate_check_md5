@@ -10,6 +10,7 @@
         "check": "npm run lint -s && dependency-check ./package.json",
         "pretest": "tsc",
         "test": "tape bin/tests/**/*.spec.js | tspec",
+        "posttest": "rimraf bin/tests",
         "test:watch": "onchange \"tests/**/*.ts\" \"src/**/*.ts\" -i -p -- npm run test",
         "compile": "tsc",
         "compile:watch": "onchange \"src/**/*.ts\" -i -p -- npm run compile",
@@ -59,7 +60,7 @@
     },
     "devDependencies": {
         "@types/cli-color": "0.3.29",
-        "@types/node": "7.0.1",
+        "@types/node": "7.0.3",
         "@types/promise": "7.1.30",
         "@types/rimraf": "0.0.28",
         "@types/yargs": "6.5.0",

@@ -1,10 +1,12 @@
 {
   "include": [
-    "src/**/*.ts"
+    "bin/src/**/*.js"
   ],
   "exclude": [
+    "bin/src/generate-check-md5.js",
+    "bin/src/index.js",
     "tests/**/*",
-    "bin/**/*",
+    "img/**/*",
     "coverage/**/*",
     "node_modules/**/*"
   ],
@@ -12,12 +14,6 @@
     "lcov",
     "text-summary"
   ],
-  "extension": [
-    ".ts"
-  ],
-  "require": [
-      "ts-node/register"
-   ],
   "all": true,
   "check-coverage": true
 }
