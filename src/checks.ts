@@ -181,7 +181,7 @@ export const _checkStateFiles = (pFile = '', pTypeArg = ''): Promise<boolean> =>
 
 // Return true: --path arg is correct
 // Return false: --path arg is not correct
-export const isPathCorrect = (pArgvPath: Array<string> = []): Promise<boolean> => {
+export const isPathCorrect = (pArgvPath: Array<string> = []): Promise<Array<boolean>> => {
   if (pArgvPath.length === 0) {
     console.error(error('\nArgument --path: The path is not correct.') + notice('\nUse: --path "your/path/and/your-folder-name1" "your/path/and/your-folder2-name"'));
     return new Promise(resolve => resolve(false));
@@ -198,14 +198,10 @@ export const isPathCorrect = (pArgvPath: Array<string> = []): Promise<boolean> =
 // Return true: --dest arg is correct
 // Return false: --dest arg is not correct
 export const isDestCorrect = (pArgvDest = ''): Promise<boolean> => {
-  if (typeof (pArgvDest) !== 'string') {
-    console.error(error('\nArgument --dest: The path is not correct.') + notice('\nUse: --dest "your/path/and/your-file.txt"'));
-    return new Promise(resolve => resolve(true));
-  } else if (pArgvDest) {
+  if (pArgvDest) {
     return _checkStateFiles(pArgvDest, 'dest');
-  } else {
-    return new Promise(resolve => resolve(true));
   }
+  return new Promise(resolve => resolve(true));
 };
 
 // Return true: --source arg is correct

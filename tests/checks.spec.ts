@@ -222,6 +222,46 @@ const path = require('path');
     });
   });
 
+  test('Call isPathCorrect without Arg1', (t: any) => {
+    t.plan(1);
+    const rslt = Promise.resolve(checks.isPathCorrect());
+    rslt.then(data => {
+      t.false(data);
+      t.end();
+    });
+  });
+
+  test('Call _checkStateFiles with 0 argument', (t: any) => {
+    t.plan(1);
+    const rslt = Promise.resolve(checks._checkStateFiles());
+    rslt.then(data => {
+      t.false(data);
+      t.end();
+    });
+  });
+
+
+  test('Call isPathCorrect with GOOD(FILE) Arg1(Array)', (t: any) => {
+    t.plan(1);
+    const mock = require('mock-fs');
+
+    mock({
+      'path/to/dir': {
+        'test.txt': 'file contents here : This is the line 2',
+        'test1.txt': 'file contents here : This is the line 2'
+      }
+    });
+
+
+    const rslt = Promise.resolve(checks.isPathCorrect(['path/to/dir/test.txt']));
+    rslt.then(data => {
+      console.log(data);
+      mock.restore();
+      t.false(data[0]);
+      t.end();
+    });
+  });
+
   test('Call isPath with GOOD Arg1(string)', (t: any) => {
     t.plan(1);
     let data = checks._isPath('path');
@@ -231,7 +271,7 @@ const path = require('path');
 
   test('Call isPath with BAD Arg1(string)', (t: any) => {
     t.plan(1);
-    let data = checks._isPath('dest');
+    let data = checks._isPath();
     t.false(data);
     t.end();
   });
@@ -389,6 +429,30 @@ const path = require('path');
     });
   });
 
+  test('Call isDestCorrect with BAD(FOLDER) Arg1(string)', (t: any) => {
+    const mock = require('mock-fs');
+    t.plan(1);
+
+    mock({
+      'path/to/dir': {
+        'test.txt': 'file contents here\nThis is the line 2',
+        'test2.txt': 'file contents here\nThis is the line 2',
+        'test3.txt': 'file contents here\nThis is the line 2'
+      },
+      'path/to/dir2': {
+        'test.txt': 'file contents here\nThis is the line 2',
+        'test2.txt': 'file contents here\nThis is the line 2',
+        'test3.txt': 'file contents here\nThis is the line 2'
+      }
+    });
+
+    const rslt = Promise.resolve(checks.isDestCorrect('path/to/'));
+    rslt.then(data => {
+      t.false(data);
+      t.end();
+    });
+  });
+
   // isSourceCorrect
   test('Call isSourceCorrect with NO Arg1', (t: any) => {
     t.plan(1);
@@ -502,6 +566,12 @@ const path = require('path');
   test('Call showRewriteUpdateError with Arg1(Boolean / True) and Arg2(Boolean / True)', (t: any) => {
     t.plan(1);
     t.false(checks.showRewriteUpdateError(true, true));
+    t.end();
+  });
+
+  test('Call showRewriteUpdateError without Arg1 and Arg2', (t: any) => {
+    t.plan(1);
+    t.true(checks.showRewriteUpdateError());
     t.end();
   });
 

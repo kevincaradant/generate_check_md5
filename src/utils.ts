@@ -14,6 +14,9 @@ const success: any = clc.green.bold;
 const notice: any = clc.blue.bold;
 
 const isFileExist = (pType: any): boolean => {
+  if (!pType) {
+    return false;
+  }
   return fs.existsSync(pType);
 };
 
@@ -32,7 +35,7 @@ export const readFile = async (pFile = ''): Promise<Array<string>> => {
       resolve(pArrayResults);
     });
 
-    lineByLineReader.on('line', (line = '') => {
+    lineByLineReader.on('line', (line: any) => {
       pArrayResults.push(line);
     });
 
@@ -140,7 +143,7 @@ export const updateMD5 = async (pFileSource: string, pFilesPath: Set<string>, pA
 };
 
 // Useful to remove / and write again a file
-export const quickDumpMD5FileDest = async (pFiles: Array<string>, pArgvDest = ''): Promise<boolean> => {
+export const quickDumpMD5FileDest = (pFiles: Array<string>, pArgvDest = ''): boolean => {
   if (isFileExist(pArgvDest)) {
     fs.unlinkSync(pArgvDest);
     pFiles.forEach(file => {

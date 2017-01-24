@@ -76,6 +76,16 @@ const path = require('path');
     });
   });
 
+  test('Call readFile without Arg1', (t: any) => {
+    t.plan(1);
+
+    const rslt = Promise.resolve(utils.readFile());
+    rslt.then(data => {
+      t.deepEqual(data, []);
+      t.end();
+    });
+  });
+
   test('Call readFile with GOOD(FILE) Arg1(String / EMPTY)', (t: any) => {
     const mock = require('mock-fs');
     t.plan(1);
@@ -124,8 +134,6 @@ const path = require('path');
       r[0].map(line => mapSource.set(line.split(' : ')[1], line.split(' : ')[0]));
       r[1].map(line => mapCompare.set(line.split(' : ')[1], line.split(' : ')[0]));
       const rslt = Promise.resolve(utils._isPresentMD5FromCompareToSource(mapSource, mapCompare));
-      console.log('rslt');
-      console.log(rslt);
       rslt.then(data => {
         mock.restore();
         t.true(data);
@@ -261,7 +269,7 @@ const path = require('path');
 
     mock({
       'path/to/dir': {
-        'test.txt': 'md5 : here1\nmd53 : line 22',
+        'test.txt': 'md5 : here1\nmd53: line 22',
         'test1.txt': 'md51 : here\nmd56 : line 2'
       }
     });
@@ -274,7 +282,7 @@ const path = require('path');
       rslt.then(data => {
         mock.restore();
         const arr = ['md51 : here', 'nmd56 : line 2'];
-        const arr2 = ['here1', 'line 22'];
+        const arr2 = ['here1'];
         t.deepEqual(data, { getNewFilesToAdd: new Set(arr), getFilesToRemove: new Set(arr2) });
         t.end();
       });
@@ -381,6 +389,27 @@ const path = require('path');
     });
   });
 
+  // quickDumpMD5FileDest
+  test('Call quickDumpMD5FileDest with GOOD(FILES) Arg1(Array) and without Arg2(String)', (t: any) => {
+    const mock = require('mock-fs');
+    t.plan(1);
+
+    mock({
+      'path/to/dir': {
+        'test.txt': 'file contents here\nThis is the line 2',
+        'test2.txt': 'file contents here\nThis is the line 2'
+      }
+    });
+
+    const rsltPromise = Promise.resolve(utils.readFile('path/to/dir/test2.txt'));
+    rsltPromise.then(r => {
+      const data = utils.quickDumpMD5FileDest(r);
+      mock.restore();
+      t.false(data);
+      t.end();
+    });
+  });
+
   test('Call quickDumpMD5FileDest with GOOD(FILES) Arg1(Array) != with BAD(FILE) Arg2(String)', (t: any) => {
     const mock = require('mock-fs');
     t.plan(1);
@@ -483,6 +512,16 @@ const path = require('path');
     rslt.then(data => {
       mock.restore();
       t.deepEqual(data, ['11111 : This is the line 1', '2222222 : This is the line 2']);
+      t.end();
+    });
+  });
+
+    // sortFileDest
+  test('Call sortFileDest without Arg1', (t: any) => {
+    t.plan(1);
+    const rslt = Promise.resolve(utils.sortFileDest());
+    rslt.then(data => {
+      t.deepEqual(data, []);
       t.end();
     });
   });

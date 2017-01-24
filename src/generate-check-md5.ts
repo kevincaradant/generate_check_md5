@@ -59,7 +59,7 @@ export const generate = (): any => {
   // Check if each argument are typed correctly otherwise we returned an error
   const checkArgWtOpt = async (pArgvPath = [], pArgvDest = '', pArgvSource = '', pArgvCompare = '') => {
     if ((pArgvPath.length > 0 || pArgvDest) && !pArgvSource && !pArgvCompare) {
-      const rslts: Array<boolean> = await Promise.all([checks.isPathCorrect(pArgvPath), checks.showPathError(pArgvPath), checks.isDestCorrect(pArgvDest), checks.showDestError(pArgvDest)]);
+      const rslts = await Promise.all([checks.isPathCorrect(pArgvPath), checks.showPathError(pArgvPath), checks.isDestCorrect(pArgvDest), checks.showDestError(pArgvDest)]);
       if (rslts.includes(false)) {
         process.exit(0);
       }
