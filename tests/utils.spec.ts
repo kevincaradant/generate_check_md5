@@ -1,6 +1,8 @@
 import * as utils from '../src/utils';
 const test = require('tape');
 const path = require('path');
+const isEqual = require('is-equal');
+
 (() => {
   // readRecursiveFolders
   test('Call readRecursiveFolders with GOOD Path Strings Array', (t: any) => {
@@ -322,9 +324,9 @@ const path = require('path');
       const rslt = Promise.resolve(utils.updateMD5('path/to/dir/test.txt', setSource));
       rslt.then(data => {
         mock.restore();
-        const arr = ['md51 : here', 'nmd56 : line 2'];
+        const arr = ['md51 : here', 'md56 : line 2'];
         const arr2 = ['here1'];
-        t.deepEqual(data, { getNewFilesToAdd: new Set(arr), getFilesToRemove: new Set(arr2) });
+        t.ok(isEqual(data, { getNewFilesToAdd: new Set(arr), getFilesToRemove: new Set(arr2) }));
         t.end();
       });
     });
@@ -350,7 +352,7 @@ const path = require('path');
         mock.restore();
         const arr = ['1111111111111111111111 : line 1'];
         const arr2 = ['line 1', 'line 2'];
-        t.deepEqual(data, { getNewFilesToAdd: new Set(arr), getFilesToRemove: new Set(arr2) });
+        t.ok(isEqual(data, { getNewFilesToAdd: new Set(arr), getFilesToRemove: new Set(arr2) }));
         t.end();
       });
     });
@@ -376,7 +378,7 @@ const path = require('path');
         mock.restore();
         const arr = ['This is the line 2'];
         const arr2 = ['1234567 : Ths is the line 2'];
-        t.deepEquals(data, { getFilesToRemove: new Set(arr), getNewFilesToAdd: new Set(arr2) });
+        t.ok(isEqual(data, { getFilesToRemove: new Set(arr), getNewFilesToAdd: new Set(arr2) }));
         t.end();
       });
     });
@@ -401,7 +403,7 @@ const path = require('path');
       rslt.then(data => {
         mock.restore();
         const arr = ['file contents here', 'This is the line 2'];
-        t.deepEquals(data, { getFilesToRemove: new Set(), getNewFilesToAdd: new Set(arr) });
+        t.ok(isEqual(data, { getFilesToRemove: new Set(), getNewFilesToAdd: new Set(arr) }));
         t.end();
       });
     });
