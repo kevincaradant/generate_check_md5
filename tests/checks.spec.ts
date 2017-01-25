@@ -70,6 +70,9 @@ const path = require('path');
     t.end();
   });
 
+
+
+
   // findAllElemInArray
   test('Call findAllElemInArray with Arg1(Array) = Arg2(Array)', (t: any) => {
     t.plan(1);
@@ -94,6 +97,9 @@ const path = require('path');
     t.false(checks.findAllElemInArray(arrayElements1, arrayElements2));
     t.end();
   });
+
+
+
 
   // isExistElemBetweenTwoArrays
   test('Call isExistElemBetweenTwoArrays with Arg1(Array) = Arg2(Array)', (t: any) => {
@@ -120,6 +126,9 @@ const path = require('path');
     t.end();
   });
 
+
+
+
   // checkAllParamsFromUser
   test('Call checkAllParamsFromUser with Arg1(Array) != Arg2(Array) / 1/3 diff', (t: any) => {
     t.plan(1);
@@ -136,6 +145,9 @@ const path = require('path');
     t.true(checks.checkAllParamsFromUser(arrayAuthorizeParams, arrayUserParams));
     t.end();
   });
+
+
+
 
   // isExistAtLeastOneParamFromUser
   test('Call isExistAtLeastOneParamFromUser with Arg1(Array) != Arg2(Array) / 1/3 diff', (t: any) => {
@@ -170,7 +182,11 @@ const path = require('path');
     t.end();
   });
 
-  test('Call handlingArgvOnErrMessage with --path Arg', (t: any) => {
+
+
+
+  // handlingArgvOnErrMessage
+  test('Call handlingArgvOnErrMessage with Arg1(err), Arg2(Good File path), Arg3(string)', (t: any) => {
     t.plan(1);
     const mock = require('mock-fs');
 
@@ -185,7 +201,7 @@ const path = require('path');
     t.end();
   });
 
-  test('Call handlingArgvOnErrMessage with --path dest which can be created', (t: any) => {
+  test('Call handlingArgvOnErrMessage with Arg1(err), Arg2(Bad File path), Arg3(string)', (t: any) => {
     t.plan(1);
     const mock = require('mock-fs');
 
@@ -204,6 +220,10 @@ const path = require('path');
     });
   });
 
+
+
+
+  // isPathCorrect
   test('Call isPathCorrect with GOOD(FOLDER) Arg1(Array)', (t: any) => {
     t.plan(1);
     const rslt = Promise.resolve(checks.isPathCorrect([__dirname]));
@@ -213,7 +233,7 @@ const path = require('path');
     });
   });
 
-  test('Call isPathCorrect with BAD(FOLDER) Arg1(Array)', (t: any) => {
+  test('Call isPathCorrect with BAD(FOLDER) Arg1(Empty Array)', (t: any) => {
     t.plan(1);
     const rslt = Promise.resolve(checks.isPathCorrect([]));
     rslt.then(data => {
@@ -231,16 +251,6 @@ const path = require('path');
     });
   });
 
-  test('Call _checkStateFiles with 0 argument', (t: any) => {
-    t.plan(1);
-    const rslt = Promise.resolve(checks._checkStateFiles());
-    rslt.then(data => {
-      t.false(data);
-      t.end();
-    });
-  });
-
-
   test('Call isPathCorrect with GOOD(FILE) Arg1(Array)', (t: any) => {
     t.plan(1);
     const mock = require('mock-fs');
@@ -252,72 +262,103 @@ const path = require('path');
       }
     });
 
-
     const rslt = Promise.resolve(checks.isPathCorrect(['path/to/dir/test.txt']));
     rslt.then(data => {
-      console.log(data);
       mock.restore();
       t.false(data[0]);
       t.end();
     });
   });
 
-  test('Call isPath with GOOD Arg1(string)', (t: any) => {
+
+
+
+  // _checkStateFiles
+  test('Call _checkStateFiles with 0 argument', (t: any) => {
+    t.plan(1);
+    const rslt = Promise.resolve(checks._checkStateFiles());
+    rslt.then(data => {
+      t.false(data);
+      t.end();
+    });
+  });
+
+
+
+
+  // _isPath
+  test('Call _isPath with GOOD Arg1(string)', (t: any) => {
     t.plan(1);
     let data = checks._isPath('path');
     t.true(data);
     t.end();
   });
 
-  test('Call isPath with BAD Arg1(string)', (t: any) => {
+  test('Call _isPath with BAD Arg1(string)', (t: any) => {
     t.plan(1);
     let data = checks._isPath();
     t.false(data);
     t.end();
   });
 
-  test('Call isDest with GOOD Arg1(string)', (t: any) => {
+
+
+
+  // _isDest
+  test('Call _isDest with GOOD Arg1(string)', (t: any) => {
     t.plan(1);
     let data = checks._isDest('dest');
     t.true(data);
     t.end();
   });
 
-  test('Call isDest with BAD Arg1(string)', (t: any) => {
+  test('Call _isDest with BAD Arg1(string)', (t: any) => {
     t.plan(1);
     let data = checks._isDest();
     t.false(data);
     t.end();
   });
 
-  test('Call isCompare with GOOD Arg1(string)', (t: any) => {
+
+
+
+  // _isCompare
+  test('Call _isCompare with GOOD Arg1(string)', (t: any) => {
     t.plan(1);
     let data = checks._isCompare('compare');
     t.true(data);
     t.end();
   });
 
-  test('Call isCompare with BAD Arg1(string)', (t: any) => {
+  test('Call _isCompare with BAD Arg1(string)', (t: any) => {
     t.plan(1);
     let data = checks._isCompare();
     t.false(data);
     t.end();
   });
 
-  test('Call isSource with GOOD Arg1(string)', (t: any) => {
+
+
+
+  // _isSource
+  test('Call _isSource with GOOD Arg1(string)', (t: any) => {
     t.plan(1);
     let data = checks._isSource('source');
     t.true(data);
     t.end();
   });
 
-  test('Call isSource with BAD Arg1(string)', (t: any) => {
+  test('Call _isSource with BAD Arg1(string)', (t: any) => {
     t.plan(1);
     let data = checks._isSource();
     t.false(data);
     t.end();
   });
 
+
+
+
+  // _isENOENTError
   test('Call _isENOENTError with GOOD Arg1(object)', (t: any) => {
     t.plan(1);
     const error = {
@@ -340,6 +381,11 @@ const path = require('path');
     t.end();
   });
 
+
+
+
+
+  // _isFile
   test('Call _isFile with GOOD Arg1(file)', (t: any) => {
     t.plan(1);
     const mock = require('mock-fs');
@@ -359,6 +405,10 @@ const path = require('path');
     });
   });
 
+
+
+
+  // _isDirectory
   test('Call _isDirectory with BAD Arg1(folder)', (t: any) => {
     t.plan(1);
     const mock = require('mock-fs');
@@ -398,6 +448,9 @@ const path = require('path');
       t.end();
     });
   });
+
+
+
 
   // isDestCorrect
   test('Call isDestCorrect with NO Arg1', (t: any) => {
@@ -448,10 +501,14 @@ const path = require('path');
 
     const rslt = Promise.resolve(checks.isDestCorrect('path/to/'));
     rslt.then(data => {
+      mock.restore();
       t.false(data);
       t.end();
     });
   });
+
+
+
 
   // isSourceCorrect
   test('Call isSourceCorrect with NO Arg1', (t: any) => {
@@ -476,10 +533,14 @@ const path = require('path');
 
     const rslt = Promise.resolve(checks.isSourceCorrect('path/to/dir/test.txt'));
     rslt.then(data => {
+      mock.restore();
       t.true(data);
       t.end();
     });
   });
+
+
+
 
   // isCompareCorrect
   test('Call isCompareCorrect with NO Arg1', (t: any) => {
@@ -504,13 +565,16 @@ const path = require('path');
 
     const rslt = Promise.resolve(checks.isCompareCorrect('path/to/dir/test.txt'));
     rslt.then(data => {
+      mock.restore();
       t.true(data);
       t.end();
     });
   });
 
-  // showPathError
 
+
+
+  // showPathError
   test('Call showPathError with Arg1(Boolean / True)', (t: any) => {
     t.plan(1);
     t.true(checks.showPathError(['true']));
@@ -522,6 +586,9 @@ const path = require('path');
     t.false(checks.showPathError());
     t.end();
   });
+
+
+
 
   // showDestError
   test('Call showDestError with Arg1(Boolean / True)', (t: any) => {
@@ -535,6 +602,9 @@ const path = require('path');
     t.true(checks.showDestError());
     t.end();
   });
+
+
+
 
   // showSourceError
   test('Call showSourceError with Arg1(Boolean / True)', (t: any) => {
@@ -561,6 +631,9 @@ const path = require('path');
     t.false(checks.showCompareError());
     t.end();
   });
+
+
+
 
   // showRewriteUpdateError
   test('Call showRewriteUpdateError with Arg1(Boolean / True) and Arg2(Boolean / True)', (t: any) => {

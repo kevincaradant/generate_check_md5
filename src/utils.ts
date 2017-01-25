@@ -63,20 +63,19 @@ export const _isPresentMD5FromCompareToSource = (pMapSource: Map<string, string>
 };
 
 // Analyze and get each md5 line by line for the two files ( pSource and pCompare )
-export const compareMD5 = async (pFileSource: string, pFileCompare: string) => {
+export const compareMD5 = async (pFileSource = '', pFileCompare = '') => {
   const mapSource = new Map<string, string>();
   const mapCompare = new Map<string, string>();
 
   const rslts = await Promise.all([readFile(pFileSource), readFile(pFileCompare)]);
   rslts[0].map(line => {
-    const [name = '', md5 = ''] = line.split(SEPARATORHASHNAME) || [];
+    const [name, md5 = ''] = line.split(SEPARATORHASHNAME);
     mapSource.set(name, md5);
   });
   rslts[1].map(line => {
-    const [name = '', md5 = ''] = line.split(SEPARATORHASHNAME) || [];
+    const [name, md5 = ''] = line.split(SEPARATORHASHNAME);
     mapCompare.set(name, md5);
   });
-
   _isPresentMD5FromCompareToSource(mapSource, mapCompare);
   return true;
 };
@@ -87,7 +86,7 @@ export const _buildDataGetFilesFromSource = (pLinesFileSource: Array<string>): M
   let mapSourceNameFiles: Map<string, string> = new Map<string, string>();
 
   pLinesFileSource.map(line => {
-    const [md5 = '', name = ''] = line.split(SEPARATORHASHNAME) || [];
+    const [md5, name = ''] = line.split(SEPARATORHASHNAME);
     if (process.platform === 'win32') {
       namePathSplit = name.split('/').join('\\');
     } else {
@@ -211,45 +210,47 @@ export const recursiveFolders = (pArgvPath: Array<string>): Promise<Array<Set<st
 };
 
 // Get all path with md5 which have to be add in the dest file
-export const _getFilesToAdd = (pFilesToAdd: Set<string>, pArgvDest = '', pArgvNoSpace = false) => {
+export const _getFilesToAdd = (pFilesToAdd: Set<string>, pArgvDest = '', pArgvNoSpace = false): boolean => {
   if (pArgvDest) {
     console.log(notice(`\nGENERATOR MODE: Line to add in --dest path file:`));
     if (pFilesToAdd.size === 0) {
       console.log(notice('0 / 0'));
     }
   }
+  if (pFilesToAdd.size > 0) {
+    const getValuesFilesToAdd = pFilesToAdd.keys();
 
-  const getValuesFilesToAdd = pFilesToAdd.keys();
+    for (let i = 0; i < pFilesToAdd.size; i++) {
+      console.log(notice(`${i + 1} / ${pFilesToAdd.size}`));
+      let file: string = getValuesFilesToAdd.next().value;
+      if (isFileExist(file)) {
+        const md5: string = md5File.sync(file);
 
-  for (let i = 0; i < pFilesToAdd.size; i++) {
-    console.log(notice(`${i + 1} / ${pFilesToAdd.size}`));
-    let file: string = getValuesFilesToAdd.next().value;
+        // We add SEPARATORSPACETOCHARACTER instead of space to have a pretty display in the file if the argument --nospace is given
+        if (pArgvNoSpace) {
+          file = file.split(' ').join(SEPARATORSPACETOCHARACTER);
+        }
 
-    if (isFileExist(file)) {
-      const md5: string = md5File.sync(file);
-
-      // We add SEPARATORSPACETOCHARACTER instead of space to have a pretty display in the file if the argument --nospace is given
-      if (pArgvNoSpace) {
-        file = file.split(' ').join(SEPARATORSPACETOCHARACTER);
-      }
-
-      // We try to add lines only if the argument --dest is filled.
-      if (pArgvDest) {
-        fs.appendFileSync(pArgvDest, `${md5}${SEPARATORHASHNAME}${file}\n`);
+        // We try to add lines only if the argument --dest is filled.
+        if (pArgvDest) {
+          fs.appendFileSync(pArgvDest, `${md5}${SEPARATORHASHNAME}${file}\n`);
+        } else {
+          // To have always the same syntax in the file (Windows / Linux / Mac)
+          // I choosed the Linux syntax for the path
+          const fileGeneric = file.split('\\').join('/');
+          console.log(notice(`${md5}${SEPARATORHASHNAME}${fileGeneric} \n`));
+        }
       } else {
-        // To have always the same syntax in the file (Windows / Linux / Mac)
-        // I choosed the Linux syntax for the path
-        const fileGeneric = file.split('\\').join('/');
-        console.log(notice(`${md5}${SEPARATORHASHNAME}${fileGeneric} \n`));
+        console.error(error(`\nGENERATOR MODE: The file "${file}" can't be read. Be sure it exists.`));
       }
-    } else {
-      console.error(error(`\nGENERATOR MODE: The file "${file}" can't be read. Be sure it exists.`));
     }
   }
+
+  return true;
 };
 
 // Get all path with md5 which have to be remove from the dest file because some paths doesn't exist anymore
-export const _getFilesToRemove = (pFilesToRemove: Set<string>, pArgvDest = ''): void => {
+export const _getFilesToRemove = (pFilesToRemove: Set<string>, pArgvDest = ''): boolean => {
   if (pArgvDest) {
     console.log(notice(`\nGENERATOR MODE: Line to remove from --dest path file:`));
 
@@ -283,6 +284,8 @@ export const _getFilesToRemove = (pFilesToRemove: Set<string>, pArgvDest = ''): 
       }
     }
   }
+
+  return true;
 };
 
 
