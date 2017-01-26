@@ -1,81 +1,81 @@
 {
-    "name": "generate_check_md5",
-    "version": "2.0.1",
-    "description": "Generate and compare MD5 files",
-    "main": "./src/index.ts",
-    "scripts": {
-        "start": "npm run build",
-        "clean": "rimraf bin && rimraf coverage",
-        "lint": "tslint './src/**/*.ts' 'tests/**/*.ts'",
-        "check": "npm run lint -s && dependency-check ./package.json",
-        "pretest": "tsc",
-        "test": "tape bin/tests/**/*.spec.js | tspec",
-        "posttest": "rimraf bin/tests",
-        "test:watch": "onchange \"tests/**/*.ts\" \"src/**/*.ts\" -i -p -- npm run test",
-        "compile": "tsc",
-        "compile:watch": "onchange \"src/**/*.ts\" -i -p -- npm run compile",
-        "build": "npm run compile",
-        "postbuild": "npm run check -s && npm run test -s",
-        "coverage": "nyc npm run test",
-        "coveralls": "npm run coverage -s && coveralls < coverage/lcov.info",
-        "postcoveralls": "rimraf ./coverage",
-        "prepublish": "npm run build -s",
-        "deploy": "git pull --rebase origin master && git push origin master",
-        "patch": "npm version patch && npm publish",
-        "minor": "npm version minor && npm publish",
-        "major": "npm version major && npm publish",
-        "postpublish": "git push origin master --follow-tags",
-        "autocl": "auto-changelog"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/kevincaradant/generate_check_md5.git"
-    },
-    "bin": {
-        "gcmd5": "./bin/src/index.js"
-    },
-    "preferGlobal": true,
-    "keywords": [
-        "generate",
-        "typescript",
-        "create",
-        "generator",
-        "comparator",
-        "md5",
-        "analyze md5",
-        "compare md5"
-    ],
-    "author": "Kévin CARADANT <kevin.caradant@gmail.com>",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/kevincaradant/generate_check_md5/issues"
-    },
-    "homepage": "https://github.com/kevincaradant/generate_check_md5#readme",
-    "dependencies": {
-        "cli-color": "1.1.0",
-        "line-by-line": "0.1.5",
-        "md5-file": "3.1.1",
-        "recursive-readdir": "git+https://github.com/kevincaradant/recursive-readdir.git",
-        "yargs": "6.6.0",
-        "tslib": "1.5.0"
-    },
-    "devDependencies": {
-        "@types/cli-color": "0.3.29",
-        "@types/node": "7.0.3",
-        "@types/promise": "7.1.30",
-        "@types/rimraf": "0.0.28",
-        "@types/yargs": "6.5.0",
-        "coveralls": "2.11.15",
-        "dependency-check": "2.7.0",
-        "is-equal": "1.5.4",
-        "mock-fs": "3.12.1",
-        "nyc": "10.1.2",
-        "onchange": "3.2.1",
-        "rimraf": "2.5.4",
-        "tap-spec": "4.1.1",
-        "tape": "4.6.3",
-        "ts-node": "2.0.0",
-        "tslint": "4.3.1",
-        "typescript": "2.1.5"
-    }
+  "name": "generate_check_md5",
+  "version": "2.0.2",
+  "description": "Generate and compare MD5 files",
+  "main": "./src/index.ts",
+  "scripts": {
+    "start": "npm run build",
+    "clean": "rimraf bin && rimraf coverage",
+    "lint": "tslint './src/**/*.ts' 'tests/**/*.ts'",
+    "check": "npm run lint -s && dependency-check ./package.json",
+    "pretest": "tsc",
+    "test": "tape bin/tests/**/*.spec.js | tspec",
+    "posttest": "rimraf bin/tests",
+    "test:watch": "onchange \"tests/**/*.ts\" \"src/**/*.ts\" -i -p -- npm run test",
+    "compile": "tsc",
+    "compile:watch": "onchange \"src/**/*.ts\" -i -p -- npm run compile",
+    "build": "npm run compile",
+    "postbuild": "npm run check -s && npm run test -s",
+    "coverage": "nyc npm run test",
+    "coveralls": "npm run coverage -s && coveralls < coverage/lcov.info",
+    "postcoveralls": "rimraf ./coverage",
+    "prepublish": "npm run build -s",
+    "deploy": "git pull --rebase origin master && git push origin master",
+    "patch": "npm version patch && npm publish",
+    "minor": "npm version minor && npm publish",
+    "major": "npm version major && npm publish",
+    "postpublish": "git push origin master --follow-tags",
+    "autocl": "auto-changelog"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevincaradant/generate_check_md5.git"
+  },
+  "bin": {
+    "gcmd5": "./bin/src/index.js"
+  },
+  "preferGlobal": true,
+  "keywords": [
+    "generate",
+    "typescript",
+    "create",
+    "generator",
+    "comparator",
+    "md5",
+    "analyze md5",
+    "compare md5"
+  ],
+  "author": "Kévin CARADANT <kevin.caradant@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kevincaradant/generate_check_md5/issues"
+  },
+  "homepage": "https://github.com/kevincaradant/generate_check_md5#readme",
+  "dependencies": {
+    "cli-color": "1.1.0",
+    "line-by-line": "0.1.5",
+    "md5-file": "3.1.1",
+    "recursive-readdir": "git+https://github.com/kevincaradant/recursive-readdir.git",
+    "yargs": "6.6.0",
+    "tslib": "1.5.0"
+  },
+  "devDependencies": {
+    "@types/cli-color": "0.3.29",
+    "@types/node": "7.0.3",
+    "@types/promise": "7.1.30",
+    "@types/rimraf": "0.0.28",
+    "@types/yargs": "6.5.0",
+    "coveralls": "2.11.15",
+    "dependency-check": "2.7.0",
+    "is-equal": "1.5.4",
+    "mock-fs": "3.12.1",
+    "nyc": "10.1.2",
+    "onchange": "3.2.1",
+    "rimraf": "2.5.4",
+    "tap-spec": "4.1.1",
+    "tape": "4.6.3",
+    "ts-node": "2.0.0",
+    "tslint": "4.3.1",
+    "typescript": "2.1.5"
+  }
 }
