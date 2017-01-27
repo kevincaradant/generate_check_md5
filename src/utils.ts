@@ -6,6 +6,7 @@ import * as fs from 'fs';
 const LineByLineReader = require('line-by-line');
 import * as clc from 'cli-color';
 const recursive = require('recursive-readdir');
+const fileToShowCompareErr = 'compareErr.txt';
 
 const SEPARATORHASHNAME = ' : ';
 const SEPARATORSPACETOCHARACTER = '_';
@@ -47,9 +48,13 @@ export const readFile = async (pFile = ''): Promise<Array<string>> => {
 
 // For each line of a the pMapCompare. We check if the content is included in the pMapSource.
 export const _isPresentMD5FromCompareToSource = (pMapSource: Map<string, string>, pMapCompare: Map<string, string>): boolean => {
+  if (isFileExist(fileToShowCompareErr)) {
+    fs.unlinkSync(fileToShowCompareErr);
+  }
   let cptCheck = 0;
   pMapCompare.forEach((name: string, md5: string) => {
     if (!pMapSource.has(md5)) {
+      fs.appendFileSync(fileToShowCompareErr, `${md5} ${SEPARATORHASHNAME} ${name}\n`);
       console.error(error('\nCOMPARATOR MODE: Error with the MD5 line: ') + notice(md5 + SEPARATORHASHNAME + name));
       cptCheck++;
     }
@@ -57,6 +62,8 @@ export const _isPresentMD5FromCompareToSource = (pMapSource: Map<string, string>
 
   if (cptCheck === 0) {
     console.log(success('\nCOMPARATOR MODE: No error MD5 detected'));
+  } else {
+    console.log(notice(`\nCOMPARATOR MODE: `) + success(`${fileToShowCompareErr} created ! `) + notice(`You can see inside, the results of the compare`));
   }
 
   return true;
