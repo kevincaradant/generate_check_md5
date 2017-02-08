@@ -4,5 +4,13 @@
   ],
   "critics": {
     "wc": { "limit": 5000 }
+  },
+  "dependencies": {
+    "unused-ignores": [
+      "tslib",
+      "recursive-readdir",
+      "md5-file",
+      "line-by-line"
+    ]
   }
 }
